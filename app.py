@@ -152,7 +152,7 @@ def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
     
     En otras palabras:
     """)
-    st.latex(r"u(x,t)=w(x,t)+v(x,t)")
+    st.latex(fr"\color{{{C_GEN}}}{{u(x,t)}} = \color{{{C_STAT}}}{{w(x,t)}} + \color{{{C_TRANS}}}{{v(x,t)}}")
     
     st.markdown("### 🛠️ Construcción de la función auxiliar")
     st.markdown("""
@@ -161,101 +161,124 @@ def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
     por lo que **no introduce términos adicionales** en la ecuación diferencial. Gracias a ello, la EDP transformada conserva prácticamente la misma estructura que la original.
     """)
     
-    st.markdown("**Tu función auxiliar calculada en tiempo real:**")
-    st.latex(f"w(x,t) = {sp.latex(w_d)}")
+    st.latex(fr"\color{{{C_STAT}}}{{w(x,t)}} = {sp.latex(w_d)}")
     
     st.markdown("""> **Observación importante:**
     > Podríamos escoger otra función que también cumpliera las condiciones de frontera (por ejemplo, agregando un seno o un polinomio que valga cero en ambos extremos). Sin embargo, esa elección produciría un término extra $\\alpha^2 w_{xx}-w_t$, complicando innecesariamente la ecuación para $v(x,t)$. La solución física final **no cambia**, pero la separación entre la parte estacionaria y la transitoria deja de ser tan clara.""")
     
     st.markdown("### 🔄 Problema transformado")
-    st.markdown("Al sustituir $u(x,t)=w(x,t)+v(x,t)$ en la ecuación de calor, obtenemos un nuevo problema para $v(x,t)$, cuya fuente y condición inicial se transforman en:")
-    st.latex(f"\\tilde{{F}}(x,t) = {sp.latex(F_t_d)}")
-    st.latex(f"\\tilde{{f}}(x) = v(x,0) = {sp.latex(f_t_d)}")
+    st.markdown(r"Al sustituir $u(x,t)=w(x,t)+v(x,t)$ en la ecuación de calor, obtenemos un nuevo problema para $v(x,t)$, cuya fuente y condición inicial se transforman en:")
+    st.latex(fr"\color{{{C_TRANS}}}{{\tilde{{F}}(x,t)}} = {sp.latex(F_t_d)}")
+    st.latex(fr"\color{{{C_TRANS}}}{{\tilde{{f}}(x)}} = v(x,0) = {sp.latex(f_t_d)}")
     
     st.markdown("""En adelante resolveremos este nuevo problema, que posee **fronteras homogéneas** y es adecuado para aplicar el método de separación de variables.
     
     > **💡 Idea clave:**
     > La homogeneización **no modifica la solución física del problema**. Únicamente cambia la forma de representarla. Elegir una función $w$ apropiada hace que $v$ describa únicamente la parte transitoria del fenómeno, simplificando considerablemente el análisis matemático.""")
+    
+    st.markdown("""
+    > **✏️ Antes de continuar**, intenta determinar por tu cuenta los valores propios y las funciones propias del problema homogéneo. Luego ejecuta la siguiente celda y compara tu procedimiento con el desarrollo propuesto.
+    """)
 
 # ==========================================
-# INTERFAZ PRINCIPAL
+# INTERFAZ PRINCIPAL - ETAPA 1
 # ==========================================
-st.title("🔥 Simulador de EDP: Calor 1D Análitico")
-st.markdown("Sigue esta ruta guiada interactiva para resolver tu Problema de Valor Inicial y de Frontera (PVIF) paso a paso mediante expresiones algebraicas generales.")
+st.title("🔥 Simulador de EDP: Calor 1D Analítico")
+st.markdown("Sigue esta ruta guiada interactiva para resolver tu Problema de Valor Inicial y de Frontera (PVIF) paso a paso.")
 st.markdown("---")
 
-# ---------------------------------------------------------
-# ETAPA 1: PLANTEAMIENTO (COMPLETAMENTE REDISEÑADA)
-# ---------------------------------------------------------
-if st.session_state.step >= 1:
-    st.header("1. Planteando la EDP")
-    
-    # Grid armonizado para el ingreso de datos
-    with st.container():
-        st.markdown("<div class='main-card'>", unsafe_allow_html=True)
-        col1, col2 = st.columns(2)
-        with col1:
-            in_L = st.text_input("Longitud de la barra (L):", value="pi", disabled=(st.session_state.step > 1))
-            in_alpha = st.text_input("Difusividad térmica (α):", value="1", disabled=(st.session_state.step > 1))
-            in_F = st.text_input("Fuente externa de calor F(x,t):", value="exp(-t)*sin(2*x)", disabled=(st.session_state.step > 1))
-        with col2:
-            in_A = st.text_input("Condición de frontera Izquierda u(0,t):", value="10", disabled=(st.session_state.step > 1))
-            in_B = st.text_input("Condición de frontera Derecha u(L,t):", value="50", disabled=(st.session_state.step > 1))
-            in_f = st.text_input("Perfil de temperatura Inicial u(x,0):", value="3*sin(4*pi*x)", disabled=(st.session_state.step > 1))
-        st.markdown("</div>", unsafe_allow_html=True)
-    
-    # --- DISPLAY EN TIEMPO REAL CON FORMATO DE LLAVE ---
-    st.markdown("### 📋 Visualización del Sistema en Tiempo Real:")
-    try:
-        L_s = sp.sympify(in_L, locals={'pi': sp.pi})
-        alpha_s = sp.sympify(in_alpha)
-        F_s = sp.sympify(in_F, locals={'x': x, 't': t, 'sin': sp.sin, 'cos': sp.cos, 'exp': sp.exp})
-        A_s = sp.sympify(in_A)
-        B_s = sp.sympify(in_B)
-        f_s = sp.sympify(in_f, locals={'x': x, 'pi': sp.pi, 'sin': sp.sin})
-        
-        # Cálculos dinámicos inmediatos para alimentar la ayuda oculta de forma responsiva
-        w_dyn = sp.simplify(A_s + (x / L_s) * (B_s - A_s))
-        F_t_dyn = sp.simplify(F_s - sp.diff(w_dyn, t) + alpha_s**2 * sp.diff(w_dyn, x, 2))
-        f_t_dyn = sp.simplify(f_s - w_dyn.subs(t, 0))
-        
-        latex_sistema = rf"""
-        \begin{cases}
-        \frac{{\partial u}}{{\partial t}} = {sp.latex(alpha_s^2)} \frac{{\partial^2 u}}{{\partial x^2}} + {sp.latex(F_s)}, & 0 < x < {sp.latex(L_s)}, \; t > 0 \\
-        u(0,t) = {sp.latex(A_s)}, & t > 0 \\
-        u({sp.latex(L_s)},t) = {sp.latex(B_s)}, & t > 0 \\
-        u(x,0) = {sp.latex(f_s)}, & 0 \le x \le {sp.latex(L_s)}
-        \end{cases}
-        """
-    except Exception:
-        # Fallback amigable mientras el usuario se encuentra digitando expresiones incompletas
-        latex_sistema = r"\begin{cases} \text{Esperando expresiones válidas...} \end{cases}"
-        w_dyn, F_t_dyn, f_t_dyn = "w(x,t)", r"\tilde{F}(x,t)", r"\tilde{f}(x)"
+st.header("1. Planteando la EDP")
 
+# Grid armonizado para el ingreso de datos (Con valores por defecto incluyendo constantes)
+with st.container():
+    st.markdown("<div class='main-card'>", unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        in_L = st.text_input("Longitud de la barra (L):", value="L")
+        in_alpha = st.text_input("Difusividad térmica (α):", value="alpha")
+        in_F = st.text_input("Fuente externa de calor F(x,t):", value="Q_0 * exp(-t)")
+    with col2:
+        in_A = st.text_input("Frontera Izquierda u(0,t):", value="T_1")
+        in_B = st.text_input("Frontera Derecha u(L,t):", value="T_2")
+        in_f = st.text_input("Perfil Inicial u(x,0):", value="T_0 * sin(pi*x/L)")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# Configuración del parser de SymPy para admitir variables implícitas y multiplicaciones (ej: "2x" -> "2*x")
+transformaciones = (standard_transformations + (implicit_multiplication_application,))
+
+def parsear_seguro(expr_str):
+    """Parsea el string asegurando que x e t sean nuestras variables simbólicas base"""
+    if not expr_str.strip():
+        raise ValueError("Expresión vacía")
+    expr = parse_expr(expr_str, transformations=transformaciones)
+    # Forzar que cualquier 'x' o 't' libre se mapee a nuestros símbolos globales
+    reemplazos = {}
+    for sim in expr.free_symbols:
+        if sim.name == 'x': reemplazos[sim] = x
+        elif sim.name == 't': reemplazos[sim] = t
+    return expr.subs(reemplazos)
+
+st.markdown("### 📋 Visualización del Sistema en Tiempo Real:")
+
+try:
+    # 1. Parseo estricto de las entradas
+    L_s = parsear_seguro(in_L)
+    alpha_s = parsear_seguro(in_alpha)
+    F_s = parsear_seguro(in_F)
+    A_s = parsear_seguro(in_A)
+    B_s = parsear_seguro(in_B)
+    f_s = parsear_seguro(in_f)
+    
+    # 2. Cálculos en tiempo real para alimentar la homogeneización
+    w_dyn = sp.simplify(A_s + (x / L_s) * (B_s - A_s))
+    F_t_dyn = sp.simplify(F_s - sp.diff(w_dyn, t) + alpha_s**2 * sp.diff(w_dyn, x, 2))
+    f_t_dyn = sp.simplify(f_s - w_dyn.subs(t, 0))
+    
+    # 3. Formateo de las variables principales (Con color ÚNICAMENTE en la variable incógnita)
+    u_tex = fr"\color{{{C_GEN}}}{{u}}"
+    u_xt_tex = fr"\color{{{C_GEN}}}{{u}}(x,t)"
+    u_0t_tex = fr"\color{{{C_GEN}}}{{u}}(0,t)"
+    u_Lt_tex = fr"\color{{{C_GEN}}}{{u}}({sp.latex(L_s)},t)"
+    u_x0_tex = fr"\color{{{C_GEN}}}{{u}}(x,0)"
+    
+    # Formateo condicional para alpha al cuadrado (evitar imprimir "alpha**2" si es numérico)
+    alpha_term = sp.latex(alpha_s**2) if not alpha_s.is_number else sp.latex(alpha_s**2)
+    
+    latex_sistema = rf"""
+    \begin{{cases}}
+    \frac{{\partial {u_tex}}}{{\partial t}} = {alpha_term} \frac{{\partial^2 {u_tex}}}{{\partial x^2}} + {sp.latex(F_s)}, & 0 < x < {sp.latex(L_s)}, \quad t > 0 \\[8pt]
+    {u_0t_tex} = {sp.latex(A_s)}, & t > 0 \\[8pt]
+    {u_Lt_tex} = {sp.latex(B_s)}, & t > 0 \\[8pt]
+    {u_x0_tex} = {sp.latex(f_s)}, & 0 \le x \le {sp.latex(L_s)}
+    \end{{cases}}
+    """
+    
+    # Mostrar el bloque matemático
     st.markdown("<div class='system-card'>", unsafe_allow_html=True)
     st.latex(latex_sistema)
     st.markdown("</div>", unsafe_allow_html=True)
-
-    # Botón sutil de ayuda interactiva que despliega el modal detallado
-    col_help, _ = st.columns([1, 3])
+    
+    # Renderizar el botón de ayuda solo si las matemáticas cargaron correctamente
+    col_help, _ = st.columns([1, 2])
     with col_help:
         if st.button("ℹ️ Ver Fundamentos Matemáticos y Homogeneización", use_container_width=True):
             mostrar_ayuda_profunda(w_dyn, F_t_dyn, f_t_dyn)
 
-    # Recordatorio explícito solicitado para guiar la proactividad del estudiante
-    st.markdown("""
-        <div class='alert-card'>
-        💡 <b>Reto de Aprendizaje:</b> ¡Intenta homogeneizar las fronteras antes de ejecutar la próxima celda!, luego compara tu procedimiento y resultado.
-        </div>
-    """, unsafe_allow_html=True)
-        
-    if st.session_state.step == 1:
-        if st.button("Guardar Parámetros y Avanzar 🚀", type="primary"):
-            with st.spinner("Procesando núcleo matemático analítico..."):
-                calcular_matematicas(in_L, in_alpha, in_F, in_A, in_B, in_f)
-            avanzar()
-            st.rerun()
-    st.markdown("---")
+except Exception as e:
+    # Fallback si el usuario escribe algo matemáticamente inválido momentáneamente (ej: "3*")
+    st.markdown("<div class='system-card'>", unsafe_allow_html=True)
+    st.latex(r"\begin{cases} \text{Escribe expresiones matemáticas válidas para visualizar tu EDP...} \end{cases}")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("""
+    <div class='alert-card'>
+    💡 <b>Reto de Aprendizaje:</b> ¡Intenta homogeneizar las fronteras antes de ejecutar la próxima celda!, luego compara tu procedimiento y resultado.
+    </div>
+""", unsafe_allow_html=True)
+
+if st.button("Guardar Parámetros y Avanzar 🚀", type="primary"):
+    # Aquí iría la lógica de avanzar al Paso 2
+    st.success("¡Parámetros guardados correctamente! (Lógica de avance a programar)")
 
 # ---------------------------------------------------------
 # ETAPA 2: HOMOGENEIZACIÓN
