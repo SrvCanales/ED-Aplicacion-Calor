@@ -2,6 +2,7 @@ import streamlit as st
 import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
+from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application
 
 # ==========================================
 # CONFIGURACIÓN DE PÁGINA Y ESTILOS AVANZADOS
