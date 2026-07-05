@@ -2471,6 +2471,166 @@ variables.
 """
     )
 
+# Funciones auxiliares finales + Pulido visual + Resumen
+#
+# Esta parte añade los últimos detalles para que el apartado de ayuda
+# se sienta terminado y coherente con el resto de la aplicación.
+# =============================================================================
+
+
+# =============================================================================
+# BOTÓN PARA REINICIAR EL RECORRIDO
+# =============================================================================
+
+def reiniciar_recorrido():
+
+    st.divider()
+
+    c1, c2, c3 = st.columns([1.5,2,1.5])
+
+    with c2:
+
+        if st.button(
+            "🔄 Volver a recorrer esta ayuda",
+            use_container_width=True
+        ):
+
+            st.session_state.help_slide = 0
+            st.rerun()
+
+
+# =============================================================================
+# RESUMEN FINAL
+# =============================================================================
+
+def resumen_final():
+
+    st.divider()
+
+    st.markdown("# 🎓 Resumen")
+
+    st.markdown("""
+Has recorrido las tres ideas fundamentales detrás de la
+homogeneización.
+
+Antes de continuar con el desarrollo matemático, verifica que
+puedes responder mentalmente las siguientes preguntas.
+""")
+
+    st.success("### ✔ Lo esencial")
+
+    st.markdown("""
+- Comprendes qué significa una **frontera homogénea**.
+
+- Sabes por qué la **separación de variables** requiere este tipo
+de condiciones de frontera.
+
+- Entiendes que la homogeneización **no modifica la física del
+problema**.
+
+- Sabes interpretar la sustitución
+
+\[
+u=w+v.
+\]
+
+- Distingues entre la parte **estacionaria** y la parte
+**transitoria** de la solución.
+
+- Comprendes por qué la sustitución lineal suele ser la elección
+más conveniente.
+
+- Sabes que existen otras sustituciones, aunque normalmente sólo se
+utilizan cuando simplifican un problema específico.
+""")
+
+    st.info("""
+A partir de este punto ya estamos preparados para aplicar el
+método de separación de variables sobre la nueva incógnita.
+""")
+
+
+# =============================================================================
+# PEQUEÑO RECORDATORIO
+# =============================================================================
+
+def recordatorio():
+
+    st.markdown(
+"""
+<div class="box-green">
+
+<h4 style="margin-top:0px">
+
+🎯 Idea para recordar
+
+</h4>
+
+<p style="font-size:16px; line-height:1.8;">
+
+La homogeneización no consiste en "inventar" una función.
+
+Consiste en escoger una función conocida que satisfaga las
+condiciones de frontera para que la nueva incógnita tenga
+fronteras homogéneas.
+
+</p>
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# MENSAJE MOTIVACIONAL
+# =============================================================================
+
+def mensaje_final():
+
+    st.success("""
+¡Excelente!
+
+La homogeneización suele parecer un paso artificial cuando se ve
+por primera vez.
+
+Sin embargo, una vez comprendida, se convierte en una herramienta
+muy natural: antes de intentar resolver la ecuación diferencial,
+eliminamos primero aquello que ya conocemos (las condiciones de
+frontera) y concentramos el esfuerzo matemático únicamente en la
+parte realmente desconocida del problema.
+""")
+
+
+# =============================================================================
+# BARRA DE FINALIZACIÓN
+# =============================================================================
+
+def progreso_completado():
+
+    st.progress(1.0)
+
+    st.caption("✅ Ayuda completada")
+
+
+# =============================================================================
+# LLAMADA FINAL
+#
+# Añadir estas líneas AL FINAL del slide_3(),
+# inmediatamente después del mensaje de
+# "🎉 Laboratorio completado".
+# =============================================================================
+
+progreso_completado()
+
+recordatorio()
+
+resumen_final()
+
+mensaje_final()
+
+reiniciar_recorrido()
+
 # ENDE Hilfe 1 Homogenisierung 
 
 # ---------------------------------------------------------
