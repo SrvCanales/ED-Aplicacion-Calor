@@ -3,6 +3,577 @@ import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
 from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application
+import streamlit.components.v1 as components 
+import textwrap
+
+# TODO AYUDA PARTE HOMOGENIZACION -------------------------------
+
+if "help_slide" not in st.session_state:
+    st.session_state.help_slide = 0
+
+if "help_max_slide" not in st.session_state:
+    st.session_state.help_max_slide = 0
+
+# -----------------------------------------------------------------------------
+# CSS GENERAL
+# -----------------------------------------------------------------------------
+
+st.markdown("""
+<style>
+
+/*==========================================================
+CONTENEDOR
+==========================================================*/
+
+.help-card{
+    background:white;
+    border-radius:16px;
+    border:1px solid #E5E7EB;
+    padding:22px;
+    margin-top:12px;
+    margin-bottom:18px;
+    box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+
+/*==========================================================
+TÍTULOS
+==========================================================*/
+
+.help-title{
+
+    font-size:30px;
+    font-weight:700;
+    color:#0F172A;
+
+}
+
+.help-subtitle{
+
+    font-size:17px;
+    color:#475569;
+    margin-bottom:20px;
+
+}
+
+.step-title{
+
+    font-size:26px;
+    font-weight:700;
+    color:#1E3A8A;
+    margin-bottom:10px;
+
+}
+
+.small-title{
+
+    font-size:19px;
+    font-weight:600;
+    color:#1F2937;
+
+}
+
+
+/*==========================================================
+CAJAS
+==========================================================*/
+
+.box-blue{
+
+    background:#EFF6FF;
+    border-left:6px solid #2563EB;
+    padding:18px;
+    border-radius:12px;
+    margin-top:12px;
+    margin-bottom:18px;
+
+}
+
+.box-green{
+
+    background:#F0FDF4;
+    border-left:6px solid #16A34A;
+    padding:18px;
+    border-radius:12px;
+    margin-top:12px;
+    margin-bottom:18px;
+
+}
+
+.box-yellow{
+
+    background:#FFF7ED;
+    border-left:6px solid #F59E0B;
+    padding:18px;
+    border-radius:12px;
+    margin-top:12px;
+    margin-bottom:18px;
+
+}
+
+.box-red{
+
+    background:#FEF2F2;
+    border-left:6px solid #DC2626;
+    padding:18px;
+    border-radius:12px;
+    margin-top:12px;
+    margin-bottom:18px;
+
+}
+
+.box-gray{
+
+    background:#F8FAFC;
+    border:1px solid #E5E7EB;
+    padding:18px;
+    border-radius:12px;
+    margin-top:10px;
+    margin-bottom:15px;
+
+}
+
+
+/*==========================================================
+TARJETAS
+==========================================================*/
+
+.card{
+
+    background:white;
+    border:1px solid #E5E7EB;
+    border-radius:15px;
+    padding:16px;
+
+}
+
+
+/*==========================================================
+BADGES
+==========================================================*/
+
+.badge{
+
+display:inline-block;
+
+padding:5px 12px;
+
+border-radius:999px;
+
+background:#DBEAFE;
+
+color:#1D4ED8;
+
+font-weight:600;
+
+font-size:13px;
+
+margin-bottom:12px;
+
+}
+
+.badge2{
+
+display:inline-block;
+
+padding:5px 12px;
+
+border-radius:999px;
+
+background:#DCFCE7;
+
+color:#15803D;
+
+font-weight:600;
+
+font-size:13px;
+
+margin-bottom:12px;
+
+}
+
+
+/*==========================================================
+NOTAS
+==========================================================*/
+
+.note{
+
+font-size:15px;
+
+color:#475569;
+
+line-height:1.75;
+
+}
+
+
+/*==========================================================
+SVG
+==========================================================*/
+
+.svg-card{
+
+border:1px solid #E5E7EB;
+
+border-radius:14px;
+
+padding:10px;
+
+background:white;
+
+}
+
+
+/*==========================================================
+BOTONES
+==========================================================*/
+
+div.stButton>button{
+
+border-radius:12px;
+
+font-weight:600;
+
+height:44px;
+
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+# =============================================================================
+# BARRA DE PROGRESO
+# =============================================================================
+
+def barra_progreso():
+
+    progreso=(st.session_state.help_slide+1)/3
+
+    st.progress(progreso)
+
+    c1,c2,c3=st.columns(3)
+
+    with c1:
+
+        if st.session_state.help_slide==0:
+            st.success("① ¿Por qué?")
+        else:
+            st.write("① ¿Por qué? ✓")
+
+    with c2:
+
+        if st.session_state.help_slide==1:
+            st.success("② ¿Cómo?")
+        elif st.session_state.help_slide>1:
+            st.write("② ¿Cómo? ✓")
+        else:
+            st.write("② ¿Cómo?")
+
+    with c3:
+
+        if st.session_state.help_slide==2:
+            st.success("③ ¿Otra sustitución?")
+        else:
+            st.write("③ ¿Otra sustitución?")
+
+
+# =============================================================================
+# BOTONES DE NAVEGACIÓN
+# =============================================================================
+
+def botones_navegacion():
+
+    st.divider()
+
+    c1,c2,c3=st.columns([1,4,1])
+
+    with c1:
+
+        if st.session_state.help_slide>0:
+
+            if st.button("⬅ Anterior",use_container_width=True):
+
+                st.session_state.help_slide-=1
+                st.rerun()
+
+    with c3:
+
+        if st.session_state.help_slide<2:
+
+            if st.button("Siguiente ➜",use_container_width=True):
+
+                st.session_state.help_slide+=1
+
+                st.session_state.help_max_slide=max(
+                    st.session_state.help_slide,
+                    st.session_state.help_max_slide
+                )
+
+                st.rerun()
+
+
+# =============================================================================
+# SVG 1
+# Frontera homogénea
+# =============================================================================
+
+def svg_frontera_homogenea():
+
+    svg="""
+
+<svg width="520" height="250"
+xmlns="http://www.w3.org/2000/svg">
+
+<rect width="100%" height="100%" fill="white"/>
+
+<line x1="60" y1="200"
+x2="470"
+y2="200"
+stroke="black"
+stroke-width="2"/>
+
+<line x1="60"
+y1="200"
+x2="60"
+y2="30"
+stroke="black"
+stroke-width="2"/>
+
+<text x="480" y="208"
+font-size="20">x</text>
+
+<text x="50" y="25"
+font-size="20">u</text>
+
+<text x="45"
+y="220"
+font-size="18">0</text>
+
+<text x="445"
+y="220"
+font-size="18">L</text>
+
+<path
+
+d="M60 200
+C130 180,
+180 90,
+260 80
+C330 90,
+390 180,
+460 200"
+
+stroke="#16A34A"
+
+stroke-width="4"
+
+fill="none"/>
+
+<circle cx="60" cy="200" r="5" fill="#16A34A"/>
+
+<circle cx="460" cy="200" r="5" fill="#16A34A"/>
+
+<text
+
+x="150"
+
+y="40"
+
+fill="#15803D"
+
+font-size="20"
+
+font-weight="bold">
+
+Frontera homogénea
+
+</text>
+
+</svg>
+
+"""
+
+    components.html(svg,height=260)
+
+
+# =============================================================================
+# SVG 2
+# Frontera NO homogénea
+# =============================================================================
+
+def svg_frontera_no_homogenea():
+
+    svg="""
+
+<svg width="520" height="250"
+xmlns="http://www.w3.org/2000/svg">
+
+<rect width="100%" height="100%" fill="white"/>
+
+<line x1="60" y1="200"
+x2="470"
+y2="200"
+stroke="black"
+stroke-width="2"/>
+
+<line x1="60"
+y1="200"
+x2="60"
+y2="30"
+stroke="black"
+stroke-width="2"/>
+
+<text x="480" y="208"
+font-size="20">x</text>
+
+<text x="50"
+y="25"
+font-size="20">u</text>
+
+<text x="45"
+y="220"
+font-size="18">0</text>
+
+<text x="445"
+y="220"
+font-size="18">L</text>
+
+<path
+
+d="M60 150
+C140 90,
+200 140,
+280 120
+C360 95,
+420 80,
+460 70"
+
+stroke="#DC2626"
+
+stroke-width="4"
+
+fill="none"/>
+
+<circle cx="60" cy="150"
+r="5"
+fill="#DC2626"/>
+
+<circle cx="460"
+cy="70"
+r="5"
+fill="#DC2626"/>
+
+<text
+
+x="105"
+
+y="40"
+
+fill="#B91C1C"
+
+font-size="20"
+
+font-weight="bold">
+
+Frontera no homogénea
+
+</text>
+
+</svg>
+
+"""
+
+    components.html(svg,height=260)
+
+
+# =============================================================================
+# SVG
+# RECTA DE HOMOGENEIZACIÓN
+# (utilizada en el Slide 2)
+# =============================================================================
+
+def svg_recta():
+
+    svg="""
+
+<svg width="520" height="260"
+xmlns="http://www.w3.org/2000/svg">
+
+<rect width="100%" height="100%" fill="white"/>
+
+<line x1="60"
+y1="210"
+x2="470"
+y2="210"
+stroke="black"
+stroke-width="2"/>
+
+<line x1="60"
+y1="210"
+x2="60"
+y2="30"
+stroke="black"
+stroke-width="2"/>
+
+<circle
+cx="60"
+cy="170"
+r="5"
+fill="#2563EB"/>
+
+<circle
+cx="460"
+cy="70"
+r="5"
+fill="#2563EB"/>
+
+<line
+
+x1="60"
+y1="170"
+x2="460"
+y2="70"
+
+stroke="#2563EB"
+
+stroke-width="4"/>
+
+<text
+x="95"
+y="95"
+font-size="18"
+fill="#1D4ED8">
+
+w(x)
+
+</text>
+
+<text
+x="40"
+y="225"
+font-size="18">
+
+0
+
+</text>
+
+<text
+x="445"
+y="225"
+font-size="18">
+
+L
+
+</text>
+
+</svg>
+
+"""
+
+    components.html(svg,height=270)
+
+#-------------------------------------------------------
 
 # ==========================================
 # CONFIGURACIÓN DE PÁGINA Y ESTILOS
@@ -139,378 +710,273 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
         return False
 
 # ==========================================
-# DIÁLOGO DE AYUDA (Conceptos Separados)
+# ANFANG Hilfe 1 Homogenisierung 
 # ==========================================
-@st.dialog("📖 Profundización Matemática: Homogeneización", width="large")
+@st.dialog("📖 Profundización matemática: Homogeneización", width="large")
 def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
 
-    st.subheader("¿Por qué debemos homogeneizar?")
-
-    st.markdown(r"""
-El método de **separación de variables** funciona de manera natural cuando las
-**condiciones de frontera son homogéneas**, es decir,
-
-\[
-u(0,t)=0,\qquad u(L,t)=0.
-\]
-
-Cuando en los extremos existen temperaturas distintas de cero, las autofunciones
-ya no satisfacen directamente las condiciones de frontera y la expansión en series
-resulta mucho más complicada.
-
-La idea consiste en **restar únicamente la parte responsable de satisfacer las
-condiciones de frontera**, dejando una nueva función que sí vale cero en los extremos.
-
-La física del problema no cambia; únicamente cambiamos la forma en que describimos
-la misma solución.
-""")
-
-    st.divider()
-
-    st.subheader("La sustitución")
+    # -------------------------------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------------------------------
 
     st.markdown("""
-Escribimos la solución como la suma de dos contribuciones:
-""")
+    <div class="help-title">
+    Homogeneización de las condiciones de frontera
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.latex(
-        rf"{COLOR_MAP['u']}(x,t)="
-        rf"{COLOR_MAP['w']}(x,t)+"
-        rf"{COLOR_MAP['v']}(x,t)"
-    )
+    st.markdown("""
+    <div class="help-subtitle">
 
-    col1, col2 = st.columns(2)
+    En esta guía recorrerás paso a paso la idea detrás de la homogeneización.
+    La intención no es memorizar una sustitución, sino comprender por qué surge
+    naturalmente al resolver la ecuación de calor mediante separación de variables.
 
-    with col1:
-        st.success("### La parte $w(x,t)$")
-        st.markdown(r"""
-- Se construye **únicamente** para satisfacer las condiciones de frontera.
+    </div>
+    """, unsafe_allow_html=True)
 
-- Representa la parte que ya conocemos antes de resolver la EDP.
+    # -------------------------------------------------------------------------
+    # Barra de progreso
+    # -------------------------------------------------------------------------
 
-- Al escogerla correctamente, la nueva incógnita tendrá fronteras homogéneas.
-""")
-
-        st.latex(rf"{COLOR_MAP['w']}(x,t)={sp.latex(w_d)}")
-
-    with col2:
-        st.info("### La parte $v(x,t)$")
-        st.markdown(r"""
-Es la parte realmente desconocida.
-
-Como
-
-\[
-u=w+v,
-\]
-
-entonces
-
-\[
-v=u-w.
-\]
-
-Por construcción,
-
-\[
-v(0,t)=v(L,t)=0.
-\]
-
-Ahora sí podremos desarrollar a \(v\) mediante autofunciones.
-""")
+    barra_progreso()
 
     st.divider()
 
-    st.subheader("¿Qué ocurre al sustituir?")
+    # =========================================================================
+    # SLIDE 1
+    # =========================================================================
 
-    st.markdown(r"""
-Se reemplaza
+    if st.session_state.help_slide == 0:
 
-\[
-u=w+v
-\]
+        slide_1()
 
-en la ecuación diferencial y posteriormente se despeja la nueva incógnita \(v\).
+    # =========================================================================
+    # SLIDE 2
+    # =========================================================================
 
-Como consecuencia:
+    elif st.session_state.help_slide == 1:
 
-- las condiciones de frontera pasan a ser homogéneas;
-- la condición inicial cambia;
-- el término fuente también puede cambiar.
+        slide_2(
+            w_d=w_d,
+            F_t_d=F_t_d,
+            f_t_d=f_t_d
+        )
 
-Todo esto ocurre automáticamente al efectuar la sustitución.
-""")
+    # =========================================================================
+    # SLIDE 3
+    # =========================================================================
 
-    st.markdown("La nueva ecuación queda con:")
+    else:
 
-    st.latex(rf"{COLOR_MAP['F_tilde']}(x,t)={sp.latex(F_t_d)}")
+        slide_3()
 
-    st.markdown("y la nueva condición inicial:")
+    # -------------------------------------------------------------------------
+    # Navegación
+    # -------------------------------------------------------------------------
 
-    st.latex(
-        rf"{COLOR_MAP['v']}(x,0)="
-        rf"{sp.latex(f_t_d)}"
+    botones_navegacion()
+
+
+# =============================================================================
+# UTILIDAD
+# Tarjetas de información
+# =============================================================================
+
+def tarjeta(titulo, texto, color="blue"):
+
+    colores = {
+        "blue": "box-blue",
+        "green": "box-green",
+        "yellow": "box-yellow",
+        "red": "box-red",
+        "gray": "box-gray"
+    }
+
+    st.markdown(
+        f"""
+<div class="{colores[color]}">
+
+<h4 style="margin-top:0px">
+{titulo}
+</h4>
+
+<p style="font-size:16px;
+line-height:1.8;
+margin-bottom:0px">
+
+{texto}
+
+</p>
+
+</div>
+""",
+        unsafe_allow_html=True
     )
 
-    st.success(
-        "A partir de este punto el problema posee fronteras homogéneas y ya puede "
-        "resolverse mediante separación de variables."
+
+# =============================================================================
+# UTILIDAD
+# Encabezado de slide
+# =============================================================================
+
+def encabezado_slide(numero, titulo, subtitulo):
+
+    st.markdown(
+        f"""
+<div class="badge">
+Paso {numero} de 3
+</div>
+
+<div class="step-title">
+{titulo}
+</div>
+
+<div class="note">
+
+{subtitulo}
+
+</div>
+""",
+        unsafe_allow_html=True
     )
 
-    st.divider()
 
-    st.subheader("Preguntas frecuentes")
+# =============================================================================
+# UTILIDAD
+# Cuadro "Idea clave"
+# =============================================================================
 
-    ###########################################################################
-    # ¿Por qué normalmente w es lineal?
-    ###########################################################################
+def idea_clave(texto):
 
-    if st.button(
-        "❓ ¿Por qué normalmente se elige una función lineal?",
-        use_container_width=True,
-        key="faq_lineal"
+    st.success("💡 Idea clave")
+
+    st.markdown(texto)
+
+
+# =============================================================================
+# UTILIDAD
+# Duda desplegable
+# =============================================================================
+
+def duda(titulo, contenido):
+
+    with st.expander(
+        "❓ " + titulo,
+        expanded=False
     ):
 
-        with st.expander("Respuesta", expanded=True):
+        st.markdown(contenido)
 
-            st.markdown(r"""
-Cuando las temperaturas en los extremos son **constantes**, basta una recta que una
-ambos valores.
 
-Además,
+# =============================================================================
+# UTILIDAD
+# Comparación lado a lado
+# =============================================================================
 
-\[
-w''(x)=0,
-\]
+def comparacion(col_izq, col_der):
 
-por lo que la sustitución introduce la menor cantidad posible de términos nuevos
-en la ecuación diferencial.
+    c1, c2 = st.columns(2)
 
-Es la elección más sencilla y por ello aparece prácticamente en todos los cursos
-introductorios.
-""")
+    with c1:
+        col_izq()
 
-    ###########################################################################
-    # ¿Siempre debe ser lineal?
-    ###########################################################################
+    with c2:
+        col_der()
 
-    if st.button(
-        "❓ ¿Siempre debe ser una función lineal?",
-        use_container_width=True,
-        key="faq_no_lineal"
-    ):
 
-        with st.expander("Respuesta", expanded=True):
+# =============================================================================
+# UTILIDAD
+# Separador visual elegante
+# =============================================================================
 
-            st.markdown(r"""
-No.
+def separador():
 
-La única condición importante es que \(w\) satisfaga las condiciones de frontera.
-
-Puede ser lineal, cuadrática, trigonométrica, exponencial o cualquier otra función
-si ello simplifica el problema.
-""")
-
-    ###########################################################################
-    # Casos donde NO es lineal
-    ###########################################################################
-
-    if st.button(
-        "❓ Ejemplos donde la sustitución NO es lineal",
-        use_container_width=True,
-        key="faq_ejemplos"
-    ):
-
-        with st.expander("Ejemplos", expanded=True):
-
-            st.markdown(r"""
-### Ejemplo 1: frontera dependiente del tiempo
-
-Si
-
-\[
-u(0,t)=10e^{-t},
-\qquad
-u(L,t)=40e^{-t},
-\]
-
-es natural escoger
-
-\[
-w(x,t)=
-10e^{-t}
-+\frac{30e^{-t}}{L}x.
-\]
-
-Aunque sigue siendo lineal en \(x\), **ya no es una función lineal completa**
-porque depende del tiempo.
-
----
-
-### Ejemplo 2: frontera senoidal
-
-Si
-
-\[
-u(0,t)=5\sin t,
-\qquad
-u(L,t)=0,
-\]
-
-podemos usar
-
-\[
-w(x,t)=
-5\sin t
-\left(1-\frac{x}{L}\right).
-\]
-
----
-
-### Ejemplo 3: cuando queremos eliminar un término fuente
-
-Supongamos
-
-\[
-u_t=\alpha^2u_{xx}+20.
-\]
-
-Puede ser conveniente elegir una función cuadrática
-
-\[
-w(x)=Ax^2+Bx+C,
-\]
-
-porque
-
-\[
-w''(x)=2A,
-\]
-
-permitiendo cancelar el término constante de la fuente.
-
----
-
-### Ejemplo 4: estado estacionario conocido
-
-Si sabemos que el estado estacionario satisface
-
-\[
-w''+\sin(x)=0,
-\]
-
-conviene utilizar directamente esa solución como \(w\).
-
-Así, el término fuente desaparece completamente del problema para \(v\).
-
----
-
-En resumen, **no existe una única sustitución correcta**.
-
-Se escoge aquella que haga el problema lo más sencillo posible.
-""")
-
-    ###########################################################################
-    # ¿Cómo sé cuál escoger?
-    ###########################################################################
-
-    if st.button(
-        "❓ ¿Cómo saber qué función elegir?",
-        use_container_width=True,
-        key="faq_como"
-    ):
-
-        with st.expander("Respuesta", expanded=True):
-
-            st.markdown(r"""
-En la práctica suele seguirse este orden:
-
-1. Buscar una función que satisfaga exactamente las condiciones de frontera.
-
-2. Preferir la función más simple posible.
-
-3. Si además simplifica la ecuación diferencial, mejor aún.
-
-En cursos básicos, casi siempre una función lineal es suficiente.
-
-En problemas más avanzados puede elegirse otra función para cancelar términos de
-la EDP o aprovechar información física del problema.
-""")
-
-    ###########################################################################
-    # ¿La solución cambia?
-    ###########################################################################
-
-    if st.button(
-        "❓ ¿La solución física cambia después de la sustitución?",
-        use_container_width=True,
-        key="faq_fisica"
-    ):
-
-        with st.expander("Respuesta", expanded=True):
-
-            st.markdown(r"""
-No.
-
-La temperatura física sigue siendo
-
-\[
-u=w+v.
-\]
-
-Nunca se reemplaza una solución por otra.
-
-Simplemente se resuelve primero la parte transitoria \(v\), porque es mucho más
-fácil, y al final se vuelve a sumar \(w\).
-
-Por ello, la homogeneización es únicamente un cambio de representación matemática,
-no un cambio del fenómeno físico.
-""")
-
-    ###########################################################################
-    # ¿Por qué cambia la condición inicial?
-    ###########################################################################
-
-    if st.button(
-        "❓ ¿Por qué también cambia la condición inicial?",
-        use_container_width=True,
-        key="faq_ci"
-    ):
-
-        with st.expander("Respuesta", expanded=True):
-
-            st.markdown(r"""
-Al inicio,
-
-\[
-u(x,0)=f(x).
-\]
-
-Como
-
-\[
-u=w+v,
-\]
-
-entonces necesariamente
-
-\[
-v(x,0)=f(x)-w(x,0).
-\]
-
-Es decir, la nueva condición inicial representa únicamente la parte que aún falta
-por evolucionar después de haber retirado el perfil \(w\).
-""")
-
-    st.divider()
-
-    st.info(
-        "💡 **Idea clave:** La homogeneización consiste únicamente en separar de la "
-        "solución una parte conocida (w), de modo que la parte restante (v) tenga "
-        "condiciones de frontera homogéneas y pueda resolverse mediante separación "
-        "de variables. Al finalizar el proceso, ambas contribuciones se vuelven a "
-        "sumar para recuperar la temperatura física original."
+    st.markdown(
+        """
+<hr style="
+margin-top:25px;
+margin-bottom:25px;
+border:none;
+border-top:1px solid #E5E7EB;
+">
+""",
+        unsafe_allow_html=True
     )
+
+
+# =============================================================================
+# MINI TARJETA
+# =============================================================================
+
+def mini_card(titulo, cuerpo):
+
+    st.markdown(
+        f"""
+<div class="card">
+
+<h4 style="margin-bottom:8px">
+{titulo}
+</h4>
+
+<p style="
+font-size:15px;
+line-height:1.7;
+margin-bottom:0px;
+">
+
+{cuerpo}
+
+</p>
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# TARJETA MATEMÁTICA
+# =============================================================================
+
+def cuadro_formula(texto_latex):
+
+    st.markdown(
+        """
+<div class="box-gray">
+""",
+        unsafe_allow_html=True
+    )
+
+    st.latex(texto_latex)
+
+    st.markdown(
+        """
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# FUNCIÓN AUXILIAR
+# Texto introductorio reutilizable
+# =============================================================================
+
+def introduccion(texto):
+
+    st.markdown(
+        f"""
+<div class="note">
+
+{textwrap.dedent(texto)}
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
 
 # ==========================================
 # INTERFAZ PRINCIPAL - ETAPA 1
@@ -591,6 +1057,1421 @@ if st.button("Guardar Parámetros y Avanzar 🚀", type="primary"):
         st.rerun()
 
 st.divider()
+
+def slide_1():
+
+    encabezado_slide(
+        1,
+        "¿Por qué debemos homogeneizar?",
+        """
+Antes de introducir una sustitución es importante entender
+qué problema estamos intentando resolver.
+La homogeneización no es un truco algebraico: aparece porque
+la separación de variables necesita un tipo muy particular de
+condiciones de frontera.
+"""
+    )
+
+    # -------------------------------------------------------------------------
+    # Comparación gráfica
+    # -------------------------------------------------------------------------
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+
+        st.markdown("### ✅ Fronteras homogéneas")
+
+        svg_frontera_homogenea()
+
+        st.markdown("""
+Una frontera homogénea significa que la función buscada satisface
+
+\[
+u(0,t)=0,
+\qquad
+u(L,t)=0.
+\]
+
+En otras palabras, **la solución vale exactamente cero en ambos extremos**.
+""")
+
+    with c2:
+
+        st.markdown("### ⚠️ Fronteras no homogéneas")
+
+        svg_frontera_no_homogenea()
+
+        st.markdown("""
+En muchos problemas físicos aparecen temperaturas impuestas como
+
+\[
+u(0,t)=T_1,
+\qquad
+u(L,t)=T_2,
+\]
+
+donde normalmente
+
+\[
+T_1\neq0,
+\qquad
+T_2\neq0.
+\]
+
+Aquí la solución ya no se anula en los extremos.
+""")
+
+    separador()
+
+    # -------------------------------------------------------------------------
+    # Explicación principal
+    # -------------------------------------------------------------------------
+
+    tarjeta(
+        "¿Por qué esto representa un inconveniente?",
+        """
+El método de separación de variables construye la solución
+como combinación de autofunciones.
+
+Estas autofunciones deben satisfacer exactamente las mismas
+condiciones de frontera que la incógnita.
+
+Cuando las fronteras son homogéneas aparecen familias muy
+simples de funciones (senos, cosenos, funciones hiperbólicas,
+etc.) que forman una base del espacio solución.
+
+Si las fronteras no son homogéneas, esas funciones dejan de
+cumplir las condiciones exigidas y el procedimiento deja de
+funcionar directamente.
+""",
+        "red"
+    )
+
+    # -------------------------------------------------------------------------
+
+    st.markdown("### ¿Qué ocurre matemáticamente?")
+
+    st.markdown(r"""
+Supongamos que intentamos escribir la solución como
+
+\[
+u(x,t)=X(x)\,T(t).
+\]
+
+Al imponer
+
+\[
+u(0,t)=0,
+\qquad
+u(L,t)=0,
+\]
+
+obtenemos inmediatamente
+
+\[
+X(0)=0,
+\qquad
+X(L)=0,
+\]
+
+que son justamente las condiciones de frontera del problema
+de autovalores.
+
+Gracias a ello aparecen las autofunciones que utilizaremos
+para construir la solución.
+
+Si, en cambio,
+
+\[
+u(0,t)=20,
+\qquad
+u(L,t)=75,
+\]
+
+la función espacial ya no puede satisfacer simultáneamente
+esas condiciones para todos los tiempos mediante una simple
+separación del tipo
+
+\[
+u=X(x)T(t).
+\]
+
+Por eso primero debemos transformar el problema.
+""")
+
+    separador()
+
+    # -------------------------------------------------------------------------
+    # Idea intuitiva
+    # -------------------------------------------------------------------------
+
+    tarjeta(
+        "Interpretación física",
+        """
+Imagina una barra cuyos extremos están permanentemente
+mantenidos a temperaturas fijas.
+
+La mayor parte del comportamiento de la barra corresponde
+simplemente a conectar esas temperaturas.
+
+Lo verdaderamente interesante es estudiar cómo evoluciona la
+temperatura alrededor de ese estado impuesto.
+
+La homogeneización separa ambas contribuciones.
+""",
+        "blue"
+    )
+
+    # -------------------------------------------------------------------------
+
+    idea_clave(r"""
+No modificamos la física del problema.
+
+Únicamente cambiamos la función que vamos a resolver para que
+sus extremos sean cero.
+
+Gracias a ello podremos desarrollar posteriormente la solución
+como una serie de autofunciones.
+""")
+
+    separador()
+
+    # -------------------------------------------------------------------------
+    # Dudas frecuentes
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿Qué significa realmente que una frontera sea homogénea?",
+        r"""
+Una condición de frontera es **homogénea** cuando el valor
+impuesto sobre la incógnita es exactamente cero.
+
+Por ejemplo,
+
+\[
+u(0,t)=0,
+\qquad
+u(L,t)=0.
+\]
+
+No importa si la solución toma valores distintos de cero en el
+interior del dominio.
+
+Lo único que exige la frontera homogénea es que la función
+coincida con cero únicamente en los extremos.
+"""
+    )
+
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿Por qué el cero es tan especial?",
+        r"""
+No existe nada físicamente especial en el número cero.
+
+Lo importante es que las condiciones homogéneas permiten
+construir un problema de autovalores sencillo.
+
+Las funciones seno
+
+\[
+\sin\!\left(\frac{n\pi x}{L}\right)
+\]
+
+ya satisfacen automáticamente
+
+\[
+X(0)=X(L)=0.
+\]
+
+Eso convierte a estas funciones en una base natural para
+representar la solución.
+
+Si las fronteras fueran distintas de cero,
+esas mismas funciones dejarían de cumplir las condiciones
+de frontera.
+"""
+    )
+
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿No sería posible resolver directamente el problema original?",
+        r"""
+Sí.
+
+Existen métodos para trabajar con condiciones de frontera
+no homogéneas.
+
+Sin embargo, el desarrollo matemático suele ser bastante
+más largo.
+
+La homogeneización transforma el problema original en otro
+equivalente cuya resolución resulta mucho más sencilla mediante
+separación de variables.
+
+Por eso prácticamente todos los textos clásicos utilizan esta
+estrategia.
+"""
+    )
+
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿La solución cambia después de homogeneizar?",
+        r"""
+No.
+
+La temperatura física sigue siendo exactamente la misma.
+
+Lo único que cambia es la forma de describirla.
+
+En lugar de resolver directamente
+
+\[
+u(x,t),
+\]
+
+resolveremos otra función mucho más conveniente y al final
+recuperaremos la solución original mediante una suma.
+
+Es simplemente un cambio de representación matemática.
+"""
+    )
+
+def slide_2(w_d, F_t_d, f_t_d):
+
+    encabezado_slide(
+        2,
+        "¿Cómo se homogeneiza un problema?",
+        """
+Ahora que sabemos por qué necesitamos fronteras homogéneas,
+veamos cómo construir una nueva incógnita que sí las satisfaga.
+La idea consiste en separar la solución en una parte conocida y
+otra que represente únicamente la evolución temporal.
+"""
+    )
+
+    # =========================================================================
+    # Idea principal
+    # =========================================================================
+
+    tarjeta(
+        "La idea fundamental",
+        """
+En lugar de intentar resolver directamente la temperatura u(x,t),
+la escribimos como la suma de dos contribuciones.
+
+Una de ellas será elegida por nosotros para satisfacer exactamente
+las condiciones de frontera.
+
+La otra contendrá toda la información restante del problema y será
+la nueva incógnita que resolveremos mediante separación de variables.
+""",
+        "green"
+    )
+
+    separador()
+
+    # =========================================================================
+    # Sustitución
+    # =========================================================================
+
+    st.markdown("## La sustitución")
+
+    st.latex(
+        rf"""
+{COLOR_MAP['u']}(x,t)=
+{COLOR_MAP['w']}(x,t)+
+{COLOR_MAP['v']}(x,t)
+"""
+    )
+
+    st.markdown("""
+No se trata de una identidad misteriosa.
+
+Simplemente estamos descomponiendo la temperatura en dos partes,
+de la misma forma en que un vector puede escribirse como suma de
+otros dos vectores.
+""")
+
+    separador()
+
+    # =========================================================================
+    # Dibujo
+    # =========================================================================
+
+    st.markdown("### ¿Qué representa la función $w(x,t)$?")
+
+    svg_recta()
+
+    st.markdown(r"""
+La recta une exactamente las temperaturas impuestas en ambos
+extremos de la barra.
+
+Su única misión consiste en satisfacer automáticamente las
+condiciones de frontera.
+
+Una elección típica es
+
+""")
+
+    st.latex(
+        rf"""
+{COLOR_MAP['w']}(x,t)
+=
+{sp.latex(w_d)}
+"""
+    )
+
+    st.info("""
+Observa que todavía no hemos resuelto la ecuación diferencial.
+
+Simplemente hemos construido una función que conecta correctamente
+las temperaturas de ambos extremos.
+""")
+
+    separador()
+
+    # =========================================================================
+    # Solución estacionaria
+    # =========================================================================
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        mini_card(
+            "🔵 La parte estacionaria",
+            """
+Corresponde a la función w.
+
+Representa la parte conocida de la solución.
+
+Su misión consiste únicamente en satisfacer las condiciones de
+frontera.
+
+En muchos problemas básicos resulta ser simplemente una recta.
+"""
+        )
+
+    with col2:
+
+        mini_card(
+            "🟢 La parte transitoria",
+            """
+Corresponde a la función v.
+
+Describe cómo evoluciona la temperatura con el tiempo una vez que
+la influencia de las fronteras ya ha sido incorporada mediante w.
+
+Esta será la función que realmente resolveremos.
+"""
+        )
+
+    separador()
+
+    # =========================================================================
+    # Consecuencia inmediata
+    # =========================================================================
+
+    st.markdown("## ¿Qué ocurre con la nueva incógnita?")
+
+    st.markdown(r"""
+Como
+
+\[
+u=w+v,
+\]
+
+entonces
+
+\[
+v=u-w.
+\]
+
+Si la función \(w\) fue construida correctamente, ocurre algo muy
+importante.
+
+En ambos extremos,
+
+\[
+v(0,t)=0,
+\qquad
+v(L,t)=0.
+\]
+
+Es decir,
+
+**la nueva incógnita posee exactamente las condiciones de frontera
+que necesitábamos para aplicar separación de variables.**
+""")
+
+    idea_clave(r"""
+No estamos obligando a la temperatura física a ser cero.
+
+La que vale cero en los extremos es únicamente la nueva incógnita
+\(v(x,t)\).
+
+La temperatura original sigue siendo
+
+\[
+u=w+v.
+\]
+""")
+
+    separador()
+
+    # =========================================================================
+    # Nueva ecuación
+    # =========================================================================
+
+    st.markdown("## ¿Qué cambia al sustituir?")
+
+    st.markdown(r"""
+Al reemplazar
+
+\[
+u=w+v
+\]
+
+en la ecuación diferencial y reorganizar los términos,
+aparecen tres modificaciones naturales.
+""")
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+
+        st.markdown("### ① Fronteras")
+
+        st.latex(r"""
+v(0,t)=0
+
+\\
+
+v(L,t)=0
+""")
+
+    with c2:
+
+        st.markdown("### ② Fuente")
+
+        st.latex(
+            rf"""
+{COLOR_MAP['F_tilde']}(x,t)=
+{sp.latex(F_t_d)}
+"""
+        )
+
+    with c3:
+
+        st.markdown("### ③ Condición inicial")
+
+        st.latex(
+            rf"""
+{COLOR_MAP['v']}(x,0)=
+{sp.latex(f_t_d)}
+"""
+        )
+
+    st.success("""
+Todo el efecto de las fronteras ahora ha quedado incorporado
+dentro de estas nuevas expresiones.
+
+La ecuación resultante ya posee fronteras homogéneas.
+""")
+
+    separador()
+
+    # =========================================================================
+    # Preguntas frecuentes
+    # =========================================================================
+
+    duda(
+        "¿Por qué se escoge precisamente una recta?",
+        r"""
+Porque normalmente las temperaturas de los extremos son
+constantes.
+
+La recta es la función más sencilla que conecta ambos valores.
+
+Además,
+
+\[
+w''(x)=0,
+\]
+
+por lo que introduce la menor cantidad posible de términos nuevos
+al sustituirla en la ecuación diferencial.
+
+Es, por tanto, la elección más simple y conveniente.
+"""
+    )
+
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿Qué significa 'solución estacionaria'?",
+        r"""
+Se denomina estacionaria a una solución que ya no cambia con el
+tiempo.
+
+Si esperamos un tiempo suficientemente largo, la temperatura suele
+aproximarse a un perfil fijo.
+
+La función \(w\) representa precisamente esa parte permanente del
+problema.
+
+La función \(v\) mide únicamente cuánto falta para alcanzar dicho
+estado.
+"""
+    )
+
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿Qué significa 'solución transitoria'?",
+        r"""
+La solución transitoria describe la evolución temporal.
+
+Al inicio puede tener valores importantes.
+
+Conforme transcurre el tiempo suele hacerse cada vez más pequeña,
+hasta desaparecer.
+
+Cuando eso ocurre únicamente permanece la parte estacionaria.
+"""
+    )
+
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿La sustitución siempre simplifica la ecuación?",
+        r"""
+Sí en el sentido más importante:
+
+las condiciones de frontera pasan a ser homogéneas.
+
+Aunque puedan aparecer nuevos términos en la ecuación o en la
+condición inicial, el problema resultante puede resolverse mediante
+separación de variables, lo que compensa ampliamente esas pequeñas
+modificaciones.
+"""
+    )
+
+def slide_3():
+
+    encabezado_slide(
+        3,
+        "Laboratorio de sustituciones",
+        """
+No existe una única sustitución posible.
+
+En este laboratorio puedes explorar distintas funciones que
+homogeneizan las condiciones de frontera y comparar cómo afectan
+la ecuación diferencial.
+
+Observa que todas cumplen el mismo objetivo, pero no todas son
+igual de convenientes.
+"""
+    )
+
+    # -------------------------------------------------------------------------
+    # Introducción
+    # -------------------------------------------------------------------------
+
+    tarjeta(
+        "Explora diferentes sustituciones",
+        """
+Selecciona una sustitución y observa cómo cambia:
+
+• su forma geométrica,
+
+• la expresión matemática,
+
+• cuándo conviene utilizarla,
+
+• qué ventajas posee,
+
+• qué dificultades introduce.
+
+El objetivo no es memorizar fórmulas, sino desarrollar criterio
+para escoger una buena sustitución.
+""",
+        "green"
+    )
+
+    st.divider()
+
+    # -------------------------------------------------------------------------
+    # Selector
+    # -------------------------------------------------------------------------
+
+    try:
+
+        tipo = st.segmented_control(
+            "Selecciona una sustitución",
+            [
+                "Lineal",
+                "Dependiente del tiempo",
+                "Cuadrática",
+                "Trigonométrica"
+            ],
+            default="Lineal"
+        )
+
+    except:
+
+        tipo = st.radio(
+            "Selecciona una sustitución",
+            [
+                "Lineal",
+                "Dependiente del tiempo",
+                "Cuadrática",
+                "Trigonométrica"
+            ],
+            horizontal=True
+        )
+
+    st.divider()
+
+    # =========================================================================
+    # CASO 1
+    # =========================================================================
+
+    if tipo == "Lineal":
+
+        st.subheader("Sustitución lineal")
+
+        st.caption(
+            "La opción utilizada prácticamente en todos los cursos "
+            "introductorios."
+        )
+
+        col1, col2 = st.columns([1.2,1])
+
+        # ---------------------------------------------------------------------
+
+        with col1:
+
+            svg_lineal()
+
+        # ---------------------------------------------------------------------
+
+        with col2:
+
+            st.latex(r"""
+w(x)=
+T_1+
+\frac{T_2-T_1}{L}x
+""")
+
+            st.markdown("""
+Esta función simplemente une mediante una recta las dos
+temperaturas impuestas en los extremos.
+""")
+
+        st.divider()
+
+        # ---------------------------------------------------------------------
+        # Interpretación
+        # ---------------------------------------------------------------------
+
+        tarjeta(
+            "Interpretación geométrica",
+            """
+La recta representa el perfil más simple capaz de conectar ambas
+temperaturas.
+
+No intenta resolver la ecuación diferencial.
+
+Únicamente satisface exactamente las condiciones de frontera.
+
+Después de restarla, la nueva incógnita será cero en ambos
+extremos.
+""",
+            "blue"
+        )
+
+        # ---------------------------------------------------------------------
+        # Ficha técnica
+        # ---------------------------------------------------------------------
+
+        st.markdown("### Ficha técnica")
+
+        c1,c2,c3,c4 = st.columns(4)
+
+        with c1:
+
+            st.metric(
+                "Complejidad",
+                "⭐"
+            )
+
+        with c2:
+
+            st.metric(
+                "Nuevos términos",
+                "Muy pocos"
+            )
+
+        with c3:
+
+            st.metric(
+                "Uso",
+                "Muy frecuente"
+            )
+
+        with c4:
+
+            st.metric(
+                "Recomendada",
+                "✔ Sí"
+            )
+
+        st.progress(0.20)
+
+        st.caption("Complejidad matemática aproximada")
+
+        st.divider()
+
+        # ---------------------------------------------------------------------
+        # Ventajas / Desventajas
+        # ---------------------------------------------------------------------
+
+        col1,col2 = st.columns(2)
+
+        with col1:
+
+            st.success("### Ventajas")
+
+            st.markdown("""
+- Es extremadamente sencilla.
+
+- Se obtiene de inmediato.
+
+- Apenas modifica la EDP.
+
+- Facilita los cálculos posteriores.
+
+- Es la elección natural cuando las fronteras son constantes.
+""")
+
+        with col2:
+
+            st.warning("### Limitaciones")
+
+            st.markdown("""
+- Solo resulta adecuada cuando una recta describe correctamente
+las condiciones de frontera.
+
+- Si las fronteras cambian con el tiempo o poseen otra forma,
+será necesario utilizar otra función.
+""")
+
+        st.divider()
+
+        # ---------------------------------------------------------------------
+        # Conclusión dinámica
+        # ---------------------------------------------------------------------
+
+        idea_clave(
+r"""
+Cuando las temperaturas de los extremos permanecen constantes,
+
+\[
+u(0,t)=T_1,
+\qquad
+u(L,t)=T_2,
+\]
+
+la sustitución lineal suele ser la mejor elección posible.
+
+No existe una función más sencilla que satisfaga simultáneamente
+ambas condiciones de frontera.
+"""
+        )
+
+        # ---------------------------------------------------------------------
+        # Duda asociada
+        # ---------------------------------------------------------------------
+
+        duda(
+            "¿Por qué una recta y no otra función?",
+            r"""
+Porque buscamos la sustitución más sencilla posible.
+
+Una recta conecta exactamente los dos extremos y además verifica
+
+\[
+w''(x)=0.
+\]
+
+Gracias a ello aparecen muy pocos términos nuevos al sustituirla
+en la ecuación diferencial.
+
+En matemáticas normalmente preferimos la solución más simple que
+resuelva completamente el problema.
+"""
+        )
+
+# =============================================================================
+# PARTE 5.2/6
+# Laboratorio interactivo
+# Casos:
+#   • Dependiente del tiempo
+#   • Cuadrática
+#
+# (Debe colocarse inmediatamente después del bloque
+#  if tipo=="Lineal": de la Parte 5.1)
+# =============================================================================
+
+    # ========================================================================
+    # CASO 2
+    # ========================================================================
+
+    elif tipo == "Dependiente del tiempo":
+
+        st.subheader("Sustitución dependiente del tiempo")
+
+        st.caption(
+            "Las temperaturas de los extremos ya no permanecen constantes."
+        )
+
+        col1, col2 = st.columns([1.2,1])
+
+        with col1:
+
+            svg_dependiente_t()
+
+        with col2:
+
+            st.latex(r"""
+w(x,t)=
+10e^{-t}
++
+\frac{30e^{-t}}{L}x
+""")
+
+            st.markdown("""
+La función sigue siendo una recta respecto a la variable espacial,
+pero ahora cambia continuamente con el tiempo.
+
+En cada instante conecta exactamente las temperaturas impuestas en
+los extremos.
+""")
+
+        st.divider()
+
+        tarjeta(
+            "¿Qué está ocurriendo?",
+            """
+Imagina que ambos extremos de la barra se enfrían
+progresivamente.
+
+La recta también debe modificar su pendiente con el tiempo para
+continuar uniendo ambos extremos.
+
+La idea de la homogeneización no cambia; únicamente cambia la
+función utilizada.
+""",
+            "blue"
+        )
+
+        st.markdown("### Ficha técnica")
+
+        c1,c2,c3,c4=st.columns(4)
+
+        with c1:
+            st.metric("Complejidad","⭐⭐")
+
+        with c2:
+            st.metric("Nuevos términos","Algunos")
+
+        with c3:
+            st.metric("Uso","Poco frecuente")
+
+        with c4:
+            st.metric("¿Recomendada?","Depende")
+
+        st.progress(.40)
+
+        st.caption("Complejidad matemática aproximada")
+
+        st.divider()
+
+        c1,c2=st.columns(2)
+
+        with c1:
+
+            st.success("### Ventajas")
+
+            st.markdown("""
+- Permite modelar fronteras que evolucionan con el tiempo.
+
+- Conserva exactamente las condiciones de frontera.
+
+- La interpretación física continúa siendo muy clara.
+
+- Sigue siendo relativamente sencilla.
+""")
+
+        with c2:
+
+            st.warning("### Desventajas")
+
+            st.markdown("""
+- Ahora aparecen derivadas temporales de la sustitución.
+
+- La EDP contiene algunos términos adicionales.
+
+- El desarrollo algebraico es más largo.
+""")
+
+        idea_clave(r"""
+La estrategia sigue siendo exactamente la misma.
+
+Únicamente cambia la función elegida para satisfacer las
+condiciones de frontera.
+""")
+
+        duda(
+            "¿Por qué ahora la ecuación diferencial cambia más?",
+            r"""
+Antes,
+
+\[
+w=w(x),
+\]
+
+por lo que únicamente aparecían derivadas respecto de la variable
+espacial.
+
+Ahora,
+
+\[
+w=w(x,t),
+\]
+
+por lo que también aparece
+
+\[
+\frac{\partial w}{\partial t},
+\]
+
+introduciendo nuevos términos en la ecuación.
+"""
+        )
+
+    # ========================================================================
+    # CASO 3
+    # ========================================================================
+
+    elif tipo=="Cuadrática":
+
+        st.subheader("Sustitución cuadrática")
+
+        st.caption(
+            "Una elección muy útil cuando deseamos simplificar el término fuente."
+        )
+
+        col1,col2=st.columns([1.2,1])
+
+        with col1:
+
+            svg_cuadratica()
+
+        with col2:
+
+            st.latex(r"""
+w(x)=
+Ax^2+Bx+C
+""")
+
+            st.markdown("""
+La sustitución ya no es una recta.
+
+Ahora posee curvatura, lo que modifica de forma importante la
+segunda derivada espacial.
+""")
+
+        st.divider()
+
+        tarjeta(
+            "¿Por qué alguien escogería una parábola?",
+            """
+Porque en muchos problemas aparece un término fuente constante.
+
+Como
+
+w''(x)=2A,
+
+podemos escoger el valor de A para cancelar completamente dicho
+término.
+
+En algunos problemas avanzados esta idea reduce notablemente el
+trabajo posterior.
+""",
+            "green"
+        )
+
+        st.markdown("### Ficha técnica")
+
+        c1,c2,c3,c4=st.columns(4)
+
+        with c1:
+            st.metric("Complejidad","⭐⭐⭐")
+
+        with c2:
+            st.metric("Nuevos términos","Moderados")
+
+        with c3:
+            st.metric("Uso","Ocasional")
+
+        with c4:
+            st.metric("¿Recomendada?","Casos especiales")
+
+        st.progress(.65)
+
+        st.caption("Complejidad matemática aproximada")
+
+        st.divider()
+
+        c1,c2=st.columns(2)
+
+        with c1:
+
+            st.success("### Ventajas")
+
+            st.markdown("""
+- Puede eliminar completamente un término fuente.
+
+- Aprovecha información conocida del problema.
+
+- Reduce el trabajo en algunos desarrollos.
+""")
+
+        with c2:
+
+            st.warning("### Desventajas")
+
+            st.markdown("""
+- Produce una EDP más larga.
+
+- La interpretación deja de ser tan inmediata.
+
+- No aporta ventajas cuando las fronteras son simplemente
+constantes.
+""")
+
+        idea_clave(r"""
+La sustitución no tiene por qué ser lineal.
+
+Podemos elegir cualquier función cuya forma haga más sencillo el
+problema completo.
+""")
+
+        duda(
+            "¿Entonces por qué casi nunca aparece en cursos básicos?",
+            r"""
+Porque normalmente las condiciones de frontera únicamente fijan dos
+temperaturas constantes.
+
+En esa situación una recta ya satisface perfectamente el problema.
+
+Una parábola únicamente introduce trabajo adicional sin aportar
+ningún beneficio importante.
+"""
+        )
+
+# =============================================================================
+# PARTE 5.3/6
+# Laboratorio interactivo
+# Caso:
+#   • Trigonométrica
+# + Conclusión general
+# + Mini desafío interactivo
+#
+# (Debe colocarse inmediatamente después del bloque
+#  elif tipo=="Cuadrática": de la Parte 5.2)
+# =============================================================================
+
+    # ========================================================================
+    # CASO 4
+    # ========================================================================
+
+    elif tipo == "Trigonométrica":
+
+        st.subheader("Sustitución trigonométrica")
+
+        st.caption(
+            "Una elección útil cuando la física del problema presenta un "
+            "comportamiento periódico."
+        )
+
+        col1, col2 = st.columns([1.2,1])
+
+        with col1:
+
+            svg_trigonometrica()
+
+        with col2:
+
+            st.latex(r"""
+w(x)=
+A\sin\!\left(\frac{\pi x}{L}\right)+B
+""")
+
+            st.markdown("""
+La sustitución ya no conecta los extremos mediante una recta,
+sino mediante una curva senoidal.
+
+Este tipo de funciones suele aparecer cuando existe información
+física adicional que justifica una geometría periódica.
+""")
+
+        st.divider()
+
+        tarjeta(
+            "¿Cuándo podría ser útil?",
+            """
+Si conocemos que el perfil estacionario posee un comportamiento
+oscilatorio o periódico, una función trigonométrica puede ser una
+excelente elección.
+
+En estos casos la sustitución aprovecha directamente la estructura
+física del problema en lugar de imponer una recta.
+""",
+            "yellow"
+        )
+
+        st.markdown("### Ficha técnica")
+
+        c1, c2, c3, c4 = st.columns(4)
+
+        with c1:
+            st.metric("Complejidad", "⭐⭐⭐⭐")
+
+        with c2:
+            st.metric("Nuevos términos", "Muchos")
+
+        with c3:
+            st.metric("Uso", "Muy específico")
+
+        with c4:
+            st.metric("¿Recomendada?", "Solo casos particulares")
+
+        st.progress(0.90)
+
+        st.caption("Complejidad matemática aproximada")
+
+        st.divider()
+
+        c1, c2 = st.columns(2)
+
+        with c1:
+
+            st.success("### Ventajas")
+
+            st.markdown("""
+- Puede representar perfiles físicos muy realistas.
+
+- Aprovecha información adicional del problema.
+
+- En algunos modelos simplifica notablemente el desarrollo.
+
+- Se adapta naturalmente a fenómenos periódicos.
+""")
+
+        with c2:
+
+            st.warning("### Desventajas")
+
+            st.markdown("""
+- Introduce muchas derivadas adicionales.
+
+- El álgebra se vuelve considerablemente más extensa.
+
+- Normalmente no aporta ventajas cuando las fronteras son
+constantes.
+
+- No suele ser apropiada en un primer curso de EDP.
+""")
+
+        idea_clave(r"""
+Las funciones trigonométricas son herramientas muy potentes,
+pero únicamente conviene utilizarlas cuando realmente reflejan la
+estructura física del problema.
+""")
+
+        duda(
+            "¿Por qué no utilizar siempre funciones seno o coseno?",
+            r"""
+Porque una buena sustitución no es la más sofisticada,
+sino la que hace el problema más sencillo.
+
+Si una simple recta ya satisface completamente las condiciones de
+frontera, una función trigonométrica únicamente aumentará el
+trabajo algebraico sin ofrecer ninguna ventaja adicional.
+"""
+        )
+
+    # ========================================================================
+    # CONCLUSIÓN GENERAL DEL LABORATORIO
+    # ========================================================================
+
+    separador()
+
+    st.markdown("## 🧭 Comparación general")
+
+    comparacion = [
+        {
+            "nombre": "Lineal",
+            "comp": "⭐",
+            "uso": "Muy frecuente",
+            "recom": "⭐⭐⭐⭐⭐"
+        },
+        {
+            "nombre": "Dependiente del tiempo",
+            "comp": "⭐⭐",
+            "uso": "Frecuente",
+            "recom": "⭐⭐⭐"
+        },
+        {
+            "nombre": "Cuadrática",
+            "comp": "⭐⭐⭐",
+            "uso": "Casos especiales",
+            "recom": "⭐⭐"
+        },
+        {
+            "nombre": "Trigonométrica",
+            "comp": "⭐⭐⭐⭐",
+            "uso": "Muy específico",
+            "recom": "⭐"
+        }
+    ]
+
+    st.table(comparacion)
+
+    tarjeta(
+        "¿Qué hemos aprendido?",
+        """
+La homogeneización no consiste en memorizar una función concreta.
+
+Consiste en elegir una sustitución que transforme el problema
+original en otro equivalente con condiciones de frontera
+homogéneas.
+
+Existen muchas funciones capaces de hacerlo, pero no todas son
+igual de convenientes.
+
+En Matemáticas, una buena elección suele ser la más sencilla que
+cumple correctamente el objetivo.
+""",
+        "blue"
+    )
+
+    # ========================================================================
+    # MINI DESAFÍO
+    # ========================================================================
+
+    separador()
+
+    st.markdown("## 🧠 Comprueba tu comprensión")
+
+    st.markdown(r"""
+Supón que únicamente conoces que
+
+\[
+u(0,t)=20,
+\qquad
+u(L,t)=80,
+\]
+
+y ambas temperaturas permanecen constantes durante todo el
+experimento.
+
+¿Cuál sería la sustitución más conveniente?
+""")
+
+    respuesta = st.radio(
+        "",
+        [
+            "Una función cuadrática",
+            "Una función trigonométrica",
+            "Una sustitución lineal",
+            "Una función exponencial"
+        ],
+        key="quiz_homogeneizacion"
+    )
+
+    if respuesta == "Una sustitución lineal":
+
+        st.success(
+            """
+¡Correcto!
+
+Una recta conecta exactamente ambos extremos y posee la menor
+complejidad algebraica.
+
+Por ello es la elección habitual cuando las temperaturas de
+frontera permanecen constantes.
+"""
+        )
+
+    elif respuesta != "Una función cuadrática":
+
+        if respuesta:
+
+            st.error(
+                """
+No es la opción más conveniente.
+
+Aunque esa sustitución podría construirse, introduciría
+complejidad innecesaria.
+
+Recuerda la idea fundamental:
+
+👉 Elegimos la función más sencilla que satisfaga las condiciones
+de frontera.
+"""
+            )
+
+    else:
+
+        st.warning(
+            """
+Una función cuadrática podría funcionar, pero normalmente no
+aportaría ninguna ventaja en este caso.
+
+La sustitución lineal sigue siendo la alternativa más simple y
+eficiente.
+"""
+        )
+
+    # ========================================================================
+    # MENSAJE FINAL
+    # ========================================================================
+
+    separador()
+
+    st.success(
+        """
+🎉 ¡Laboratorio completado!
+
+Ya conoces la idea fundamental detrás de la homogeneización.
+
+En el resto del desarrollo utilizaremos la sustitución lineal,
+no porque sea la única posible, sino porque suele ser la más
+simple y la más eficiente para resolver problemas con
+temperaturas de frontera constantes mediante separación de
+variables.
+"""
+    )
+
+# ENDE Hilfe 1 Homogenisierung 
 
 # ---------------------------------------------------------
 # ETAPA 2: HOMOGENEIZACIÓN
