@@ -5,49 +5,23 @@ import matplotlib.pyplot as plt
 from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application
 
 # ==========================================
-# CONFIGURACIÓN DE PÁGINA Y ESTILOS AVANZADOS
+# CONFIGURACIÓN DE PÁGINA Y ESTILOS
 # ==========================================
 st.set_page_config(page_title="Ruta de Aprendizaje: Calor 1D", layout="wide", initial_sidebar_state="expanded")
 
-# Inyección de CSS para armonizar la interfaz y crear componentes limpios
-st.markdown("""
-    <style>
-    .main-card {
-        background-color: #f8fafc;
-        padding: 25px;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        margin-bottom: 20px;
-    }
-    .system-card {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-        border-left: 5px solid #1565C0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
-    .alert-card {
-        background-color: #fff7ed;
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #ffedd5;
-        color: #9a3412;
-        font-weight: 500;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
-    </style>
-""", unsafe_allow_html=True)
+# Paleta de Colores Suaves (Material Design)
+C_STAT = "#1976D2"  # Azul (Estacionaria)
+C_TRANS = "#D32F2F" # Rojo (Transitoria)
+C_GEN = "#7B1FA2"   # Morado (Solución General)
+C_SPACE = "#388E3C" # Verde (Espacial)
+C_TIME = "#F57C00"  # Naranjo (Temporal)
 
-# Paleta de Colores (Códigos HEX)
-C_STAT = "#1565C0"  # Azul: Estacionaria
-C_TRANS = "#C62828" # Rojo: Transitoria
-C_GEN = "#6A1B9A"   # Morado: Solución General
-C_SPACE = "#2E7D32" # Verde: Espacial
-C_TIME = "#EF6C00"  # Naranjo: Temporal (a_n(t))
+def c_sym(symbol, color):
+    """Función auxiliar para colorear SOLO el símbolo matemático, sin afectar paréntesis ni otros elementos."""
+    return rf"\color{{{color}}}{{{symbol}}}"
 
 # ==========================================
-# GESTIÓN DEL ESTADO (Ruta Progresiva)
+# GESTIÓN DEL ESTADO
 # ==========================================
 if 'step' not in st.session_state:
     st.session_state.step = 1
@@ -58,9 +32,9 @@ def avanzar():
     st.session_state.step += 1
 
 # ==========================================
-# BARRA LATERAL (Progreso del Estudiante)
+# BARRA LATERAL (Progreso)
 # ==========================================
-st.sidebar.markdown(f"### 🗺️ Tu Progreso")
+st.sidebar.markdown("### 🗺️ Tu Progreso")
 pasos = [
     "1. Planteando la EDP",
     "2. Homogeneizando fronteras",
@@ -79,12 +53,12 @@ for i, paso in enumerate(pasos):
         st.sidebar.markdown(f"🔒 <span style='color:lightgray;'>{paso}</span>", unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("**Código de Color:**")
-st.sidebar.markdown(f"■ <span style='color:{C_STAT}; font-weight:bold;'>Estacionaria</span>", unsafe_allow_html=True)
-st.sidebar.markdown(f"■ <span style='color:{C_TRANS}; font-weight:bold;'>Transitoria</span>", unsafe_allow_html=True)
-st.sidebar.markdown(f"■ <span style='color:{C_GEN}; font-weight:bold;'>General</span>", unsafe_allow_html=True)
-st.sidebar.markdown(f"■ <span style='color:{C_SPACE}; font-weight:bold;'>Espacial</span>", unsafe_allow_html=True)
-st.sidebar.markdown(f"■ <span style='color:{C_TIME}; font-weight:bold;'>Temporal</span>", unsafe_allow_html=True)
+st.sidebar.markdown("**Código de Color (Variables):**")
+st.sidebar.markdown(f"■ <span style='color:{C_STAT}; font-weight:bold;'>Estacionaria ($w$)</span>", unsafe_allow_html=True)
+st.sidebar.markdown(f"■ <span style='color:{C_TRANS}; font-weight:bold;'>Transitoria ($v$)</span>", unsafe_allow_html=True)
+st.sidebar.markdown(f"■ <span style='color:{C_GEN}; font-weight:bold;'>General ($u$)</span>", unsafe_allow_html=True)
+st.sidebar.markdown(f"■ <span style='color:{C_SPACE}; font-weight:bold;'>Espacial ($\phi$)</span>", unsafe_allow_html=True)
+st.sidebar.markdown(f"■ <span style='color:{C_TIME}; font-weight:bold;'>Temporal ($a_n$)</span>", unsafe_allow_html=True)
 
 # ==========================================
 # MOTOR MATEMÁTICO CENTRAL
@@ -101,19 +75,19 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
     B = sp.sympify(B_str)
     f = sp.sympify(f_str, locals={'x': x, 'pi': sp.pi, 'sin': sp.sin})
     
-    # 2. Homogeneización
+    # Homogeneización
     w = sp.simplify(A + (x / L) * (B - A))
     F_tilde = sp.simplify(F - sp.diff(w, t) + alpha**2 * sp.diff(w, x, 2))
     f_tilde = sp.simplify(f - w.subs(t, 0))
     
-    # 3. Componente Espacial
+    # Componente Espacial
     lam_n = n_sym * sp.pi / L
     phi_n = sp.sin(lam_n * x)
     
-    # 5. Componente Temporal Proyectada (a_n(t))
+    # Componente Temporal Proyectada
     q_n_expr = (2/L) * sp.integrate(F_tilde * phi_n, (x, 0, L))
     
-    # Para la simulación numérica posterior, fijamos internamente N=6 términos representativos
+    # Simulación numérica (N=6 términos)
     v_sol_num = 0
     for n_val in range(1, 7):
         lam_val = n_val * sp.pi / L
@@ -139,60 +113,46 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
     }
 
 # ==========================================
-# DIÁLOGO DE AYUDA DE ALTO IMPACTO VISUAL
+# DIÁLOGO DE AYUDA (Conceptos Separados)
 # ==========================================
 @st.dialog("📖 Profundización Matemática: Homogeneización", width="large")
 def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
-    st.markdown("## 1.2 Homogeneización de las condiciones de frontera")
-    st.markdown("""
-    El método de separación de variables funciona de manera natural cuando las **condiciones de frontera son homogéneas**, es decir,
-    $$v(0,t)=v(L,t)=0$$
-    Como nuestro problema original no necesariamente cumple esta condición, transformaremos la temperatura total en la suma de dos contribuciones:
-    * **Una parte estacionaria (o pseudo-estacionaria)** $w(x,t)$, encargada de satisfacer las condiciones de frontera.
-    * **Una parte transitoria** $v(x,t)$, que contendrá toda la evolución temporal restante y tendrá fronteras homogéneas.
+    st.subheader("El Problema de las Fronteras No Homogéneas")
+    st.markdown("El método de separación de variables requiere **condiciones de frontera nulas** ($0$). Cuando tenemos temperaturas fijas distintas de cero en los extremos, debemos transformar el problema.")
     
-    En otras palabras:
-    """)
-    st.latex(fr"\color{{{C_GEN}}}{{u(x,t)}} = \color{{{C_STAT}}}{{w(x,t)}} + \color{{{C_TRANS}}}{{v(x,t)}}")
+    st.subheader("La Sustitución")
+    st.markdown("Separamos la temperatura total en dos contribuciones físicas distintas:")
+    u_xt = f"{c_sym('u', C_GEN)}(x,t)"
+    w_xt = f"{c_sym('w', C_STAT)}(x,t)"
+    v_xt = f"{c_sym('v', C_TRANS)}(x,t)"
+    st.latex(f"{u_xt} = {w_xt} + {v_xt}")
     
-    st.markdown("### 🛠️ Construcción de la función auxiliar")
-    st.markdown("""
-    Existen **infinitas funciones** que satisfacen las mismas condiciones de frontera. Sin embargo, elegimos la interpolación lineal entre ambos extremos porque es la opción más simple y, además, cumple que
-    $$\\frac{\\partial^2 w}{\\partial x^2}=0$$
-    por lo que **no introduce términos adicionales** en la ecuación diferencial. Gracias a ello, la EDP transformada conserva prácticamente la misma estructura que la original.
-    """)
+    st.markdown("1. **Perfil Estacionario** ($w$): Una función lineal que conecta las temperaturas de los extremos. Al ser una recta, su segunda derivada espacial es cero, por lo que no altera la estructura de la EDP.")
+    st.latex(f"{w_xt} = {sp.latex(w_d)}")
     
-    st.latex(fr"\color{{{C_STAT}}}{{w(x,t)}} = {sp.latex(w_d)}")
+    st.markdown("2. **Perfil Transitorio** ($v$): Es la diferencia entre la temperatura real y el perfil estacionario. Por definición, vale cero en los extremos.")
     
-    st.markdown("""> **Observación importante:**
-    > Podríamos escoger otra función que también cumpliera las condiciones de frontera (por ejemplo, agregando un seno o un polinomio que valga cero en ambos extremos). Sin embargo, esa elección produciría un término extra $\\alpha^2 w_{xx}-w_t$, complicando innecesariamente la ecuación para $v(x,t)$. La solución física final **no cambia**, pero la separación entre la parte estacionaria y la transitoria deja de ser tan clara.""")
+    st.subheader("El Problema Homogéneo Resultante")
+    st.markdown("Al sustituir la solución propuesta en la EDP original, obtenemos una nueva ecuación para la parte transitoria, donde la fuente y la condición inicial absorben los efectos de las fronteras:")
+    F_tilde_xt = f"{c_sym(r'\tilde{F}', C_TRANS)}(x,t)"
+    f_tilde_x = f"{c_sym(r'\tilde{f}', C_TRANS)}(x)"
+    st.latex(f"{F_tilde_xt} = {sp.latex(F_t_d)}")
+    st.latex(f"{f_tilde_x} = {c_sym('v', C_TRANS)}(x,0) = {sp.latex(f_t_d)}")
     
-    st.markdown("### 🔄 Problema transformado")
-    st.markdown(r"Al sustituir $u(x,t)=w(x,t)+v(x,t)$ en la ecuación de calor, obtenemos un nuevo problema para $v(x,t)$, cuya fuente y condición inicial se transforman en:")
-    st.latex(fr"\color{{{C_TRANS}}}{{\tilde{{F}}(x,t)}} = {sp.latex(F_t_d)}")
-    st.latex(fr"\color{{{C_TRANS}}}{{\tilde{{f}}(x)}} = v(x,0) = {sp.latex(f_t_d)}")
-    
-    st.markdown("""En adelante resolveremos este nuevo problema, que posee **fronteras homogéneas** y es adecuado para aplicar el método de separación de variables.
-    
-    > **💡 Idea clave:**
-    > La homogeneización **no modifica la solución física del problema**. Únicamente cambia la forma de representarla. Elegir una función $w$ apropiada hace que $v$ describa únicamente la parte transitoria del fenómeno, simplificando considerablemente el análisis matemático.""")
-    
-    st.markdown("""
-    > **✏️ Antes de continuar**, intenta determinar por tu cuenta los valores propios y las funciones propias del problema homogéneo. Luego ejecuta la siguiente celda y compara tu procedimiento con el desarrollo propuesto.
-    """)
+    st.info("💡 **Interpretación Física:** La homogeneización no cambia la física del problema; simplemente desplaza nuestro sistema de referencia. Ahora modelamos cómo la temperatura *evoluciona* hacia el estado estacionario, en lugar de modelar la temperatura absoluta directamente.")
 
 # ==========================================
 # INTERFAZ PRINCIPAL - ETAPA 1
 # ==========================================
 st.title("🔥 Simulador de EDP: Calor 1D Analítico")
 st.markdown("Sigue esta ruta guiada interactiva para resolver tu Problema de Valor Inicial y de Frontera (PVIF) paso a paso.")
-st.markdown("---")
+st.divider()
 
 st.header("1. Planteando la EDP")
+st.markdown("Define los parámetros físicos y geométricos de tu sistema unidimensional.")
 
-# Grid armonizado para el ingreso de datos (Con valores por defecto incluyendo constantes)
-with st.container():
-    st.markdown("<div class='main-card'>", unsafe_allow_html=True)
+# Contenedor nativo con borde para los inputs
+with st.container(border=True):
     col1, col2 = st.columns(2)
     with col1:
         in_L = st.text_input("Longitud de la barra (L):", value="L")
@@ -202,27 +162,19 @@ with st.container():
         in_A = st.text_input("Frontera Izquierda u(0,t):", value="T_1")
         in_B = st.text_input("Frontera Derecha u(L,t):", value="T_2")
         in_f = st.text_input("Perfil Inicial u(x,0):", value="T_0 * sin(pi*x/L)")
-    st.markdown("</div>", unsafe_allow_html=True)
 
-# Configuración del parser de SymPy para admitir variables implícitas y multiplicaciones (ej: "2x" -> "2*x")
 transformaciones = (standard_transformations + (implicit_multiplication_application,))
 
 def parsear_seguro(expr_str):
-    """Parsea el string asegurando que x e t sean nuestras variables simbólicas base"""
     if not expr_str.strip():
         raise ValueError("Expresión vacía")
     expr = parse_expr(expr_str, transformations=transformaciones)
-    # Forzar que cualquier 'x' o 't' libre se mapee a nuestros símbolos globales
-    reemplazos = {}
-    for sim in expr.free_symbols:
-        if sim.name == 'x': reemplazos[sim] = x
-        elif sim.name == 't': reemplazos[sim] = t
+    reemplazos = {sim: (x if sim.name == 'x' else (t if sim.name == 't' else sim)) for sim in expr.free_symbols}
     return expr.subs(reemplazos)
 
-st.markdown("### 📋 Visualización del Sistema en Tiempo Real:")
+st.subheader("Modelo Matemático (Tiempo Real)")
 
 try:
-    # 1. Parseo estricto de las entradas
     L_s = parsear_seguro(in_L)
     alpha_s = parsear_seguro(in_alpha)
     F_s = parsear_seguro(in_F)
@@ -230,56 +182,46 @@ try:
     B_s = parsear_seguro(in_B)
     f_s = parsear_seguro(in_f)
     
-    # 2. Cálculos en tiempo real para alimentar la homogeneización
     w_dyn = sp.simplify(A_s + (x / L_s) * (B_s - A_s))
     F_t_dyn = sp.simplify(F_s - sp.diff(w_dyn, t) + alpha_s**2 * sp.diff(w_dyn, x, 2))
     f_t_dyn = sp.simplify(f_s - w_dyn.subs(t, 0))
     
-    # 3. Formateo de las variables principales (Con color ÚNICAMENTE en la variable incógnita)
-    u_tex = fr"\color{{{C_GEN}}}{{u}}"
-    u_xt_tex = fr"\color{{{C_GEN}}}{{u}}(x,t)"
-    u_0t_tex = fr"\color{{{C_GEN}}}{{u}}(0,t)"
-    u_Lt_tex = fr"\color{{{C_GEN}}}{{u}}({sp.latex(L_s)},t)"
-    u_x0_tex = fr"\color{{{C_GEN}}}{{u}}(x,0)"
-    
-    # Formateo condicional para alpha al cuadrado (evitar imprimir "alpha**2" si es numérico)
+    # Colorear solo la función incógnita
+    u_sym = c_sym('u', C_GEN)
     alpha_term = sp.latex(alpha_s**2) if not alpha_s.is_number else sp.latex(alpha_s**2)
     
     latex_sistema = rf"""
     \begin{{cases}}
-    \frac{{\partial {u_tex}}}{{\partial t}} = {alpha_term} \frac{{\partial^2 {u_tex}}}{{\partial x^2}} + {sp.latex(F_s)}, & 0 < x < {sp.latex(L_s)}, \quad t > 0 \\[8pt]
-    {u_0t_tex} = {sp.latex(A_s)}, & t > 0 \\[8pt]
-    {u_Lt_tex} = {sp.latex(B_s)}, & t > 0 \\[8pt]
-    {u_x0_tex} = {sp.latex(f_s)}, & 0 \le x \le {sp.latex(L_s)}
+    \frac{{\partial {u_sym}}}{{\partial t}} = {alpha_term} \frac{{\partial^2 {u_sym}}}{{\partial x^2}} + {sp.latex(F_s)}, & 0 < x < {sp.latex(L_s)}, \quad t > 0 \\[8pt]
+    {u_sym}(0,t) = {sp.latex(A_s)}, & t > 0 \\[8pt]
+    {u_sym}({sp.latex(L_s)},t) = {sp.latex(B_s)}, & t > 0 \\[8pt]
+    {u_sym}(x,0) = {sp.latex(f_s)}, & 0 \le x \le {sp.latex(L_s)}
     \end{{cases}}
     """
     
-    # Mostrar el bloque matemático
-    st.markdown("<div class='system-card'>", unsafe_allow_html=True)
-    st.latex(latex_sistema)
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    # Renderizar el botón de ayuda solo si las matemáticas cargaron correctamente
+    # Contenedor nativo para el sistema de ecuaciones
+    with st.container(border=True):
+        st.latex(latex_sistema)
+        
     col_help, _ = st.columns([1, 2])
     with col_help:
-        if st.button("ℹ️ Ver Fundamentos Matemáticos y Homogeneización", use_container_width=True):
+        if st.button("ℹ️ Ver Fundamentos de Homogeneización", use_container_width=True):
             mostrar_ayuda_profunda(w_dyn, F_t_dyn, f_t_dyn)
 
-except Exception as e:
-    # Fallback si el usuario escribe algo matemáticamente inválido momentáneamente (ej: "3*")
-    st.markdown("<div class='system-card'>", unsafe_allow_html=True)
-    st.latex(r"\begin{cases} \text{Escribe expresiones matemáticas válidas para visualizar tu EDP...} \end{cases}")
-    st.markdown("</div>", unsafe_allow_html=True)
+except Exception:
+    with st.container(border=True):
+        st.latex(r"\text{Esperando expresiones matemáticas válidas...}")
 
-st.markdown("""
-    <div class='alert-card'>
-    💡 <b>Reto de Aprendizaje:</b> ¡Intenta homogeneizar las fronteras antes de ejecutar la próxima celda!, luego compara tu procedimiento y resultado.
-    </div>
-""", unsafe_allow_html=True)
+st.info("💡 **Reto de Aprendizaje:** Identifica mentalmente cuáles términos causan que el problema no sea homogéneo antes de avanzar.")
 
 if st.button("Guardar Parámetros y Avanzar 🚀", type="primary"):
-    # Aquí iría la lógica de avanzar al Paso 2
-    st.success("¡Parámetros guardados correctamente! (Lógica de avance a programar)")
+    # Mocking el proceso matemático para el flujo de la UI
+    calcular_matematicas(in_L, in_alpha, in_F, in_A, in_B, in_f)
+    if st.session_state.step == 1:
+        avanzar()
+    st.rerun()
+
+st.divider()
 
 # ---------------------------------------------------------
 # ETAPA 2: HOMOGENEIZACIÓN
@@ -288,19 +230,26 @@ if st.session_state.step >= 2:
     data = st.session_state.math_data
     st.header("2. Homogeneizando las fronteras")
     
-    st.markdown(f"Proponemos que la solución se divide en una parte estacionaria y una transitoria:")
-    st.latex(fr"\color{{{C_GEN}}}{{u(x,t)}} = \color{{{C_STAT}}}{{w(x,t)}} + \color{{{C_TRANS}}}{{v(x,t)}}")
+    st.markdown("Proponemos separar la solución en dos contribuciones físicas:")
+    u_xt = f"{c_sym('u', C_GEN)}(x,t)"
+    w_xt = f"{c_sym('w', C_STAT)}(x,t)"
+    v_xt = f"{c_sym('v', C_TRANS)}(x,t)"
+    st.latex(f"{u_xt} = {w_xt} + {v_xt}")
     
-    st.markdown("La parte estacionaria calculada es:")
-    st.latex(fr"\color{{{C_STAT}}}{{w(x,t) = {sp.latex(data['w'])}}}")
+    st.markdown("Interpolando linealmente las fronteras, la **parte estacionaria** resulta en:")
+    st.latex(f"{w_xt} = {c_sym(sp.latex(data['w']), C_STAT)}")
     
-    st.markdown("Al sustituir esto en la EDP original, nuestro nuevo problema transitorio tiene una fuente y condición inicial modificadas:")
-    st.latex(fr"\color{{{C_TRANS}}}{{\tilde{{F}}(x,t)}} = {sp.latex(data['F_tilde'])}")
-    st.latex(fr"\color{{{C_TRANS}}}{{\tilde{{f}}(x)}} = {sp.latex(data['f_tilde'])}")
+    st.markdown("Sustituyendo en la EDP, nuestro **nuevo problema transitorio** queda sujeto a:")
+    F_tilde_xt = f"{c_sym(r'\tilde{F}', C_TRANS)}(x,t)"
+    f_tilde_x = f"{c_sym(r'\tilde{f}', C_TRANS)}(x)"
+    
+    with st.container(border=True):
+        st.latex(f"{F_tilde_xt} = {sp.latex(data['F_tilde'])}")
+        st.latex(f"{f_tilde_x} = {sp.latex(data['f_tilde'])}")
         
     if st.session_state.step == 2:
         if st.button("Buscar Valores Propios 🚀"): avanzar(); st.rerun()
-    st.markdown("---")
+    st.divider()
 
 # ---------------------------------------------------------
 # ETAPA 3: VALORES Y FUNCIONES PROPIAS
@@ -309,13 +258,18 @@ if st.session_state.step >= 3:
     data = st.session_state.math_data
     st.header("3. Valores y Funciones Propias Espaciales")
     
-    st.markdown("Separando variables en el lado homogéneo, el problema espacial arroja:")
-    st.latex(fr"\color{{{C_SPACE}}}{{\lambda_n^2}} = \left( {sp.latex(data['lam_n'])} \right)^2")
-    st.latex(fr"\color{{{C_SPACE}}}{{\phi_n(x)}} = {sp.latex(data['phi_n'])}")
+    st.markdown("Resolviendo el problema de Sturm-Liouville asociado a las fronteras homogéneas nulas en ambos extremos, obtenemos la base espacial:")
+    
+    lam_n = f"{c_sym(r'\lambda_n', C_SPACE)}"
+    phi_n = f"{c_sym(r'\phi_n', C_SPACE)}(x)"
+    
+    with st.container(border=True):
+        st.latex(f"{lam_n} = {sp.latex(data['lam_n'])}")
+        st.latex(f"{phi_n} = {sp.latex(data['phi_n'])}")
 
     if st.session_state.step == 3:
         if st.button("Plantear Expansión 🚀"): avanzar(); st.rerun()
-    st.markdown("---")
+    st.divider()
 
 # ---------------------------------------------------------
 # ETAPA 4: EXPANSIÓN Y STURM-LIOUVILLE
@@ -324,13 +278,21 @@ if st.session_state.step >= 4:
     data = st.session_state.math_data
     st.header("4. Sturm-Liouville y Expansión")
     
-    st.markdown("Con nuestra base espacial lista, expandimos nuestras incógnitas temporales transformadas en coeficientes $a_n(t)$:")
-    st.latex(fr"\color{{{C_TRANS}}}{{v(x,t)}} = \sum_{{n=1}}^{{\infty}} \color{{{C_TIME}}}{{a_n(t)}} \color{{{C_SPACE}}}{{\sin\left(\frac{{n\pi x}}{{{sp.latex(data['L'])}}}\right)}}")
-    st.latex(fr"\color{{{C_TRANS}}}{{\tilde{{F}}(x,t)}} = \sum_{{n=1}}^{{\infty}} \color{{{C_TIME}}}{{q_n(t)}} \color{{{C_SPACE}}}{{\sin\left(\frac{{n\pi x}}{{{sp.latex(data['L'])}}}\right)}}")
+    st.markdown("Expresamos la solución transitoria y la fuente modificada como combinaciones lineales (series de Fourier) de nuestras funciones propias espaciales:")
+    
+    v_xt = f"{c_sym('v', C_TRANS)}(x,t)"
+    F_tilde_xt = f"{c_sym(r'\tilde{F}', C_TRANS)}(x,t)"
+    a_n = c_sym('a_n', C_TIME)
+    q_n = c_sym('q_n', C_TIME)
+    sin_term = f"{c_sym(r'\sin', C_SPACE)}\left(\\frac{{n\pi x}}{{{sp.latex(data['L'])}}}\\right)"
+    
+    with st.container(border=True):
+        st.latex(f"{v_xt} = \sum_{{n=1}}^{{\infty}} {a_n}(t) \cdot {sin_term}")
+        st.latex(f"{F_tilde_xt} = \sum_{{n=1}}^{{\infty}} {q_n}(t) \cdot {sin_term}")
 
     if st.session_state.step == 4:
         if st.button("Resolver Coeficientes Temporales 🚀"): avanzar(); st.rerun()
-    st.markdown("---")
+    st.divider()
 
 # ---------------------------------------------------------
 # ETAPA 5: COEFICIENTES TEMPORALES a_n(t)
@@ -339,15 +301,22 @@ if st.session_state.step >= 5:
     data = st.session_state.math_data
     st.header("5. Obteniendo los Coeficientes Temporales")
     
-    st.markdown("Al introducir las series en la EDP, proyectamos todo por ortogonalidad y transformamos la ecuación parcial en infinitas Ecuaciones Diferenciales Ordinarias (EDOs) para los coeficientes algebraicos de tiempo $a_n(t)$:")
-    st.latex(fr"\color{{{C_TIME}}}{{a_n'(t)}} + {sp.latex(data['alpha']**2)} \color{{{C_SPACE}}}{{\left(\frac{{n\pi}}{{{sp.latex(data['L'])}}}\right)^2}} \color{{{C_TIME}}}{{a_n(t)}} = \color{{{C_TIME}}}{{q_n(t)}}")
+    st.markdown("Proyectando la ecuación original sobre la base ortogonal, la EDP se desacopla en infinitas Ecuaciones Diferenciales Ordinarias (EDOs) para el tiempo:")
     
-    st.markdown("Donde los coeficientes de la fuente proyectada se calculan formalmente como:")
-    st.latex(fr"\color{{{C_TIME}}}{{q_n(t)}} = {sp.latex(data['q_n_expr'])}")
+    a_n_prime = f"{c_sym(r'a_n^\prime', C_TIME)}(t)"
+    a_n = f"{c_sym('a_n', C_TIME)}(t)"
+    q_n = f"{c_sym('q_n', C_TIME)}(t)"
+    factor = f"{sp.latex(data['alpha']**2)} \left(\\frac{{n\pi}}{{{sp.latex(data['L'])}}}\\right)^2"
+    
+    with st.container(border=True):
+        st.latex(f"{a_n_prime} + {factor} {a_n} = {q_n}")
+        
+    st.markdown("Donde los coeficientes de la fuente proyectada calculados por el producto interno son:")
+    st.latex(f"{q_n} = {sp.latex(data['q_n_expr'])}")
 
     if st.session_state.step == 5:
         if st.button("Ensamblar Solución Final y Simular 🚀"): avanzar(); st.rerun()
-    st.markdown("---")
+    st.divider()
 
 # ---------------------------------------------------------
 # ETAPA 6: SOLUCIÓN Y SIMULADOR
@@ -356,26 +325,28 @@ if st.session_state.step >= 6:
     data = st.session_state.math_data
     st.header("6. Solución General y Simulador Físico")
     
-    st.markdown("**Modo de Visualización de la Solución:**")
-    vista = st.radio("Selecciona qué componente de la solución deseas analizar:", 
-                     ["Solución General u(x,t)", "Sólo Estacionaria w(x,t)", "Sólo Transitoria v(x,t)"],
+    vista = st.radio("Filtro de Visualización Matemática:", 
+                     ["Solución General completa", "Solo Estacionaria", "Solo Transitoria"],
                      horizontal=True)
     
     L_tex = sp.latex(data['L'])
     w_tex = sp.latex(data['w'])
-    sum_tex = r"\sum_{n=1}^{\infty} \color{" + C_TIME + r"}{a_n(t)} \color{" + C_SPACE + r"}{\sin\left(\frac{n\pi x}{" + L_tex + r"}\right)}"
     
-    st.markdown("<div style='background-color:#ffffff; padding:20px; border-radius:10px; border:1px solid #e5e7eb;'>", unsafe_allow_html=True)
-    if vista == "Sólo Estacionaria w(x,t)":
-        st.latex(fr"\color{{{C_STAT}}}{{w(x,t)}} = \color{{{C_STAT}}}{{{w_tex}}}")
-    elif vista == "Sólo Transitoria v(x,t)":
-        st.latex(fr"\color{{{C_TRANS}}}{{v(x,t)}} = {sum_tex}")
-    else:
-        u_inf_tex = (fr"\color{{{C_STAT}}}{{{w_tex}}} + " if data['w'] != 0 else "") + sum_tex
-        st.latex(fr"\color{{{C_GEN}}}{{u(x,t)}} = {u_inf_tex}")
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Construcción limpia usando la función c_sym
+    a_n_term = f"{c_sym('a_n', C_TIME)}(t)"
+    sin_term = f"{c_sym(r'\sin', C_SPACE)}\left(\\frac{{n\pi x}}{{{L_tex}}}\\right)"
+    sum_tex = rf"\sum_{{n=1}}^{{\infty}} {a_n_term} \cdot {sin_term}"
+    
+    with st.container(border=True):
+        if vista == "Solo Estacionaria":
+            st.latex(f"{c_sym('w', C_STAT)}(x,t) = {c_sym(w_tex, C_STAT)}")
+        elif vista == "Solo Transitoria":
+            st.latex(f"{c_sym('v', C_TRANS)}(x,t) = {sum_tex}")
+        else:
+            w_part = f"{c_sym(w_tex, C_STAT)} + " if data['w'] != 0 else ""
+            st.latex(f"{c_sym('u', C_GEN)}(x,t) = {w_part} {sum_tex}")
 
-    # SIMULADOR NUMÉRICO ASOCIADO
+    # SIMULADOR NUMÉRICO
     st.subheader("Simulación Térmica Interactiva")
     t_val = st.slider(f"Flujo del Tiempo (t)", 0.0, 5.0, 0.0, 0.05)
     
