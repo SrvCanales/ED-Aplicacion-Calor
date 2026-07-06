@@ -712,271 +712,6 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
 # ==========================================
 # ANFANG Hilfe 1 Homogenisierung 
 # ==========================================
-@st.dialog("📖 Profundización matemática: Homogeneización", width="large")
-def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
-
-    # -------------------------------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------------------------------
-
-    st.markdown("""
-    <div class="help-title">
-    Homogeneización de las condiciones de frontera
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class="help-subtitle">
-
-    En esta guía recorrerás paso a paso la idea detrás de la homogeneización.
-    La intención no es memorizar una sustitución, sino comprender por qué surge
-    naturalmente al resolver la ecuación de calor mediante separación de variables.
-
-    </div>
-    """, unsafe_allow_html=True)
-
-    # -------------------------------------------------------------------------
-    # Barra de progreso
-    # -------------------------------------------------------------------------
-
-    barra_progreso()
-
-    st.divider()
-
-    # =========================================================================
-    # SLIDE 1
-    # =========================================================================
-
-    if st.session_state.help_slide == 0:
-
-        slide_1()
-
-    # =========================================================================
-    # SLIDE 2
-    # =========================================================================
-
-    elif st.session_state.help_slide == 1:
-
-        slide_2(
-            w_d=w_d,
-            F_t_d=F_t_d,
-            f_t_d=f_t_d
-        )
-
-    # =========================================================================
-    # SLIDE 3
-    # =========================================================================
-
-    else:
-
-        slide_3()
-
-    # -------------------------------------------------------------------------
-    # Navegación
-    # -------------------------------------------------------------------------
-
-    botones_navegacion()
-
-
-# =============================================================================
-# UTILIDAD
-# Tarjetas de información
-# =============================================================================
-
-def tarjeta(titulo, texto, color="blue"):
-
-    colores = {
-        "blue": "box-blue",
-        "green": "box-green",
-        "yellow": "box-yellow",
-        "red": "box-red",
-        "gray": "box-gray"
-    }
-
-    st.markdown(
-        f"""
-<div class="{colores[color]}">
-
-<h4 style="margin-top:0px">
-{titulo}
-</h4>
-
-<p style="font-size:16px;
-line-height:1.8;
-margin-bottom:0px">
-
-{texto}
-
-</p>
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# UTILIDAD
-# Encabezado de slide
-# =============================================================================
-
-def encabezado_slide(numero, titulo, subtitulo):
-
-    st.markdown(
-        f"""
-<div class="badge">
-Paso {numero} de 3
-</div>
-
-<div class="step-title">
-{titulo}
-</div>
-
-<div class="note">
-
-{subtitulo}
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# UTILIDAD
-# Cuadro "Idea clave"
-# =============================================================================
-
-def idea_clave(texto):
-
-    st.success("💡 Idea clave")
-
-    st.markdown(texto)
-
-
-# =============================================================================
-# UTILIDAD
-# Duda desplegable
-# =============================================================================
-
-def duda(titulo, contenido):
-
-    with st.expander(
-        "❓ " + titulo,
-        expanded=False
-    ):
-
-        st.markdown(contenido)
-
-
-# =============================================================================
-# UTILIDAD
-# Comparación lado a lado
-# =============================================================================
-
-def comparacion(col_izq, col_der):
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        col_izq()
-
-    with c2:
-        col_der()
-
-
-# =============================================================================
-# UTILIDAD
-# Separador visual elegante
-# =============================================================================
-
-def separador():
-
-    st.markdown(
-        """
-<hr style="
-margin-top:25px;
-margin-bottom:25px;
-border:none;
-border-top:1px solid #E5E7EB;
-">
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# MINI TARJETA
-# =============================================================================
-
-def mini_card(titulo, cuerpo):
-
-    st.markdown(
-        f"""
-<div class="card">
-
-<h4 style="margin-bottom:8px">
-{titulo}
-</h4>
-
-<p style="
-font-size:15px;
-line-height:1.7;
-margin-bottom:0px;
-">
-
-{cuerpo}
-
-</p>
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# TARJETA MATEMÁTICA
-# =============================================================================
-
-def cuadro_formula(texto_latex):
-
-    st.markdown(
-        """
-<div class="box-gray">
-""",
-        unsafe_allow_html=True
-    )
-
-    st.latex(texto_latex)
-
-    st.markdown(
-        """
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# FUNCIÓN AUXILIAR
-# Texto introductorio reutilizable
-# =============================================================================
-
-def introduccion(texto):
-
-    st.markdown(
-        f"""
-<div class="note">
-
-{textwrap.dedent(texto)}
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
 
 # ==========================================
 # INTERFAZ PRINCIPAL - ETAPA 1
@@ -2461,6 +2196,16 @@ eficiente.
         """
 🎉 ¡Laboratorio completado!
 
+progreso_completado()
+
+recordatorio()
+
+resumen_final()
+
+mensaje_final()
+
+reiniciar_recorrido()
+
 Ya conoces la idea fundamental detrás de la homogeneización.
 
 En el resto del desarrollo utilizaremos la sustitución lineal,
@@ -2612,24 +2357,272 @@ def progreso_completado():
 
     st.caption("✅ Ayuda completada")
 
+@st.dialog("📖 Profundización matemática: Homogeneización", width="large")
+def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
+
+    # -------------------------------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------------------------------
+
+    st.markdown("""
+    <div class="help-title">
+    Homogeneización de las condiciones de frontera
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="help-subtitle">
+
+    En esta guía recorrerás paso a paso la idea detrás de la homogeneización.
+    La intención no es memorizar una sustitución, sino comprender por qué surge
+    naturalmente al resolver la ecuación de calor mediante separación de variables.
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # Barra de progreso
+    # -------------------------------------------------------------------------
+
+    barra_progreso()
+
+    st.divider()
+
+    # =========================================================================
+    # SLIDE 1
+    # =========================================================================
+
+    if st.session_state.help_slide == 0:
+
+        slide_1()
+
+    # =========================================================================
+    # SLIDE 2
+    # =========================================================================
+
+    elif st.session_state.help_slide == 1:
+
+        slide_2(
+            w_d=w_d,
+            F_t_d=F_t_d,
+            f_t_d=f_t_d
+        )
+
+    # =========================================================================
+    # SLIDE 3
+    # =========================================================================
+
+    else:
+
+        slide_3()
+
+    # -------------------------------------------------------------------------
+    # Navegación
+    # -------------------------------------------------------------------------
+
+    botones_navegacion()
+
 
 # =============================================================================
-# LLAMADA FINAL
-#
-# Añadir estas líneas AL FINAL del slide_3(),
-# inmediatamente después del mensaje de
-# "🎉 Laboratorio completado".
+# UTILIDAD
+# Tarjetas de información
 # =============================================================================
 
-progreso_completado()
+def tarjeta(titulo, texto, color="blue"):
 
-recordatorio()
+    colores = {
+        "blue": "box-blue",
+        "green": "box-green",
+        "yellow": "box-yellow",
+        "red": "box-red",
+        "gray": "box-gray"
+    }
 
-resumen_final()
+    st.markdown(
+        f"""
+<div class="{colores[color]}">
 
-mensaje_final()
+<h4 style="margin-top:0px">
+{titulo}
+</h4>
 
-reiniciar_recorrido()
+<p style="font-size:16px;
+line-height:1.8;
+margin-bottom:0px">
+
+{texto}
+
+</p>
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# UTILIDAD
+# Encabezado de slide
+# =============================================================================
+
+def encabezado_slide(numero, titulo, subtitulo):
+
+    st.markdown(
+        f"""
+<div class="badge">
+Paso {numero} de 3
+</div>
+
+<div class="step-title">
+{titulo}
+</div>
+
+<div class="note">
+
+{subtitulo}
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# UTILIDAD
+# Cuadro "Idea clave"
+# =============================================================================
+
+def idea_clave(texto):
+
+    st.success("💡 Idea clave")
+
+    st.markdown(texto)
+
+
+# =============================================================================
+# UTILIDAD
+# Duda desplegable
+# =============================================================================
+
+def duda(titulo, contenido):
+
+    with st.expander(
+        "❓ " + titulo,
+        expanded=False
+    ):
+
+        st.markdown(contenido)
+
+
+# =============================================================================
+# UTILIDAD
+# Comparación lado a lado
+# =============================================================================
+
+def comparacion(col_izq, col_der):
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        col_izq()
+
+    with c2:
+        col_der()
+
+
+# =============================================================================
+# UTILIDAD
+# Separador visual elegante
+# =============================================================================
+
+def separador():
+
+    st.markdown(
+        """
+<hr style="
+margin-top:25px;
+margin-bottom:25px;
+border:none;
+border-top:1px solid #E5E7EB;
+">
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# MINI TARJETA
+# =============================================================================
+
+def mini_card(titulo, cuerpo):
+
+    st.markdown(
+        f"""
+<div class="card">
+
+<h4 style="margin-bottom:8px">
+{titulo}
+</h4>
+
+<p style="
+font-size:15px;
+line-height:1.7;
+margin-bottom:0px;
+">
+
+{cuerpo}
+
+</p>
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# TARJETA MATEMÁTICA
+# =============================================================================
+
+def cuadro_formula(texto_latex):
+
+    st.markdown(
+        """
+<div class="box-gray">
+""",
+        unsafe_allow_html=True
+    )
+
+    st.latex(texto_latex)
+
+    st.markdown(
+        """
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# FUNCIÓN AUXILIAR
+# Texto introductorio reutilizable
+# =============================================================================
+
+def introduccion(texto):
+
+    st.markdown(
+        f"""
+<div class="note">
+
+{textwrap.dedent(texto)}
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+
 
 # ENDE Hilfe 1 Homogenisierung 
 
