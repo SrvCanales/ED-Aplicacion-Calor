@@ -716,82 +716,6 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
 # ==========================================
 # INTERFAZ PRINCIPAL - ETAPA 1
 # ==========================================
-st.title("🔥 Simulador de EDP: Calor 1D Analítico")
-st.markdown("Sigue esta ruta guiada interactiva para resolver tu Problema de Valor Inicial y de Frontera (PVIF) paso a paso.")
-st.divider()
-
-st.header("1. Planteando la EDP")
-st.markdown("Define los parámetros físicos y geométricos de tu sistema unidimensional.")
-
-# Contenedor nativo con enlace directo al session_state para retener los datos ingresados
-with st.container(border=True):
-    col1, col2 = st.columns(2)
-    with col1:
-        st.session_state.in_L = st.text_input("Longitud de la barra (L):", value=st.session_state.in_L)
-        st.session_state.in_alpha = st.text_input("Difusividad térmica (α):", value=st.session_state.in_alpha)
-        st.session_state.in_F = st.text_input("Fuente externa de calor F(x,t):", value=st.session_state.in_F)
-    with col2:
-        st.session_state.in_A = st.text_input("Frontera Izquierda u(0,t):", value=st.session_state.in_A)
-        st.session_state.in_B = st.text_input("Frontera Derecha u(L,t):", value=st.session_state.in_B)
-        st.session_state.in_f = st.text_input("Perfil Inicial u(x,0):", value=st.session_state.in_f)
-
-transformaciones = (standard_transformations + (implicit_multiplication_application,))
-
-def parsear_seguro(expr_str):
-    if not expr_str.strip():
-        raise ValueError("Expresión vacía")
-    expr = parse_expr(expr_str, transformations=transformaciones)
-    reemplazos = {sim: (x if sim.name == 'x' else (t if sim.name == 't' else sim)) for sim in expr.free_symbols}
-    return expr.subs(reemplazos)
-
-st.subheader("Modelo Matemático (Tiempo Real)")
-
-try:
-    L_s = parsear_seguro(st.session_state.in_L)
-    alpha_s = parsear_seguro(st.session_state.in_alpha)
-    F_s = parsear_seguro(st.session_state.in_F)
-    A_s = parsear_seguro(st.session_state.in_A)
-    B_s = parsear_seguro(st.session_state.in_B)
-    f_s = parsear_seguro(st.session_state.in_f)
-    
-    w_dyn = sp.simplify(A_s + (x / L_s) * (B_s - A_s))
-    F_t_dyn = sp.simplify(F_s - sp.diff(w_dyn, t) + alpha_s**2 * sp.diff(w_dyn, x, 2))
-    f_t_dyn = sp.simplify(f_s - w_dyn.subs(t, 0))
-    
-    alpha_term = sp.latex(alpha_s**2)
-    
-    # Construcción precisa de LaTeX inyectando solo el color en el carácter 'u'
-    latex_sistema = rf"""
-    \begin{{cases}}
-    \frac{{\partial {COLOR_MAP['u']}}}{{\partial t}} = {alpha_term} \frac{{\partial^2 {COLOR_MAP['u']}}}{{\partial x^2}} + {sp.latex(F_s)}, & 0 < x < {sp.latex(L_s)}, \quad t > 0 \\[8pt]
-    {COLOR_MAP['u']}(0,t) = {sp.latex(A_s)}, & t > 0 \\[8pt]
-    {COLOR_MAP['u']}({sp.latex(L_s)},t) = {sp.latex(B_s)}, & t > 0 \\[8pt]
-    {COLOR_MAP['u']}(x,0) = {sp.latex(f_s)}, & 0 \le x \le {sp.latex(L_s)}
-    \end{{cases}}
-    """
-    
-    with st.container(border=True):
-        st.latex(latex_sistema)
-        
-    col_help, _ = st.columns([1, 2])
-    with col_help:
-        if st.button("ℹ️ Ver Fundamentos de Homogeneización", use_container_width=True):
-            mostrar_ayuda_profunda(w_dyn, F_t_dyn, f_t_dyn)
-
-except Exception:
-    with st.container(border=True):
-        st.latex(r"\text{Esperando expresiones matemáticas válidas...}")
-
-st.info("💡 **Reto de Aprendizaje:** Identifica mentalmente cuáles términos causan que el problema no sea homogéneo antes de avanzar.")
-
-if st.button("Guardar Parámetros y Avanzar 🚀", type="primary"):
-    exito = calcular_matematicas(st.session_state.in_L, st.session_state.in_alpha, st.session_state.in_F, st.session_state.in_A, st.session_state.in_B, st.session_state.in_f)
-    if exito:
-        if st.session_state.step == 1:
-            avanzar()
-        st.rerun()
-
-st.divider()
 
 def slide_1():
 
@@ -2356,6 +2280,85 @@ def progreso_completado():
     st.progress(1.0)
 
     st.caption("✅ Ayuda completada")
+
+
+st.title("🔥 Simulador de EDP: Calor 1D Analítico")
+st.markdown("Sigue esta ruta guiada interactiva para resolver tu Problema de Valor Inicial y de Frontera (PVIF) paso a paso.")
+st.divider()
+
+st.header("1. Planteando la EDP")
+st.markdown("Define los parámetros físicos y geométricos de tu sistema unidimensional.")
+
+# Contenedor nativo con enlace directo al session_state para retener los datos ingresados
+with st.container(border=True):
+    col1, col2 = st.columns(2)
+    with col1:
+        st.session_state.in_L = st.text_input("Longitud de la barra (L):", value=st.session_state.in_L)
+        st.session_state.in_alpha = st.text_input("Difusividad térmica (α):", value=st.session_state.in_alpha)
+        st.session_state.in_F = st.text_input("Fuente externa de calor F(x,t):", value=st.session_state.in_F)
+    with col2:
+        st.session_state.in_A = st.text_input("Frontera Izquierda u(0,t):", value=st.session_state.in_A)
+        st.session_state.in_B = st.text_input("Frontera Derecha u(L,t):", value=st.session_state.in_B)
+        st.session_state.in_f = st.text_input("Perfil Inicial u(x,0):", value=st.session_state.in_f)
+
+transformaciones = (standard_transformations + (implicit_multiplication_application,))
+
+def parsear_seguro(expr_str):
+    if not expr_str.strip():
+        raise ValueError("Expresión vacía")
+    expr = parse_expr(expr_str, transformations=transformaciones)
+    reemplazos = {sim: (x if sim.name == 'x' else (t if sim.name == 't' else sim)) for sim in expr.free_symbols}
+    return expr.subs(reemplazos)
+
+st.subheader("Modelo Matemático (Tiempo Real)")
+
+try:
+    L_s = parsear_seguro(st.session_state.in_L)
+    alpha_s = parsear_seguro(st.session_state.in_alpha)
+    F_s = parsear_seguro(st.session_state.in_F)
+    A_s = parsear_seguro(st.session_state.in_A)
+    B_s = parsear_seguro(st.session_state.in_B)
+    f_s = parsear_seguro(st.session_state.in_f)
+    
+    w_dyn = sp.simplify(A_s + (x / L_s) * (B_s - A_s))
+    F_t_dyn = sp.simplify(F_s - sp.diff(w_dyn, t) + alpha_s**2 * sp.diff(w_dyn, x, 2))
+    f_t_dyn = sp.simplify(f_s - w_dyn.subs(t, 0))
+    
+    alpha_term = sp.latex(alpha_s**2)
+    
+    # Construcción precisa de LaTeX inyectando solo el color en el carácter 'u'
+    latex_sistema = rf"""
+    \begin{{cases}}
+    \frac{{\partial {COLOR_MAP['u']}}}{{\partial t}} = {alpha_term} \frac{{\partial^2 {COLOR_MAP['u']}}}{{\partial x^2}} + {sp.latex(F_s)}, & 0 < x < {sp.latex(L_s)}, \quad t > 0 \\[8pt]
+    {COLOR_MAP['u']}(0,t) = {sp.latex(A_s)}, & t > 0 \\[8pt]
+    {COLOR_MAP['u']}({sp.latex(L_s)},t) = {sp.latex(B_s)}, & t > 0 \\[8pt]
+    {COLOR_MAP['u']}(x,0) = {sp.latex(f_s)}, & 0 \le x \le {sp.latex(L_s)}
+    \end{{cases}}
+    """
+    
+    with st.container(border=True):
+        st.latex(latex_sistema)
+        
+    col_help, _ = st.columns([1, 2])
+    with col_help:
+        if st.button("ℹ️ Ver Fundamentos de Homogeneización", use_container_width=True):
+            mostrar_ayuda_profunda(w_dyn, F_t_dyn, f_t_dyn)
+
+except Exception:
+    with st.container(border=True):
+        st.latex(r"\text{Esperando expresiones matemáticas válidas...}")
+
+st.info("💡 **Reto de Aprendizaje:** Identifica mentalmente cuáles términos causan que el problema no sea homogéneo antes de avanzar.")
+
+if st.button("Guardar Parámetros y Avanzar 🚀", type="primary"):
+    exito = calcular_matematicas(st.session_state.in_L, st.session_state.in_alpha, st.session_state.in_F, st.session_state.in_A, st.session_state.in_B, st.session_state.in_f)
+    if exito:
+        if st.session_state.step == 1:
+            avanzar()
+        st.rerun()
+
+st.divider()
+
 
 @st.dialog("📖 Profundización matemática: Homogeneización", width="large")
 def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
