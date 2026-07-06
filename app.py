@@ -242,339 +242,6 @@ height:44px;
 """, unsafe_allow_html=True)
 
 
-# =============================================================================
-# BARRA DE PROGRESO
-# =============================================================================
-
-def barra_progreso():
-
-    progreso=(st.session_state.help_slide+1)/3
-
-    st.progress(progreso)
-
-    c1,c2,c3=st.columns(3)
-
-    with c1:
-
-        if st.session_state.help_slide==0:
-            st.success("① ¿Por qué?")
-        else:
-            st.write("① ¿Por qué? ✓")
-
-    with c2:
-
-        if st.session_state.help_slide==1:
-            st.success("② ¿Cómo?")
-        elif st.session_state.help_slide>1:
-            st.write("② ¿Cómo? ✓")
-        else:
-            st.write("② ¿Cómo?")
-
-    with c3:
-
-        if st.session_state.help_slide==2:
-            st.success("③ ¿Otra sustitución?")
-        else:
-            st.write("③ ¿Otra sustitución?")
-
-
-# =============================================================================
-# BOTONES DE NAVEGACIÓN
-# =============================================================================
-
-def botones_navegacion():
-
-    st.divider()
-
-    c1,c2,c3=st.columns([1,4,1])
-
-    with c1:
-
-        if st.session_state.help_slide>0:
-
-            if st.button("⬅ Anterior",use_container_width=True):
-
-                st.session_state.help_slide-=1
-                st.rerun()
-
-    with c3:
-
-        if st.session_state.help_slide<2:
-
-            if st.button("Siguiente ➜",use_container_width=True):
-
-                st.session_state.help_slide+=1
-
-                st.session_state.help_max_slide=max(
-                    st.session_state.help_slide,
-                    st.session_state.help_max_slide
-                )
-
-                st.rerun()
-
-
-# =============================================================================
-# SVG 1
-# Frontera homogénea
-# =============================================================================
-
-def svg_frontera_homogenea():
-
-    svg="""
-
-<svg width="520" height="250"
-xmlns="http://www.w3.org/2000/svg">
-
-<rect width="100%" height="100%" fill="white"/>
-
-<line x1="60" y1="200"
-x2="470"
-y2="200"
-stroke="black"
-stroke-width="2"/>
-
-<line x1="60"
-y1="200"
-x2="60"
-y2="30"
-stroke="black"
-stroke-width="2"/>
-
-<text x="480" y="208"
-font-size="20">x</text>
-
-<text x="50" y="25"
-font-size="20">u</text>
-
-<text x="45"
-y="220"
-font-size="18">0</text>
-
-<text x="445"
-y="220"
-font-size="18">L</text>
-
-<path
-
-d="M60 200
-C130 180,
-180 90,
-260 80
-C330 90,
-390 180,
-460 200"
-
-stroke="#16A34A"
-
-stroke-width="4"
-
-fill="none"/>
-
-<circle cx="60" cy="200" r="5" fill="#16A34A"/>
-
-<circle cx="460" cy="200" r="5" fill="#16A34A"/>
-
-<text
-
-x="150"
-
-y="40"
-
-fill="#15803D"
-
-font-size="20"
-
-font-weight="bold">
-
-Frontera homogénea
-
-</text>
-
-</svg>
-
-"""
-
-    components.html(svg,height=260)
-
-
-# =============================================================================
-# SVG 2
-# Frontera NO homogénea
-# =============================================================================
-
-def svg_frontera_no_homogenea():
-
-    svg="""
-
-<svg width="520" height="250"
-xmlns="http://www.w3.org/2000/svg">
-
-<rect width="100%" height="100%" fill="white"/>
-
-<line x1="60" y1="200"
-x2="470"
-y2="200"
-stroke="black"
-stroke-width="2"/>
-
-<line x1="60"
-y1="200"
-x2="60"
-y2="30"
-stroke="black"
-stroke-width="2"/>
-
-<text x="480" y="208"
-font-size="20">x</text>
-
-<text x="50"
-y="25"
-font-size="20">u</text>
-
-<text x="45"
-y="220"
-font-size="18">0</text>
-
-<text x="445"
-y="220"
-font-size="18">L</text>
-
-<path
-
-d="M60 150
-C140 90,
-200 140,
-280 120
-C360 95,
-420 80,
-460 70"
-
-stroke="#DC2626"
-
-stroke-width="4"
-
-fill="none"/>
-
-<circle cx="60" cy="150"
-r="5"
-fill="#DC2626"/>
-
-<circle cx="460"
-cy="70"
-r="5"
-fill="#DC2626"/>
-
-<text
-
-x="105"
-
-y="40"
-
-fill="#B91C1C"
-
-font-size="20"
-
-font-weight="bold">
-
-Frontera no homogénea
-
-</text>
-
-</svg>
-
-"""
-
-    components.html(svg,height=260)
-
-
-# =============================================================================
-# SVG
-# RECTA DE HOMOGENEIZACIÓN
-# (utilizada en el Slide 2)
-# =============================================================================
-
-def svg_recta():
-
-    svg="""
-
-<svg width="520" height="260"
-xmlns="http://www.w3.org/2000/svg">
-
-<rect width="100%" height="100%" fill="white"/>
-
-<line x1="60"
-y1="210"
-x2="470"
-y2="210"
-stroke="black"
-stroke-width="2"/>
-
-<line x1="60"
-y1="210"
-x2="60"
-y2="30"
-stroke="black"
-stroke-width="2"/>
-
-<circle
-cx="60"
-cy="170"
-r="5"
-fill="#2563EB"/>
-
-<circle
-cx="460"
-cy="70"
-r="5"
-fill="#2563EB"/>
-
-<line
-
-x1="60"
-y1="170"
-x2="460"
-y2="70"
-
-stroke="#2563EB"
-
-stroke-width="4"/>
-
-<text
-x="95"
-y="95"
-font-size="18"
-fill="#1D4ED8">
-
-w(x)
-
-</text>
-
-<text
-x="40"
-y="225"
-font-size="18">
-
-0
-
-</text>
-
-<text
-x="445"
-y="225"
-font-size="18">
-
-L
-
-</text>
-
-</svg>
-
-"""
-
-    components.html(svg,height=270)
-
-#-------------------------------------------------------
-
 # ==========================================
 # CONFIGURACIÓN DE PÁGINA Y ESTILOS
 # ==========================================
@@ -709,15 +376,623 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
         st.error(f"Error en los cálculos matemáticos: {e}")
         return False
 
-# ==========================================
-# ANFANG Hilfe 1 Homogenisierung 
-# ==========================================
 
-# ==========================================
-# INTERFAZ PRINCIPAL - ETAPA 1
-# ==========================================
+# =============================================================================
+# FUNCIONES
+# =============================================================================
 
-def slide_1():
+
+def barra_progreso(): #Progreso homogenización
+
+    progreso=(st.session_state.help_slide+1)/3
+
+    st.progress(progreso)
+
+    c1,c2,c3=st.columns(3)
+
+    with c1:
+
+        if st.session_state.help_slide==0:
+            st.success("① ¿Por qué?")
+        else:
+            st.write("① ¿Por qué? ✓")
+
+    with c2:
+
+        if st.session_state.help_slide==1:
+            st.success("② ¿Cómo?")
+        elif st.session_state.help_slide>1:
+            st.write("② ¿Cómo? ✓")
+        else:
+            st.write("② ¿Cómo?")
+
+    with c3:
+
+        if st.session_state.help_slide==2:
+            st.success("③ ¿Otra sustitución?")
+        else:
+            st.write("③ ¿Otra sustitución?")
+
+
+def botones_navegacion(): #Navegación homogenización
+
+    st.divider()
+
+    c1,c2,c3=st.columns([1,4,1])
+
+    with c1:
+
+        if st.session_state.help_slide>0:
+
+            if st.button("⬅ Anterior",use_container_width=True):
+
+                st.session_state.help_slide-=1
+                st.rerun()
+
+    with c3:
+
+        if st.session_state.help_slide<2:
+
+            if st.button("Siguiente ➜",use_container_width=True):
+
+                st.session_state.help_slide+=1
+
+                st.session_state.help_max_slide=max(
+                    st.session_state.help_slide,
+                    st.session_state.help_max_slide
+                )
+
+                st.rerun()
+                
+def svg_frontera_homogenea(): #SVG1, frontera homogenea
+
+    svg="""
+
+<svg width="520" height="250"
+xmlns="http://www.w3.org/2000/svg">
+
+<rect width="100%" height="100%" fill="white"/>
+
+<line x1="60" y1="200"
+x2="470"
+y2="200"
+stroke="black"
+stroke-width="2"/>
+
+<line x1="60"
+y1="200"
+x2="60"
+y2="30"
+stroke="black"
+stroke-width="2"/>
+
+<text x="480" y="208"
+font-size="20">x</text>
+
+<text x="50" y="25"
+font-size="20">u</text>
+
+<text x="45"
+y="220"
+font-size="18">0</text>
+
+<text x="445"
+y="220"
+font-size="18">L</text>
+
+<path
+
+d="M60 200
+C130 180,
+180 90,
+260 80
+C330 90,
+390 180,
+460 200"
+
+stroke="#16A34A"
+
+stroke-width="4"
+
+fill="none"/>
+
+<circle cx="60" cy="200" r="5" fill="#16A34A"/>
+
+<circle cx="460" cy="200" r="5" fill="#16A34A"/>
+
+<text
+
+x="150"
+
+y="40"
+
+fill="#15803D"
+
+font-size="20"
+
+font-weight="bold">
+
+Frontera homogénea
+
+</text>
+
+</svg>
+
+"""
+
+    components.html(svg,height=260)
+
+def svg_frontera_no_homogenea(): #SVG 2, fontera no homogenea
+
+    svg="""
+
+<svg width="520" height="250"
+xmlns="http://www.w3.org/2000/svg">
+
+<rect width="100%" height="100%" fill="white"/>
+
+<line x1="60" y1="200"
+x2="470"
+y2="200"
+stroke="black"
+stroke-width="2"/>
+
+<line x1="60"
+y1="200"
+x2="60"
+y2="30"
+stroke="black"
+stroke-width="2"/>
+
+<text x="480" y="208"
+font-size="20">x</text>
+
+<text x="50"
+y="25"
+font-size="20">u</text>
+
+<text x="45"
+y="220"
+font-size="18">0</text>
+
+<text x="445"
+y="220"
+font-size="18">L</text>
+
+<path
+
+d="M60 150
+C140 90,
+200 140,
+280 120
+C360 95,
+420 80,
+460 70"
+
+stroke="#DC2626"
+
+stroke-width="4"
+
+fill="none"/>
+
+<circle cx="60" cy="150"
+r="5"
+fill="#DC2626"/>
+
+<circle cx="460"
+cy="70"
+r="5"
+fill="#DC2626"/>
+
+<text
+
+x="105"
+
+y="40"
+
+fill="#B91C1C"
+
+font-size="20"
+
+font-weight="bold">
+
+Frontera no homogénea
+
+</text>
+
+</svg>
+
+"""
+
+    components.html(svg,height=260)
+
+def svg_recta(): #SVG3, recta de homogenización
+
+    svg="""
+
+<svg width="520" height="260"
+xmlns="http://www.w3.org/2000/svg">
+
+<rect width="100%" height="100%" fill="white"/>
+
+<line x1="60"
+y1="210"
+x2="470"
+y2="210"
+stroke="black"
+stroke-width="2"/>
+
+<line x1="60"
+y1="210"
+x2="60"
+y2="30"
+stroke="black"
+stroke-width="2"/>
+
+<circle
+cx="60"
+cy="170"
+r="5"
+fill="#2563EB"/>
+
+<circle
+cx="460"
+cy="70"
+r="5"
+fill="#2563EB"/>
+
+<line
+
+x1="60"
+y1="170"
+x2="460"
+y2="70"
+
+stroke="#2563EB"
+
+stroke-width="4"/>
+
+<text
+x="95"
+y="95"
+font-size="18"
+fill="#1D4ED8">
+
+w(x)
+
+</text>
+
+<text
+x="40"
+y="225"
+font-size="18">
+
+0
+
+</text>
+
+<text
+x="445"
+y="225"
+font-size="18">
+
+L
+
+</text>
+
+</svg>
+
+"""
+
+    components.html(svg,height=270)
+
+@st.dialog("📖 Profundización matemática: Homogeneización", width="large") ##!!!!
+def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
+
+    # -------------------------------------------------------------------------
+    # TÍTULO
+    # -------------------------------------------------------------------------
+
+    st.markdown("""
+    <div class="help-title">
+    Homogeneización de las condiciones de frontera
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="help-subtitle">
+
+    En esta guía recorrerás paso a paso la idea detrás de la homogeneización.
+    La intención no es memorizar una sustitución, sino comprender por qué surge
+    naturalmente al resolver la ecuación de calor mediante separación de variables.
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # Barra de progreso
+    # -------------------------------------------------------------------------
+
+    barra_progreso()
+
+    st.divider()
+
+    # =========================================================================
+    # SLIDE 1
+    # =========================================================================
+
+    if st.session_state.help_slide == 0:
+
+        slide_1()
+
+    # =========================================================================
+    # SLIDE 2
+    # =========================================================================
+
+    elif st.session_state.help_slide == 1:
+
+        slide_2(
+            w_d=w_d,
+            F_t_d=F_t_d,
+            f_t_d=f_t_d
+        )
+
+    # =========================================================================
+    # SLIDE 3
+    # =========================================================================
+
+    else:
+
+        slide_3()
+
+    # -------------------------------------------------------------------------
+    # Navegación
+    # -------------------------------------------------------------------------
+
+    botones_navegacion()
+
+
+# =============================================================================
+# UTILIDAD
+# Tarjetas de información
+# =============================================================================
+
+def tarjeta(titulo, texto, color="blue"):
+
+    colores = {
+        "blue": "box-blue",
+        "green": "box-green",
+        "yellow": "box-yellow",
+        "red": "box-red",
+        "gray": "box-gray"
+    }
+
+    st.markdown(
+        f"""
+<div class="{colores[color]}">
+
+<h4 style="margin-top:0px">
+{titulo}
+</h4>
+
+<p style="font-size:16px;
+line-height:1.8;
+margin-bottom:0px">
+
+{texto}
+
+</p>
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# UTILIDAD
+# Encabezado de slide
+# =============================================================================
+
+def encabezado_slide(numero, titulo, subtitulo):
+
+    st.markdown(
+        f"""
+<div class="badge">
+Paso {numero} de 3
+</div>
+
+<div class="step-title">
+{titulo}
+</div>
+
+<div class="note">
+
+{subtitulo}
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# UTILIDAD
+# Cuadro "Idea clave"
+# =============================================================================
+
+def idea_clave(texto):
+
+    st.success("💡 Idea clave")
+
+    st.markdown(texto)
+
+
+# =============================================================================
+# UTILIDAD
+# Duda desplegable
+# =============================================================================
+
+def duda(titulo, contenido):
+
+    with st.expander(
+        "❓ " + titulo,
+        expanded=False
+    ):
+
+        st.markdown(contenido)
+
+
+# =============================================================================
+# UTILIDAD
+# Comparación lado a lado
+# =============================================================================
+
+def comparacion(col_izq, col_der):
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        col_izq()
+
+    with c2:
+        col_der()
+
+
+# =============================================================================
+# UTILIDAD
+# Separador visual elegante
+# =============================================================================
+
+def separador():
+
+    st.markdown(
+        """
+<hr style="
+margin-top:25px;
+margin-bottom:25px;
+border:none;
+border-top:1px solid #E5E7EB;
+">
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# MINI TARJETA
+# =============================================================================
+
+def mini_card(titulo, cuerpo):
+
+    st.markdown(
+        f"""
+<div class="card">
+
+<h4 style="margin-bottom:8px">
+{titulo}
+</h4>
+
+<p style="
+font-size:15px;
+line-height:1.7;
+margin-bottom:0px;
+">
+
+{cuerpo}
+
+</p>
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# TARJETA MATEMÁTICA
+# =============================================================================
+
+def cuadro_formula(texto_latex):
+
+    st.markdown(
+        """
+<div class="box-gray">
+""",
+        unsafe_allow_html=True
+    )
+
+    st.latex(texto_latex)
+
+    st.markdown(
+        """
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+# =============================================================================
+# FUNCIÓN AUXILIAR
+# Texto introductorio reutilizable
+# =============================================================================
+
+def introduccion(texto):
+
+    st.markdown(
+        f"""
+<div class="note">
+
+{textwrap.dedent(texto)}
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+def recordatorio(): #HOMOGENIZACION
+
+    st.markdown(
+"""
+<div class="box-green">
+
+<h4 style="margin-top:0px">
+
+🎯 Idea para recordar
+
+</h4>
+
+<p style="font-size:16px; line-height:1.8;">
+
+La homogeneización no consiste en "inventar" una función.
+
+Consiste en escoger una función conocida que satisfaga las
+condiciones de frontera para que la nueva incógnita tenga
+fronteras homogéneas.
+
+</p>
+
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+def mensaje_final(): #HOMOGENIZACION
+
+    st.success("""
+¡Excelente!
+
+La homogeneización suele parecer un paso artificial cuando se ve
+por primera vez.
+
+Sin embargo, una vez comprendida, se convierte en una herramienta
+muy natural: antes de intentar resolver la ecuación diferencial,
+eliminamos primero aquello que ya conocemos (las condiciones de
+frontera) y concentramos el esfuerzo matemático únicamente en la
+parte realmente desconocida del problema.
+""")
+
+def slide_1(): #SLIDE 1 HOMOGENIZACION
 
     encabezado_slide(
         1,
@@ -2110,10 +2385,6 @@ eficiente.
 """
         )
 
-    # ========================================================================
-    # MENSAJE FINAL
-    # ========================================================================
-
     separador()
 
     st.success(
@@ -2138,149 +2409,10 @@ simple y la más eficiente para resolver problemas con
 temperaturas de frontera constantes mediante separación de
 variables.
 """
-    )
 
-# Funciones auxiliares finales + Pulido visual + Resumen
-#
-# Esta parte añade los últimos detalles para que el apartado de ayuda
-# se sienta terminado y coherente con el resto de la aplicación.
-# =============================================================================
-
-
-# =============================================================================
-# BOTÓN PARA REINICIAR EL RECORRIDO
-# =============================================================================
-
-def reiniciar_recorrido():
-
-    st.divider()
-
-    c1, c2, c3 = st.columns([1.5,2,1.5])
-
-    with c2:
-
-        if st.button(
-            "🔄 Volver a recorrer esta ayuda",
-            use_container_width=True
-        ):
-
-            st.session_state.help_slide = 0
-            st.rerun()
-
-
-# =============================================================================
-# RESUMEN FINAL
-# =============================================================================
-
-def resumen_final():
-
-    st.divider()
-
-    st.markdown("# 🎓 Resumen")
-
-    st.markdown("""
-Has recorrido las tres ideas fundamentales detrás de la
-homogeneización.
-
-Antes de continuar con el desarrollo matemático, verifica que
-puedes responder mentalmente las siguientes preguntas.
-""")
-
-    st.success("### ✔ Lo esencial")
-
-    st.markdown("""
-- Comprendes qué significa una **frontera homogénea**.
-
-- Sabes por qué la **separación de variables** requiere este tipo
-de condiciones de frontera.
-
-- Entiendes que la homogeneización **no modifica la física del
-problema**.
-
-- Sabes interpretar la sustitución
-
-\[
-u=w+v.
-\]
-
-- Distingues entre la parte **estacionaria** y la parte
-**transitoria** de la solución.
-
-- Comprendes por qué la sustitución lineal suele ser la elección
-más conveniente.
-
-- Sabes que existen otras sustituciones, aunque normalmente sólo se
-utilizan cuando simplifican un problema específico.
-""")
-
-    st.info("""
-A partir de este punto ya estamos preparados para aplicar el
-método de separación de variables sobre la nueva incógnita.
-""")
-
-
-# =============================================================================
-# PEQUEÑO RECORDATORIO
-# =============================================================================
-
-def recordatorio():
-
-    st.markdown(
-"""
-<div class="box-green">
-
-<h4 style="margin-top:0px">
-
-🎯 Idea para recordar
-
-</h4>
-
-<p style="font-size:16px; line-height:1.8;">
-
-La homogeneización no consiste en "inventar" una función.
-
-Consiste en escoger una función conocida que satisfaga las
-condiciones de frontera para que la nueva incógnita tenga
-fronteras homogéneas.
-
-</p>
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# MENSAJE MOTIVACIONAL
-# =============================================================================
-
-def mensaje_final():
-
-    st.success("""
-¡Excelente!
-
-La homogeneización suele parecer un paso artificial cuando se ve
-por primera vez.
-
-Sin embargo, una vez comprendida, se convierte en una herramienta
-muy natural: antes de intentar resolver la ecuación diferencial,
-eliminamos primero aquello que ya conocemos (las condiciones de
-frontera) y concentramos el esfuerzo matemático únicamente en la
-parte realmente desconocida del problema.
-""")
-
-
-# =============================================================================
-# BARRA DE FINALIZACIÓN
-# =============================================================================
-
-def progreso_completado():
-
-    st.progress(1.0)
-
-    st.caption("✅ Ayuda completada")
-
+##################################
+# CONTENIDOS
+##################################
 
 st.title("🔥 Simulador de EDP: Calor 1D Analítico")
 st.markdown("Sigue esta ruta guiada interactiva para resolver tu Problema de Valor Inicial y de Frontera (PVIF) paso a paso.")
@@ -2361,273 +2493,6 @@ st.divider()
 
 
 @st.dialog("📖 Profundización matemática: Homogeneización", width="large")
-def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
-
-    # -------------------------------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------------------------------
-
-    st.markdown("""
-    <div class="help-title">
-    Homogeneización de las condiciones de frontera
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class="help-subtitle">
-
-    En esta guía recorrerás paso a paso la idea detrás de la homogeneización.
-    La intención no es memorizar una sustitución, sino comprender por qué surge
-    naturalmente al resolver la ecuación de calor mediante separación de variables.
-
-    </div>
-    """, unsafe_allow_html=True)
-
-    # -------------------------------------------------------------------------
-    # Barra de progreso
-    # -------------------------------------------------------------------------
-
-    barra_progreso()
-
-    st.divider()
-
-    # =========================================================================
-    # SLIDE 1
-    # =========================================================================
-
-    if st.session_state.help_slide == 0:
-
-        slide_1()
-
-    # =========================================================================
-    # SLIDE 2
-    # =========================================================================
-
-    elif st.session_state.help_slide == 1:
-
-        slide_2(
-            w_d=w_d,
-            F_t_d=F_t_d,
-            f_t_d=f_t_d
-        )
-
-    # =========================================================================
-    # SLIDE 3
-    # =========================================================================
-
-    else:
-
-        slide_3()
-
-    # -------------------------------------------------------------------------
-    # Navegación
-    # -------------------------------------------------------------------------
-
-    botones_navegacion()
-
-
-# =============================================================================
-# UTILIDAD
-# Tarjetas de información
-# =============================================================================
-
-def tarjeta(titulo, texto, color="blue"):
-
-    colores = {
-        "blue": "box-blue",
-        "green": "box-green",
-        "yellow": "box-yellow",
-        "red": "box-red",
-        "gray": "box-gray"
-    }
-
-    st.markdown(
-        f"""
-<div class="{colores[color]}">
-
-<h4 style="margin-top:0px">
-{titulo}
-</h4>
-
-<p style="font-size:16px;
-line-height:1.8;
-margin-bottom:0px">
-
-{texto}
-
-</p>
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# UTILIDAD
-# Encabezado de slide
-# =============================================================================
-
-def encabezado_slide(numero, titulo, subtitulo):
-
-    st.markdown(
-        f"""
-<div class="badge">
-Paso {numero} de 3
-</div>
-
-<div class="step-title">
-{titulo}
-</div>
-
-<div class="note">
-
-{subtitulo}
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# UTILIDAD
-# Cuadro "Idea clave"
-# =============================================================================
-
-def idea_clave(texto):
-
-    st.success("💡 Idea clave")
-
-    st.markdown(texto)
-
-
-# =============================================================================
-# UTILIDAD
-# Duda desplegable
-# =============================================================================
-
-def duda(titulo, contenido):
-
-    with st.expander(
-        "❓ " + titulo,
-        expanded=False
-    ):
-
-        st.markdown(contenido)
-
-
-# =============================================================================
-# UTILIDAD
-# Comparación lado a lado
-# =============================================================================
-
-def comparacion(col_izq, col_der):
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        col_izq()
-
-    with c2:
-        col_der()
-
-
-# =============================================================================
-# UTILIDAD
-# Separador visual elegante
-# =============================================================================
-
-def separador():
-
-    st.markdown(
-        """
-<hr style="
-margin-top:25px;
-margin-bottom:25px;
-border:none;
-border-top:1px solid #E5E7EB;
-">
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# MINI TARJETA
-# =============================================================================
-
-def mini_card(titulo, cuerpo):
-
-    st.markdown(
-        f"""
-<div class="card">
-
-<h4 style="margin-bottom:8px">
-{titulo}
-</h4>
-
-<p style="
-font-size:15px;
-line-height:1.7;
-margin-bottom:0px;
-">
-
-{cuerpo}
-
-</p>
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# TARJETA MATEMÁTICA
-# =============================================================================
-
-def cuadro_formula(texto_latex):
-
-    st.markdown(
-        """
-<div class="box-gray">
-""",
-        unsafe_allow_html=True
-    )
-
-    st.latex(texto_latex)
-
-    st.markdown(
-        """
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-# =============================================================================
-# FUNCIÓN AUXILIAR
-# Texto introductorio reutilizable
-# =============================================================================
-
-def introduccion(texto):
-
-    st.markdown(
-        f"""
-<div class="note">
-
-{textwrap.dedent(texto)}
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-
-
-
-# ENDE Hilfe 1 Homogenisierung 
 
 # ---------------------------------------------------------
 # ETAPA 2: HOMOGENEIZACIÓN
