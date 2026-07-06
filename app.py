@@ -2343,8 +2343,7 @@ experimento.
 
     if respuesta == "Una sustitución lineal":
 
-        st.success(
-            """
+        st.success("""
 ¡Correcto!
 
 Una recta conecta exactamente ambos extremos y posee la menor
@@ -2352,15 +2351,13 @@ complejidad algebraica.
 
 Por ello es la elección habitual cuando las temperaturas de
 frontera permanecen constantes.
-"""
-        )
+""")
 
     elif respuesta != "Una función cuadrática":
 
         if respuesta:
 
-            st.error(
-                """
+            st.error("""
 No es la opción más conveniente.
 
 Aunque esa sustitución podría construirse, introduciría
@@ -2369,37 +2366,32 @@ complejidad innecesaria.
 Recuerda la idea fundamental:
 
 👉 Elegimos la función más sencilla que satisfaga las condiciones
-de frontera.
-"""
-            )
+de frontera.""")
 
     else:
 
-        st.warning(
-            """
+        st.warning("""
 Una función cuadrática podría funcionar, pero normalmente no
 aportaría ninguna ventaja en este caso.
 
 La sustitución lineal sigue siendo la alternativa más simple y
 eficiente.
-"""
-        )
+""")
 
     separador()
+    
+    progreso_completado()
 
-    st.success(
-        """
+    recordatorio()
+
+    resumen_final()
+
+    mensaje_final()
+
+    reiniciar_recorrido()
+
+    st.success("""
 🎉 ¡Laboratorio completado!
-
-progreso_completado()
-
-recordatorio()
-
-resumen_final()
-
-mensaje_final()
-
-reiniciar_recorrido()
 
 Ya conoces la idea fundamental detrás de la homogeneización.
 
@@ -2408,7 +2400,7 @@ no porque sea la única posible, sino porque suele ser la más
 simple y la más eficiente para resolver problemas con
 temperaturas de frontera constantes mediante separación de
 variables.
-"""
+""")
 
 ##################################
 # CONTENIDOS
