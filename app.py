@@ -2483,9 +2483,6 @@ if st.button("Guardar Parámetros y Avanzar 🚀", type="primary"):
 
 st.divider()
 
-
-@st.dialog("📖 Profundización matemática: Homogeneización", width="large")
-
 # ---------------------------------------------------------
 # ETAPA 2: HOMOGENEIZACIÓN
 # ---------------------------------------------------------
