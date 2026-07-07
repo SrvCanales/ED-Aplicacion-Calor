@@ -244,7 +244,7 @@ height:44px;
 
 
 # ==========================================
-# CONFIGURACIÓN DE PÁGINA Y ESTILOS
+# CONFIGURACIÓN DE PÁGINA Y ESTILOS 
 # ==========================================
 st.set_page_config(page_title="Ruta de Aprendizaje: Calor 1D", layout="wide", initial_sidebar_state="expanded")
 
@@ -254,6 +254,20 @@ C_TRANS = "#D32F2F" # Rojo (Transitoria)
 C_GEN = "#7B1FA2"   # Morado (Solución General)
 C_SPACE = "#388E3C" # Verde (Espacial)
 C_TIME = "#F57C00"  # Naranjo (Temporal)
+
+# =============================================================================
+# PALETA DE COLORES
+# =============================================================================
+
+COLOR_CURVE = "#F57C00"          # Naranja principal
+COLOR_CURVE_2 = "#FB8C00"
+COLOR_BORDER = "#D84315"         # Rojo cálido
+COLOR_BG = "#FFF8F2"             # Fondo crema
+COLOR_GRID = "#EADFD3"
+COLOR_TEXT = "#3C3C3C"
+COLOR_BOX = "#FFF3E0"
+
+
 
 # ==========================================
 # GESTIÓN DEL ESTADO Y LOGICA DE FLUJO
@@ -382,156 +396,342 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
 # FUNKTIONEN
 # =============================================================================
 
+
+# =============================================================================
+# ESTILOS
+# =============================================================================
+
+def texto(txt):
+    st.markdown(
+        f"""
+<div style="
+color:{COLOR_TEXT};
+font-size:17px;
+line-height:1.8;
+text-align:justify;
+margin-top:0.3rem;
+margin-bottom:0.5rem;
+">
+{txt}
+</div>
+""",
+        unsafe_allow_html=True
+    )
+
+
+def caja_latex(expresion):
+
+    st.markdown(
+        f"""
+<div style="
+background:{COLOR_BOX};
+padding:0.55rem;
+border-left:5px solid {COLOR_CURVE};
+border-radius:10px;
+margin-top:0.4rem;
+margin-bottom:0.4rem;
+">
+""",
+        unsafe_allow_html=True
+    )
+
+    st.latex(expresion)
+
+    st.markdown(
+        "</div>",
+        unsafe_allow_html=True
+    )
+
+def aplicar_estilo(fig):
+
+    fig.update_layout(
+
+        height=340,
+
+        margin=dict(
+            l=20,
+            r=20,
+            t=20,
+            b=10
+        ),
+
+        paper_bgcolor=COLOR_BG,
+        plot_bgcolor=COLOR_BG,
+
+        font=dict(
+            family="Arial",
+            size=15,
+            color=COLOR_TEXT
+        ),
+
+        hoverlabel=dict(
+            bgcolor=COLOR_BOX,
+            font_size=15
+        ),
+
+        showlegend=False
+    )
+
+    fig.update_xaxes(
+
+        title="Posición sobre la barra",
+
+        tickmode="array",
+
+        tickvals=[0, L],
+
+        ticktext=["0", "L"],
+
+        range=[-0.3, L + 0.3],
+
+        gridcolor=COLOR_GRID,
+
+        linecolor="#7A5230",
+
+        linewidth=2,
+
+        mirror=False,
+
+        zeroline=False
+    )
+
+    fig.update_yaxes(
+
+        title="Temperatura",
+
+        gridcolor=COLOR_GRID,
+
+        linecolor="#7A5230",
+
+        linewidth=2,
+
+        zeroline=True,
+
+        zerolinecolor="#C7B6A3"
+    )
+
+    return fig
+
 def grafico_frontera_homogenea():
 
-    x = np.linspace(0, 1, 400)
-    y = np.sin(np.pi*x)
+    x = np.linspace(0, L, 500)
+
+    y = 2.8*np.sin(np.pi*x/L)
 
     fig = go.Figure()
 
     fig.add_trace(
+
         go.Scatter(
+
             x=x,
             y=y,
+
             mode="lines",
-            line=dict(width=4),
-            hovertemplate="x=%{x:.2f}<br>u=%{y:.2f}<extra></extra>",
-            name=""
+
+            line=dict(
+                color=COLOR_CURVE,
+                width=4
+            ),
+
+            hovertemplate="<b>x</b> = %{x:.2f}<br><b>u(x)</b> = %{y:.2f}<extra></extra>"
         )
     )
 
     fig.add_trace(
+
         go.Scatter(
-            x=[0,1],
-            y=[0,0],
+
+            x=[0, L],
+
+            y=[0, 0],
+
             mode="markers",
-            marker=dict(size=10),
-            showlegend=False,
-            hoverinfo="skip"
+
+            marker=dict(
+
+                color=COLOR_BORDER,
+
+                size=10,
+
+                line=dict(
+                    color="white",
+                    width=2
+                )
+            )
         )
     )
 
     fig.add_annotation(
+
         x=0,
         y=0,
-        text="u(0,t)=0",
+
+        text="<b>0°C</b>",
+
         showarrow=True,
-        yshift=22
+
+        yshift=22,
+
+        font=dict(color=COLOR_BORDER)
     )
 
     fig.add_annotation(
-        x=1,
+
+        x=L,
         y=0,
-        text="u(L,t)=0",
+
+        text="<b>0°C</b>",
+
         showarrow=True,
-        yshift=22
+
+        yshift=22,
+
+        font=dict(color=COLOR_BORDER)
     )
 
-    fig.update_layout(
+    fig.add_shape(
 
-        height=320,
+        type="line",
 
-        margin=dict(l=20,r=20,t=25,b=20),
+        x0=0,
+        x1=L,
 
-        xaxis=dict(
+        y0=-3.6,
+        y1=-3.6,
 
-            title="Posición x",
-
-            range=[-0.05,1.05],
-
-            zeroline=False,
-
-            showgrid=False
-        ),
-
-        yaxis=dict(
-
-            title="Temperatura",
-
-            zeroline=True,
-
-            showgrid=True
+        line=dict(
+            color="#B77B40",
+            width=9
         )
     )
 
-    return fig
+    fig.add_annotation(
+
+        x=L/2,
+
+        y=-4.1,
+
+        text="<b>Barra</b>",
+
+        showarrow=False,
+
+        font=dict(color="#7A5230")
+    )
+
+    return aplicar_estilo(fig)
 
 
 def grafico_frontera_no_homogenea():
 
-    x = np.linspace(0,1,400)
+    x = np.linspace(0, L, 500)
 
-    y = 20 + 55*x + 8*np.sin(np.pi*x)
+    y = 20 + (75-20)*x/L + 6*np.sin(np.pi*x/L)
 
     fig = go.Figure()
 
     fig.add_trace(
+
         go.Scatter(
+
             x=x,
             y=y,
+
             mode="lines",
-            line=dict(width=4),
-            hovertemplate="x=%{x:.2f}<br>u=%{y:.2f}<extra></extra>",
-            name=""
+
+            line=dict(
+
+                color=COLOR_CURVE,
+
+                width=4
+            ),
+
+            hovertemplate="<b>x</b> = %{x:.2f}<br><b>u(x)</b> = %{y:.2f}<extra></extra>"
         )
     )
 
     fig.add_trace(
+
         go.Scatter(
-            x=[0,1],
-            y=[20,75],
+
+            x=[0, L],
+
+            y=[20, 75],
+
             mode="markers",
-            marker=dict(size=10),
-            showlegend=False,
-            hoverinfo="skip"
+
+            marker=dict(
+
+                color=COLOR_BORDER,
+
+                size=10,
+
+                line=dict(
+                    color="white",
+                    width=2
+                )
+            )
         )
     )
 
     fig.add_annotation(
+
         x=0,
         y=20,
-        text="20°C",
+
+        text="<b>20°C</b>",
+
         showarrow=True,
-        yshift=22
+
+        yshift=22,
+
+        font=dict(color=COLOR_BORDER)
     )
 
     fig.add_annotation(
-        x=1,
+
+        x=L,
         y=75,
-        text="75°C",
+
+        text="<b>75°C</b>",
+
         showarrow=True,
-        yshift=22
+
+        yshift=22,
+
+        font=dict(color=COLOR_BORDER)
     )
 
-    fig.update_layout(
+    fig.add_shape(
 
-        height=320,
+        type="line",
 
-        margin=dict(l=20,r=20,t=25,b=20),
+        x0=0,
+        x1=L,
 
-        xaxis=dict(
+        y0=-8,
+        y1=-8,
 
-            title="Posición x",
-
-            range=[-0.05,1.05],
-
-            zeroline=False,
-
-            showgrid=False
-        ),
-
-        yaxis=dict(
-
-            title="Temperatura",
-
-            zeroline=True,
-
-            showgrid=True
+        line=dict(
+            color="#B77B40",
+            width=9
         )
     )
 
-    return fig
+    fig.add_annotation(
 
+        x=L/2,
+
+        y=-13,
+
+        text="<b>Barra</b>",
+
+        showarrow=False,
+
+        font=dict(color="#7A5230")
+    )
+
+    return aplicar_estilo(fig)
 
 def barra_progreso(): #Progreso homogenización
 
@@ -1143,17 +1343,20 @@ frontera) y concentramos el esfuerzo matemático únicamente en la
 parte realmente desconocida del problema.
 """)
 
-def slide_1(): 
+def slide_1():
 
     encabezado_slide(
-        1,
-        "¿Por qué debemos homogeneizar?",
-        """
-Antes de introducir una sustitución es importante entender
-qué problema estamos intentando resolver.
 
-La homogeneización no es un truco algebraico: aparece porque
-la separación de variables necesita un tipo muy particular
+        1,
+
+        "¿Por qué debemos homogeneizar?",
+
+        """
+Antes de introducir una sustitución es importante comprender qué
+problema estamos intentando resolver.
+
+La homogeneización no es un truco algebraico; aparece porque el
+método de separación de variables requiere un tipo muy particular
 de condiciones de frontera.
 """
     )
@@ -1162,65 +1365,53 @@ de condiciones de frontera.
 
     with c1:
 
-        st.markdown("### ✅ Fronteras homogéneas")
+        st.markdown("### 🔥 Fronteras homogéneas")
 
         st.plotly_chart(
             grafico_frontera_homogenea(),
             use_container_width=True
         )
 
-        st.markdown(
-            """
-Una frontera homogénea significa que la solución
-vale exactamente cero en ambos extremos.
-"""
-        )
-
-        st.latex(r"""
-u(0,t)=0
+        texto("""
+Una frontera homogénea significa que la temperatura vale
+exactamente cero en ambos extremos de la barra.
 """)
 
-        st.latex(r"""
-u(L,t)=0
-""")
+        caja_latex(r"u(0,t)=0")
+
+        caja_latex(r"u(L,t)=0")
 
     with c2:
 
-        st.markdown("### ⚠️ Fronteras no homogéneas")
+        st.markdown("### 🌡️ Fronteras no homogéneas")
 
         st.plotly_chart(
             grafico_frontera_no_homogenea(),
             use_container_width=True
         )
 
-        st.markdown(
-            """
-En muchos problemas físicos aparecen temperaturas
-impuestas en los extremos.
-"""
-        )
-
-        st.latex(r"""
-u(0,t)=T_1
+        texto("""
+En muchos problemas físicos los extremos permanecen a
+temperaturas constantes distintas de cero.
 """)
 
-        st.latex(r"""
-u(L,t)=T_2
-""")
+        caja_latex(r"u(0,t)=T_1")
 
-        st.latex(r"""
-T_1\neq0,\qquad T_2\neq0
-""")
+        caja_latex(r"u(L,t)=T_2")
+
+        caja_latex(r"T_1\neq0,\qquad T_2\neq0")
 
     separador()
 
     tarjeta(
+
         "¿Por qué esto representa un inconveniente?",
+
         """
 El método de separación de variables construye la solución
 como combinación de autofunciones.
 
-Estas autofunciones deben satisfacer exactamente las mismas
+Estas funciones deben satisfacer exactamente las mismas
 condiciones de frontera que la incógnita.
 
 Cuando las fronteras son homogéneas aparecen familias muy
@@ -1228,79 +1419,66 @@ simples de funciones (senos, cosenos, funciones hiperbólicas,
 etc.) que forman una base del espacio solución.
 
 Si las fronteras no son homogéneas, esas funciones dejan de
-cumplir las condiciones exigidas y el procedimiento deja de
+cumplir las condiciones requeridas y el procedimiento deja de
 funcionar directamente.
 """,
+
         "red"
     )
 
     st.markdown("### ¿Qué ocurre matemáticamente?")
 
-    st.markdown(
-        """
-Supongamos que intentamos escribir la solución como
-"""
-    )
+    texto("Supongamos que intentamos escribir la solución como")
 
-    st.latex(r"u(x,t)=X(x)\,T(t)")
+    caja_latex(r"u(x,t)=X(x)\,T(t)")
 
-    st.markdown(
-        """
-Al imponer fronteras homogéneas obtenemos
-"""
-    )
+    texto("Si las fronteras son homogéneas obtenemos")
 
-    st.latex(r"""
-X(0)=0,\qquad X(L)=0
-""")
+    caja_latex(r"X(0)=0,\qquad X(L)=0")
 
-    st.markdown(
-        """
-que son precisamente las condiciones del problema de autovalores.
+    texto("""
+Estas son precisamente las condiciones del problema de
+autovalores.
 
 Gracias a ello aparecen las autofunciones que utilizaremos
-para construir la solución.
-
-Si, en cambio,
-"""
-    )
-
-    st.latex(r"""
-u(0,t)=20,\qquad
-u(L,t)=75
+posteriormente para construir la solución.
 """)
 
-    st.markdown(
-        """
-la función espacial ya no puede satisfacer simultáneamente
-esas condiciones mediante una separación del tipo
-"""
-    )
+    texto("Si en cambio imponemos")
 
-    st.latex(r"u=X(x)T(t)")
+    caja_latex(r"u(0,t)=20,\qquad u(L,t)=75")
 
-    st.markdown(
-        """
-Por eso primero debemos transformar el problema.
-"""
-    )
+    texto("la separación")
+
+    caja_latex(r"u(x,t)=X(x)T(t)")
+
+    texto("""
+ya no puede satisfacer simultáneamente ambas condiciones
+para todo tiempo.
+
+Por ello primero transformamos el problema mediante la
+homogeneización.
+""")
 
     separador()
 
     tarjeta(
+
         "Interpretación física",
+
         """
-Imagina una barra cuyos extremos están permanentemente
-mantenidos a temperaturas fijas.
+Imagina una barra cuyos extremos permanecen a temperaturas
+fijas.
 
-La mayor parte del comportamiento corresponde simplemente
-a conectar esas temperaturas.
+Una parte de la distribución de temperatura simplemente conecta
+ambos extremos.
 
-Lo verdaderamente interesante es estudiar cómo evoluciona
-la temperatura alrededor de ese estado impuesto.
+Lo realmente interesante es estudiar cómo evoluciona la
+temperatura alrededor de ese estado impuesto.
 
 La homogeneización separa ambas contribuciones.
 """,
+
         "blue"
     )
 
@@ -1308,15 +1486,83 @@ La homogeneización separa ambas contribuciones.
         """
 No modificamos la física del problema.
 
-Únicamente cambiamos la función que vamos a resolver para
-que sus extremos sean cero.
+Únicamente cambiamos la función que vamos a resolver para que
+sus extremos sean cero.
 
-Gracias a ello podremos desarrollar posteriormente la
-solución como una serie de autofunciones.
+Gracias a ello podremos expresar posteriormente la solución
+como una serie de autofunciones.
 """
     )
 
     separador()
+
+    duda(
+        "¿Qué significa realmente que una frontera sea homogénea?",
+        r"""
+Una condición de frontera es homogénea cuando el valor
+impuesto sobre la incógnita es exactamente cero.
+
+No importa si la solución toma valores distintos de cero
+en el interior del dominio.
+
+Lo único que exige la frontera homogénea es que la función
+coincida con cero únicamente en los extremos.
+"""
+    )
+
+    duda(
+        "¿Por qué el cero es tan especial?",
+        r"""
+No existe nada físicamente especial en el número cero.
+
+Lo importante es que las condiciones homogéneas permiten
+construir un problema de autovalores sencillo.
+
+Las funciones
+
+\[
+\sin\!\left(\frac{n\pi x}{L}\right)
+\]
+
+satisfacen automáticamente
+
+\[
+X(0)=X(L)=0.
+\]
+
+Eso las convierte en una base natural para representar
+la solución.
+"""
+    )
+
+    duda(
+        "¿No sería posible resolver directamente el problema original?",
+        r"""
+Sí.
+
+Existen métodos para trabajar directamente con condiciones
+de frontera no homogéneas.
+
+Sin embargo, el desarrollo suele ser bastante más largo.
+
+La homogeneización transforma el problema en otro equivalente
+cuya resolución mediante separación de variables resulta
+mucho más sencilla.
+"""
+    )
+
+    duda(
+        "¿La solución cambia después de homogeneizar?",
+        r"""
+No.
+
+La temperatura física sigue siendo exactamente la misma.
+
+Únicamente cambia la forma de representarla matemáticamente.
+
+Al final del procedimiento recuperaremos la solución original.
+"""
+    )
 
     # -------------------------------------------------------------------------
     # Dudas frecuentes
