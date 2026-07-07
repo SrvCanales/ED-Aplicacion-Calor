@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application
 import streamlit.components.v1 as components 
 import textwrap
+import plotly.graph_objects as go
 
 # TODO AYUDA PARTE HOMOGENIZACION -------------------------------
 
