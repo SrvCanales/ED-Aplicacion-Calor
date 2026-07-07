@@ -1499,6 +1499,16 @@ como una serie de autofunciones.
     )
 
     separador()
+    
+st.markdown("Hola")
+
+st.latex(r"x^2")
+
+st.markdown("Adiós") 
+
+############################
+## DUDAS
+############################
 
     duda(
         "¿Qué significa realmente que una frontera sea homogénea?",
