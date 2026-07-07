@@ -1499,20 +1499,20 @@ como una serie de autofunciones.
     )
 
     separador()
-    
-st.markdown("Hola")
 
-st.latex(r"x^2")
+    st.markdown("Hola")
 
-st.markdown("Adiós") 
+    st.latex(r"x^2")
 
-separador()
+    st.markdown("Adiós") 
+
+    separador()
     
 ############################
 ## DUDAS
 ############################
 
-duda(
+    duda(
         "¿Qué significa realmente que una frontera sea homogénea?",
         r"""
 Una condición de frontera es homogénea cuando el valor
@@ -1526,7 +1526,7 @@ coincida con cero únicamente en los extremos.
 """
     )
 
-duda(
+    duda(
         "¿Por qué el cero es tan especial?",
         r"""
 No existe nada físicamente especial en el número cero.
@@ -1551,7 +1551,7 @@ la solución.
 """
     )
 
-duda(
+    duda(
         "¿No sería posible resolver directamente el problema original?",
         r"""
 Sí.
@@ -1567,7 +1567,7 @@ mucho más sencilla.
 """
     )
 
-duda(
+    duda(
         "¿La solución cambia después de homogeneizar?",
         r"""
 No.
