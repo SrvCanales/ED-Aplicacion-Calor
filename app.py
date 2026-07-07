@@ -2061,53 +2061,50 @@ modificaciones.
 """
     )
 
+# =============================================================================
+# SLIDE 3 - LABORATORIO DE SUSTITUCIONES
+# (Reemplaza el comienzo de slide_3() hasta antes del bloque
+# elif tipo=="Dependiente del tiempo")
+# =============================================================================
+
 def slide_3():
 
     encabezado_slide(
         3,
         "Laboratorio de sustituciones",
         """
-No existe una única sustitución posible.
+Hasta ahora hemos utilizado una sustitución lineal.
 
-En este laboratorio puedes explorar distintas funciones que
-homogeneizan las condiciones de frontera y comparar cómo afectan
-la ecuación diferencial.
+Sin embargo, no es la única posibilidad.
 
-Observa que todas cumplen el mismo objetivo, pero no todas son
-igual de convenientes.
+En esta sección exploraremos brevemente otras alternativas para
+comprender que existen muchas funciones capaces de homogeneizar
+las condiciones de frontera, aunque para este curso trabajaremos
+casi siempre con la opción más sencilla.
 """
     )
 
-    # -------------------------------------------------------------------------
-    # Introducción
-    # -------------------------------------------------------------------------
+    # =========================================================================
+    # INTRODUCCIÓN
+    # =========================================================================
 
     tarjeta(
-        "Explora diferentes sustituciones",
+        "🔥 Una misma idea, distintas funciones",
         """
-Selecciona una sustitución y observa cómo cambia:
+El objetivo de una sustitución siempre es el mismo:
 
-• su forma geométrica,
+transformar el problema original en otro equivalente con
+condiciones de frontera homogéneas.
 
-• la expresión matemática,
+Existen muchas funciones capaces de lograrlo.
 
-• cuándo conviene utilizarla,
-
-• qué ventajas posee,
-
-• qué dificultades introduce.
-
-El objetivo no es memorizar fórmulas, sino desarrollar criterio
-para escoger una buena sustitución.
+En este curso nos centraremos principalmente en la sustitución
+lineal, ya que suele ser la alternativa más simple y eficiente.
 """,
         "green"
     )
 
-    st.divider()
-
-    # -------------------------------------------------------------------------
-    # Selector
-    # -------------------------------------------------------------------------
+    separador()
 
     try:
 
@@ -2135,151 +2132,194 @@ para escoger una buena sustitución.
             horizontal=True
         )
 
-    st.divider()
+    separador()
 
     # =========================================================================
-    # CASO 1
+    # LINEAL
     # =========================================================================
 
     if tipo == "Lineal":
 
-        st.subheader("Sustitución lineal")
+        st.markdown("## 🔥 Sustitución lineal")
 
-        st.caption(
-            "La opción utilizada prácticamente en todos los cursos "
-            "introductorios."
-        )
+        texto("""
+La sustitución lineal es la que utilizaremos durante todo el curso.
 
-        col1, col2 = st.columns([1.2,1])
+Conecta las temperaturas impuestas en ambos extremos mediante
+la función más sencilla posible.
+""")
 
-        # ---------------------------------------------------------------------
+        col1, col2 = st.columns([1.3,1])
 
         with col1:
 
-            svg_lineal()
+            T1 = 20
+            T2 = 75
 
-        # ---------------------------------------------------------------------
+            x = np.linspace(0, L, 400)
+
+            y = T1 + (T2-T1)*x/L
+
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    line=dict(
+                        color=COLOR_CURVE,
+                        width=4
+                    ),
+                    hovertemplate=
+                    "<b>x</b> = %{x:.2f}"
+                    "<br><b>w(x)</b> = %{y:.2f} °C"
+                    "<extra></extra>"
+                )
+            )
+
+            fig.add_trace(
+                go.Scatter(
+                    x=[0,L],
+                    y=[T1,T2],
+                    mode="markers",
+                    marker=dict(
+                        color=COLOR_BORDER,
+                        size=11,
+                        line=dict(
+                            color="white",
+                            width=2
+                        )
+                    )
+                )
+            )
+
+            fig.add_annotation(
+                x=0,
+                y=T1,
+                text="<b>T₁</b>",
+                showarrow=True,
+                yshift=18,
+                font=dict(color=COLOR_BORDER)
+            )
+
+            fig.add_annotation(
+                x=L,
+                y=T2,
+                text="<b>T₂</b>",
+                showarrow=True,
+                yshift=18,
+                font=dict(color=COLOR_BORDER)
+            )
+
+            fig.add_shape(
+                type="line",
+                x0=0,
+                x1=L,
+                y0=0,
+                y1=0,
+                line=dict(
+                    color="#B77B40",
+                    width=9
+                )
+            )
+
+            fig.add_annotation(
+                x=L/2,
+                y=-6,
+                text="<b>Barra</b>",
+                showarrow=False,
+                font=dict(
+                    color="#7A5230",
+                    size=14
+                )
+            )
+
+            fig.update_yaxes(range=[0,85])
+
+            st.plotly_chart(
+                aplicar_estilo(fig),
+                use_container_width=True
+            )
 
         with col2:
 
-            st.latex(r"""
+            bloque_latex(
+                "Sustitución utilizada",
+                r"""
 w(x)=
 T_1+
 \frac{T_2-T_1}{L}x
-""")
+"""
+            )
 
-            st.markdown("""
-Esta función simplemente une mediante una recta las dos
-temperaturas impuestas en los extremos.
-""")
-
-        st.divider()
-
-        # ---------------------------------------------------------------------
-        # Interpretación
-        # ---------------------------------------------------------------------
-
-        tarjeta(
-            "Interpretación geométrica",
-            """
-La recta representa el perfil más simple capaz de conectar ambas
-temperaturas.
+            texto("""
+La recta conecta exactamente ambas temperaturas.
 
 No intenta resolver la ecuación diferencial.
 
-Únicamente satisface exactamente las condiciones de frontera.
+Su única misión consiste en satisfacer
+las condiciones de frontera.
+""")
 
-Después de restarla, la nueva incógnita será cero en ambos
-extremos.
+        separador()
+
+        tarjeta(
+            "🌡️ Interpretación",
+            """
+La función w representa el perfil estacionario más sencillo
+compatible con las temperaturas impuestas.
+
+Después de restarla a la temperatura original,
+la nueva incógnita será cero en ambos extremos.
+
+Gracias a ello podremos aplicar separación de variables.
 """,
             "blue"
         )
 
-        # ---------------------------------------------------------------------
-        # Ficha técnica
-        # ---------------------------------------------------------------------
+        separador()
 
-        st.markdown("### Ficha técnica")
+        st.markdown("### 📋 Resumen")
 
         c1,c2,c3,c4 = st.columns(4)
 
         with c1:
-
             st.metric(
                 "Complejidad",
                 "⭐"
             )
 
         with c2:
-
             st.metric(
-                "Nuevos términos",
-                "Muy pocos"
+                "Uso",
+                "Curso"
             )
 
         with c3:
-
             st.metric(
-                "Uso",
-                "Muy frecuente"
+                "Álgebra",
+                "Muy simple"
             )
 
         with c4:
-
             st.metric(
                 "Recomendada",
-                "✔ Sí"
+                "✅ Sí"
             )
 
-        st.progress(0.20)
+        st.progress(.18)
 
-        st.caption("Complejidad matemática aproximada")
-
-        st.divider()
-
-        # ---------------------------------------------------------------------
-        # Ventajas / Desventajas
-        # ---------------------------------------------------------------------
-
-        col1,col2 = st.columns(2)
-
-        with col1:
-
-            st.success("### Ventajas")
-
-            st.markdown("""
-- Es extremadamente sencilla.
-
-- Se obtiene de inmediato.
-
-- Apenas modifica la EDP.
-
-- Facilita los cálculos posteriores.
-
-- Es la elección natural cuando las fronteras son constantes.
+        texto("""
+Es la elección más sencilla cuando las temperaturas
+de los extremos permanecen constantes.
 """)
 
-        with col2:
-
-            st.warning("### Limitaciones")
-
-            st.markdown("""
-- Solo resulta adecuada cuando una recta describe correctamente
-las condiciones de frontera.
-
-- Si las fronteras cambian con el tiempo o poseen otra forma,
-será necesario utilizar otra función.
-""")
-
-        st.divider()
-
-        # ---------------------------------------------------------------------
-        # Conclusión dinámica
-        # ---------------------------------------------------------------------
+        separador()
 
         idea_clave(
 r"""
-Cuando las temperaturas de los extremos permanecen constantes,
+Cuando
 
 \[
 u(0,t)=T_1,
@@ -2287,586 +2327,345 @@ u(0,t)=T_1,
 u(L,t)=T_2,
 \]
 
-la sustitución lineal suele ser la mejor elección posible.
+permanecen constantes, una recta ya satisface exactamente
+las condiciones de frontera.
 
-No existe una función más sencilla que satisfaga simultáneamente
-ambas condiciones de frontera.
+No necesitamos una función más complicada.
 """
         )
-
-        # ---------------------------------------------------------------------
-        # Duda asociada
-        # ---------------------------------------------------------------------
 
         duda(
-            "¿Por qué una recta y no otra función?",
+            "¿Por qué elegir precisamente una recta?",
             r"""
-Porque buscamos la sustitución más sencilla posible.
+Porque buscamos la función más sencilla capaz de cumplir
+el objetivo.
 
-Una recta conecta exactamente los dos extremos y además verifica
+Además,
 
 \[
-w''(x)=0.
+w''(x)=0,
 \]
 
-Gracias a ello aparecen muy pocos términos nuevos al sustituirla
-en la ecuación diferencial.
+por lo que la ecuación diferencial apenas se modifica.
 
-En matemáticas normalmente preferimos la solución más simple que
-resuelva completamente el problema.
+En Matemáticas suele ser preferible la solución más simple
+que resuelva completamente el problema.
 """
         )
 
-# =============================================================================
-# PARTE 5.2/6
-# Laboratorio interactivo
-# Casos:
-#   • Dependiente del tiempo
-#   • Cuadrática
-#
-# (Debe colocarse inmediatamente después del bloque
-#  if tipo=="Lineal": de la Parte 5.1)
+        # =============================================================================
+# CASOS: Dependiente del tiempo + Cuadrática + Trigonométrica
+# (Reemplaza los bloques elif originales)
 # =============================================================================
 
-    # ========================================================================
-    # CASO 2
-    # ========================================================================
+    # =========================================================================
+    # DEPENDIENTE DEL TIEMPO
+    # =========================================================================
 
     elif tipo == "Dependiente del tiempo":
 
-        st.subheader("Sustitución dependiente del tiempo")
-
-        st.caption(
-            "Las temperaturas de los extremos ya no permanecen constantes."
-        )
-
-        col1, col2 = st.columns([1.2,1])
-
-        with col1:
-
-            svg_dependiente_t()
-
-        with col2:
-
-            st.latex(r"""
-w(x,t)=
-10e^{-t}
-+
-\frac{30e^{-t}}{L}x
-""")
-
-            st.markdown("""
-La función sigue siendo una recta respecto a la variable espacial,
-pero ahora cambia continuamente con el tiempo.
-
-En cada instante conecta exactamente las temperaturas impuestas en
-los extremos.
-""")
-
-        st.divider()
+        st.markdown("## ⏳ Sustitución dependiente del tiempo")
 
         tarjeta(
-            "¿Qué está ocurriendo?",
+            "Más allá del caso básico",
             """
-Imagina que ambos extremos de la barra se enfrían
-progresivamente.
+La idea de la homogeneización no cambia.
 
-La recta también debe modificar su pendiente con el tiempo para
-continuar uniendo ambos extremos.
+La diferencia es que ahora las temperaturas impuestas en los
+extremos también evolucionan con el tiempo.
 
-La idea de la homogeneización no cambia; únicamente cambia la
-función utilizada.
+La función w debe adaptarse continuamente para seguir
+satisfaciendo las condiciones de frontera.
 """,
             "blue"
         )
 
-        st.markdown("### Ficha técnica")
-
-        c1,c2,c3,c4=st.columns(4)
-
-        with c1:
-            st.metric("Complejidad","⭐⭐")
-
-        with c2:
-            st.metric("Nuevos términos","Algunos")
-
-        with c3:
-            st.metric("Uso","Poco frecuente")
-
-        with c4:
-            st.metric("¿Recomendada?","Depende")
-
-        st.progress(.40)
-
-        st.caption("Complejidad matemática aproximada")
-
-        st.divider()
-
-        c1,c2=st.columns(2)
-
-        with c1:
-
-            st.success("### Ventajas")
-
-            st.markdown("""
-- Permite modelar fronteras que evolucionan con el tiempo.
-
-- Conserva exactamente las condiciones de frontera.
-
-- La interpretación física continúa siendo muy clara.
-
-- Sigue siendo relativamente sencilla.
-""")
-
-        with c2:
-
-            st.warning("### Desventajas")
-
-            st.markdown("""
-- Ahora aparecen derivadas temporales de la sustitución.
-
-- La EDP contiene algunos términos adicionales.
-
-- El desarrollo algebraico es más largo.
-""")
-
-        idea_clave(r"""
-La estrategia sigue siendo exactamente la misma.
-
-Únicamente cambia la función elegida para satisfacer las
-condiciones de frontera.
-""")
-
-        duda(
-            "¿Por qué ahora la ecuación diferencial cambia más?",
-            r"""
-Antes,
-
-\[
-w=w(x),
-\]
-
-por lo que únicamente aparecían derivadas respecto de la variable
-espacial.
-
-Ahora,
-
-\[
-w=w(x,t),
-\]
-
-por lo que también aparece
-
-\[
-\frac{\partial w}{\partial t},
-\]
-
-introduciendo nuevos términos en la ecuación.
-"""
-        )
-
-    # ========================================================================
-    # CASO 3
-    # ========================================================================
-
-    elif tipo=="Cuadrática":
-
-        st.subheader("Sustitución cuadrática")
-
-        st.caption(
-            "Una elección muy útil cuando deseamos simplificar el término fuente."
-        )
-
-        col1,col2=st.columns([1.2,1])
+        col1, col2 = st.columns([1.3,1])
 
         with col1:
 
-            svg_cuadratica()
+            x = np.linspace(0, L, 400)
+
+            T1 = 10
+            T2 = 40
+
+            y = T1 + (T2-T1)*x/L
+
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    line=dict(
+                        color=COLOR_CURVE,
+                        width=4,
+                        dash="dash"
+                    ),
+                    hovertemplate=
+                    "<b>x</b> = %{x:.2f}"
+                    "<br><b>w(x,t)</b> = %{y:.2f}"
+                    "<extra></extra>"
+                )
+            )
+
+            fig.add_shape(
+                type="line",
+                x0=0,
+                x1=L,
+                y0=0,
+                y1=0,
+                line=dict(
+                    color="#B77B40",
+                    width=9
+                )
+            )
+
+            fig.update_yaxes(range=[0,50])
+
+            st.plotly_chart(
+                aplicar_estilo(fig),
+                use_container_width=True
+            )
 
         with col2:
 
-            st.latex(r"""
-w(x)=
+            bloque_latex(
+                "Ejemplo",
+                r"""
+w(x,t)
+=
+10e^{-t}
++
+\frac{30e^{-t}}{L}x
+"""
+            )
+
+            texto("""
+La función sigue siendo lineal respecto a x,
+pero ahora cambia con el tiempo.
+
+En cada instante conecta correctamente
+las temperaturas impuestas.
+""")
+
+        idea_clave(
+r"""
+La estrategia es exactamente la misma.
+
+Simplemente permitimos que la función utilizada para
+homogeneizar también dependa del tiempo.
+"""
+        )
+
+        st.info("""
+💡 Este tipo de sustituciones aparece cuando las temperaturas
+de frontera ya no permanecen constantes.
+""")
+
+        separador()
+
+    # =========================================================================
+    # CUADRÁTICA
+    # =========================================================================
+
+    elif tipo == "Cuadrática":
+
+        st.markdown("## 📈 Sustitución cuadrática")
+
+        col1, col2 = st.columns([1.3,1])
+
+        with col1:
+
+            x = np.linspace(0, L, 400)
+
+            y = 20 + 55*(x/L) + 12*(x/L)*(1-x/L)
+
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    line=dict(
+                        color=COLOR_CURVE,
+                        width=4
+                    ),
+                    hovertemplate=
+                    "<b>x</b> = %{x:.2f}"
+                    "<br><b>w(x)</b> = %{y:.2f}"
+                    "<extra></extra>"
+                )
+            )
+
+            fig.add_shape(
+                type="line",
+                x0=0,
+                x1=L,
+                y0=0,
+                y1=0,
+                line=dict(
+                    color="#B77B40",
+                    width=9
+                )
+            )
+
+            fig.update_yaxes(range=[0,90])
+
+            st.plotly_chart(
+                aplicar_estilo(fig),
+                use_container_width=True
+            )
+
+        with col2:
+
+            bloque_latex(
+                "Ejemplo",
+                r"""
+w(x)
+=
 Ax^2+Bx+C
+"""
+            )
+
+            texto("""
+La función ya no es una recta.
+
+Ahora posee curvatura, lo que modifica
+sus derivadas espaciales.
 """)
-
-            st.markdown("""
-La sustitución ya no es una recta.
-
-Ahora posee curvatura, lo que modifica de forma importante la
-segunda derivada espacial.
-""")
-
-        st.divider()
 
         tarjeta(
-            "¿Por qué alguien escogería una parábola?",
+            "¿Por qué alguien usaría una parábola?",
             """
-Porque en muchos problemas aparece un término fuente constante.
+En algunos problemas especiales puede resultar útil para
+simplificar ciertos términos de la ecuación diferencial.
 
-Como
-
-w''(x)=2A,
-
-podemos escoger el valor de A para cancelar completamente dicho
-término.
-
-En algunos problemas avanzados esta idea reduce notablemente el
-trabajo posterior.
+Sin embargo, para los problemas introductorios de este curso
+normalmente no ofrece ventajas importantes frente a una recta.
 """,
             "green"
         )
 
-        st.markdown("### Ficha técnica")
+        idea_clave(
+r"""
+Una parábola también puede homogeneizar el problema.
 
-        c1,c2,c3,c4=st.columns(4)
-
-        with c1:
-            st.metric("Complejidad","⭐⭐⭐")
-
-        with c2:
-            st.metric("Nuevos términos","Moderados")
-
-        with c3:
-            st.metric("Uso","Ocasional")
-
-        with c4:
-            st.metric("¿Recomendada?","Casos especiales")
-
-        st.progress(.65)
-
-        st.caption("Complejidad matemática aproximada")
-
-        st.divider()
-
-        c1,c2=st.columns(2)
-
-        with c1:
-
-            st.success("### Ventajas")
-
-            st.markdown("""
-- Puede eliminar completamente un término fuente.
-
-- Aprovecha información conocida del problema.
-
-- Reduce el trabajo en algunos desarrollos.
-""")
-
-        with c2:
-
-            st.warning("### Desventajas")
-
-            st.markdown("""
-- Produce una EDP más larga.
-
-- La interpretación deja de ser tan inmediata.
-
-- No aporta ventajas cuando las fronteras son simplemente
-constantes.
-""")
-
-        idea_clave(r"""
-La sustitución no tiene por qué ser lineal.
-
-Podemos elegir cualquier función cuya forma haga más sencillo el
-problema completo.
-""")
-
-        duda(
-            "¿Entonces por qué casi nunca aparece en cursos básicos?",
-            r"""
-Porque normalmente las condiciones de frontera únicamente fijan dos
-temperaturas constantes.
-
-En esa situación una recta ya satisface perfectamente el problema.
-
-Una parábola únicamente introduce trabajo adicional sin aportar
-ningún beneficio importante.
+Sin embargo, si una recta ya funciona correctamente,
+normalmente preferimos la opción más simple.
 """
         )
 
-# =============================================================================
-# PARTE 5.3/6
-# Laboratorio interactivo
-# Caso:
-#   • Trigonométrica
-# + Conclusión general
-# + Mini desafío interactivo
-#
-# (Debe colocarse inmediatamente después del bloque
-#  elif tipo=="Cuadrática": de la Parte 5.2)
-# =============================================================================
+        st.warning("""
+⚠️ En cursos básicos rara vez necesitaremos este tipo de
+sustituciones.
+""")
 
-    # ========================================================================
-    # CASO 4
-    # ========================================================================
+        separador()
+
+    # =========================================================================
+    # TRIGONOMÉTRICA
+    # =========================================================================
 
     elif tipo == "Trigonométrica":
 
-        st.subheader("Sustitución trigonométrica")
+        st.markdown("## 🌊 Sustitución trigonométrica")
 
-        st.caption(
-            "Una elección útil cuando la física del problema presenta un "
-            "comportamiento periódico."
-        )
-
-        col1, col2 = st.columns([1.2,1])
+        col1, col2 = st.columns([1.3,1])
 
         with col1:
 
-            svg_trigonometrica()
+            x = np.linspace(0, L, 500)
+
+            y = 20 + 55*x/L + 10*np.sin(np.pi*x/L)
+
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    line=dict(
+                        color=COLOR_CURVE,
+                        width=4
+                    ),
+                    hovertemplate=
+                    "<b>x</b> = %{x:.2f}"
+                    "<br><b>w(x)</b> = %{y:.2f}"
+                    "<extra></extra>"
+                )
+            )
+
+            fig.add_shape(
+                type="line",
+                x0=0,
+                x1=L,
+                y0=0,
+                y1=0,
+                line=dict(
+                    color="#B77B40",
+                    width=9
+                )
+            )
+
+            fig.update_yaxes(range=[0,90])
+
+            st.plotly_chart(
+                aplicar_estilo(fig),
+                use_container_width=True
+            )
 
         with col2:
 
-            st.latex(r"""
-w(x)=
-A\sin\!\left(\frac{\pi x}{L}\right)+B
+            bloque_latex(
+                "Ejemplo",
+                r"""
+w(x)
+=
+A\sin\!\left(
+\frac{\pi x}{L}
+\right)+B
+"""
+            )
+
+            texto("""
+Este tipo de funciones aparece cuando la física
+del problema presenta comportamientos periódicos
+u oscilatorios.
 """)
-
-            st.markdown("""
-La sustitución ya no conecta los extremos mediante una recta,
-sino mediante una curva senoidal.
-
-Este tipo de funciones suele aparecer cuando existe información
-física adicional que justifica una geometría periódica.
-""")
-
-        st.divider()
 
         tarjeta(
-            "¿Cuándo podría ser útil?",
+            "Una posibilidad más",
             """
-Si conocemos que el perfil estacionario posee un comportamiento
-oscilatorio o periódico, una función trigonométrica puede ser una
-excelente elección.
+Las funciones trigonométricas también pueden utilizarse
+para construir sustituciones válidas.
 
-En estos casos la sustitución aprovecha directamente la estructura
-física del problema en lugar de imponer una recta.
+Sin embargo, suelen generar desarrollos algebraicos más
+largos y rara vez son necesarias en una primera introducción
+a la ecuación de calor.
 """,
             "yellow"
         )
 
-        st.markdown("### Ficha técnica")
+        idea_clave(
+r"""
+La mejor sustitución no es la más sofisticada.
 
-        c1, c2, c3, c4 = st.columns(4)
-
-        with c1:
-            st.metric("Complejidad", "⭐⭐⭐⭐")
-
-        with c2:
-            st.metric("Nuevos términos", "Muchos")
-
-        with c3:
-            st.metric("Uso", "Muy específico")
-
-        with c4:
-            st.metric("¿Recomendada?", "Solo casos particulares")
-
-        st.progress(0.90)
-
-        st.caption("Complejidad matemática aproximada")
-
-        st.divider()
-
-        c1, c2 = st.columns(2)
-
-        with c1:
-
-            st.success("### Ventajas")
-
-            st.markdown("""
-- Puede representar perfiles físicos muy realistas.
-
-- Aprovecha información adicional del problema.
-
-- En algunos modelos simplifica notablemente el desarrollo.
-
-- Se adapta naturalmente a fenómenos periódicos.
-""")
-
-        with c2:
-
-            st.warning("### Desventajas")
-
-            st.markdown("""
-- Introduce muchas derivadas adicionales.
-
-- El álgebra se vuelve considerablemente más extensa.
-
-- Normalmente no aporta ventajas cuando las fronteras son
-constantes.
-
-- No suele ser apropiada en un primer curso de EDP.
-""")
-
-        idea_clave(r"""
-Las funciones trigonométricas son herramientas muy potentes,
-pero únicamente conviene utilizarlas cuando realmente reflejan la
-estructura física del problema.
-""")
-
-        duda(
-            "¿Por qué no utilizar siempre funciones seno o coseno?",
-            r"""
-Porque una buena sustitución no es la más sofisticada,
-sino la que hace el problema más sencillo.
-
-Si una simple recta ya satisface completamente las condiciones de
-frontera, una función trigonométrica únicamente aumentará el
-trabajo algebraico sin ofrecer ninguna ventaja adicional.
+Es la que simplifica el problema de la forma más eficiente.
 """
         )
 
-    # ========================================================================
-    # CONCLUSIÓN GENERAL DEL LABORATORIO
-    # ========================================================================
-
-    separador()
-
-    st.markdown("## 🧭 Comparación general")
-
-    comparacion = [
-        {
-            "nombre": "Lineal",
-            "comp": "⭐",
-            "uso": "Muy frecuente",
-            "recom": "⭐⭐⭐⭐⭐"
-        },
-        {
-            "nombre": "Dependiente del tiempo",
-            "comp": "⭐⭐",
-            "uso": "Frecuente",
-            "recom": "⭐⭐⭐"
-        },
-        {
-            "nombre": "Cuadrática",
-            "comp": "⭐⭐⭐",
-            "uso": "Casos especiales",
-            "recom": "⭐⭐"
-        },
-        {
-            "nombre": "Trigonométrica",
-            "comp": "⭐⭐⭐⭐",
-            "uso": "Muy específico",
-            "recom": "⭐"
-        }
-    ]
-
-    st.table(comparacion)
-
-    tarjeta(
-        "¿Qué hemos aprendido?",
-        """
-La homogeneización no consiste en memorizar una función concreta.
-
-Consiste en elegir una sustitución que transforme el problema
-original en otro equivalente con condiciones de frontera
-homogéneas.
-
-Existen muchas funciones capaces de hacerlo, pero no todas son
-igual de convenientes.
-
-En Matemáticas, una buena elección suele ser la más sencilla que
-cumple correctamente el objetivo.
-""",
-        "blue"
-    )
-
-    # ========================================================================
-    # MINI DESAFÍO
-    # ========================================================================
-
-    separador()
-
-    st.markdown("## 🧠 Comprueba tu comprensión")
-
-    st.markdown(r"""
-Supón que únicamente conoces que
-
-\[
-u(0,t)=20,
-\qquad
-u(L,t)=80,
-\]
-
-y ambas temperaturas permanecen constantes durante todo el
-experimento.
-
-¿Cuál sería la sustitución más conveniente?
-""")
-
-    respuesta = st.radio(
-        "",
-        [
-            "Una función cuadrática",
-            "Una función trigonométrica",
-            "Una sustitución lineal",
-            "Una función exponencial"
-        ],
-        key="quiz_homogeneizacion"
-    )
-
-    if respuesta == "Una sustitución lineal":
-
-        st.success("""
-¡Correcto!
-
-Una recta conecta exactamente ambos extremos y posee la menor
-complejidad algebraica.
-
-Por ello es la elección habitual cuando las temperaturas de
-frontera permanecen constantes.
-""")
-
-    elif respuesta != "Una función cuadrática":
-
-        if respuesta:
-
-            st.error("""
-No es la opción más conveniente.
-
-Aunque esa sustitución podría construirse, introduciría
-complejidad innecesaria.
-
-Recuerda la idea fundamental:
-
-👉 Elegimos la función más sencilla que satisfaga las condiciones
-de frontera.""")
-
-    else:
-
         st.warning("""
-Una función cuadrática podría funcionar, pero normalmente no
-aportaría ninguna ventaja en este caso.
-
-La sustitución lineal sigue siendo la alternativa más simple y
-eficiente.
+⚠️ En este curso las veremos principalmente como una
+curiosidad matemática y no como la estrategia principal.
 """)
 
-    separador()
-    
-    progreso_completado()
+        separador()
 
-    recordatorio()
 
-    resumen_final()
-
-    mensaje_final()
-
-    reiniciar_recorrido()
-
-    st.success("""
-🎉 ¡Laboratorio completado!
-
-Ya conoces la idea fundamental detrás de la homogeneización.
-
-En el resto del desarrollo utilizaremos la sustitución lineal,
-no porque sea la única posible, sino porque suele ser la más
-simple y la más eficiente para resolver problemas con
-temperaturas de frontera constantes mediante separación de
-variables.
-""")
 
 ##################################
 # CONTENIDOS
