@@ -1506,8 +1506,8 @@ st.latex(r"x^2")
 
 st.markdown("Adiós") 
 
-    separador()
-
+separador()
+    
 ############################
 ## DUDAS
 ############################
