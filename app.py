@@ -1504,11 +1504,11 @@ como una serie de autofunciones.
 
 <div style="background:red">
 
-Hola
-
-</div>
-
 """,unsafe_allow_html=True)
+
+    st.latex(r"x^2")
+
+    st.markdown("</div>",unsafe_allow_html=True)
 
     separador()
     
