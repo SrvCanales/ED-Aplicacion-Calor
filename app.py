@@ -7,6 +7,10 @@ import streamlit.components.v1 as components
 import textwrap
 import plotly.graph_objects as go
 
+### AUX
+
+L = 10
+
 # TODO AYUDA PARTE HOMOGENIZACION -------------------------------
 
 if "help_slide" not in st.session_state:
