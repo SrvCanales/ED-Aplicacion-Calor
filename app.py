@@ -1441,7 +1441,7 @@ funcionar directamente.
 
     texto("Supongamos que intentamos escribir la solución como")
 
-   bloque_latex(
+    bloque_latex(
     "Separación de variables",
     r"u(x,t)=X(x)\,T(t)"
 )
