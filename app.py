@@ -1562,7 +1562,7 @@ como una serie de autofunciones.
     separador()
     
 ############################
-## DUDAS
+## DUDAS1
 ############################
 
     duda(
@@ -1635,32 +1635,39 @@ Al final del procedimiento recuperaremos la solución original.
 
 def slide_2(w_d, F_t_d, f_t_d):
 
+    # =========================================================================
+    # ENCABEZADO
+    # =========================================================================
+
     encabezado_slide(
         2,
         "¿Cómo se homogeneiza un problema?",
         """
-Ahora que sabemos por qué necesitamos fronteras homogéneas,
-veamos cómo construir una nueva incógnita que sí las satisfaga.
-La idea consiste en separar la solución en una parte conocida y
-otra que represente únicamente la evolución temporal.
+Ahora construiremos una nueva incógnita que sí satisfaga fronteras
+homogéneas.
+
+La idea consiste en separar la temperatura en una parte conocida,
+responsable de las condiciones de frontera, y otra que describa
+la evolución restante del sistema.
 """
     )
 
     # =========================================================================
-    # Idea principal
+    # IDEA PRINCIPAL
     # =========================================================================
 
     tarjeta(
-        "La idea fundamental",
+        "🔥 La idea fundamental",
         """
-En lugar de intentar resolver directamente la temperatura u(x,t),
-la escribimos como la suma de dos contribuciones.
+En lugar de resolver directamente la temperatura u(x,t),
+la escribiremos como la suma de dos funciones.
 
-Una de ellas será elegida por nosotros para satisfacer exactamente
-las condiciones de frontera.
+Una de ellas será elegida por nosotros para satisfacer
+automáticamente las condiciones de frontera.
 
-La otra contendrá toda la información restante del problema y será
-la nueva incógnita que resolveremos mediante separación de variables.
+La otra contendrá toda la información dinámica del problema
+y será la nueva incógnita que resolveremos mediante separación
+de variables.
 """,
         "green"
     )
@@ -1668,12 +1675,13 @@ la nueva incógnita que resolveremos mediante separación de variables.
     separador()
 
     # =========================================================================
-    # Sustitución
+    # SUSTITUCIÓN
     # =========================================================================
 
-    st.markdown("## La sustitución")
+    st.markdown("## 🔥 La sustitución")
 
-    st.latex(
+    bloque_latex(
+        "Descomposición de la temperatura",
         rf"""
 {COLOR_MAP['u']}(x,t)=
 {COLOR_MAP['w']}(x,t)+
@@ -1681,54 +1689,143 @@ la nueva incógnita que resolveremos mediante separación de variables.
 """
     )
 
-    st.markdown("""
+    texto("""
 No se trata de una identidad misteriosa.
 
 Simplemente estamos descomponiendo la temperatura en dos partes,
-de la misma forma en que un vector puede escribirse como suma de
-otros dos vectores.
+de la misma manera que un vector puede escribirse como suma
+de otros dos vectores.
+
+La ventaja es que podremos controlar por separado las
+condiciones de frontera y la evolución temporal.
 """)
 
     separador()
 
     # =========================================================================
-    # Dibujo
+    # REPRESENTACIÓN DE w(x,t)
     # =========================================================================
 
-    st.markdown("### ¿Qué representa la función $w(x,t)$?")
+    st.markdown("## 🌡️ ¿Qué representa la función $w(x,t)$?")
 
-    svg_recta()
+    x = np.linspace(0, L, 400)
 
-    st.markdown(r"""
-La recta une exactamente las temperaturas impuestas en ambos
-extremos de la barra.
+    T1 = 20
+    T2 = 75
 
-Su única misión consiste en satisfacer automáticamente las
-condiciones de frontera.
+    y = T1 + (T2 - T1) * x / L
 
-Una elección típica es
+    fig = go.Figure()
 
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y,
+            mode="lines",
+            line=dict(
+                color=COLOR_CURVE,
+                width=4
+            ),
+            hovertemplate=
+            "<b>x</b> = %{x:.2f}"
+            "<br><b>w(x)</b> = %{y:.2f} °C"
+            "<extra></extra>"
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[0, L],
+            y=[T1, T2],
+            mode="markers",
+            marker=dict(
+                color=COLOR_BORDER,
+                size=11,
+                line=dict(
+                    color="white",
+                    width=2
+                )
+            )
+        )
+    )
+
+    fig.add_annotation(
+        x=0,
+        y=T1,
+        text="<b>T₁</b>",
+        showarrow=True,
+        yshift=20,
+        font=dict(color=COLOR_BORDER)
+    )
+
+    fig.add_annotation(
+        x=L,
+        y=T2,
+        text="<b>T₂</b>",
+        showarrow=True,
+        yshift=20,
+        font=dict(color=COLOR_BORDER)
+    )
+
+    fig.add_shape(
+        type="line",
+        x0=0,
+        x1=L,
+        y0=0,
+        y1=0,
+        line=dict(
+            color="#B77B40",
+            width=9
+        )
+    )
+
+    fig.add_annotation(
+        x=L/2,
+        y=-6,
+        text="<b>Barra</b>",
+        showarrow=False,
+        font=dict(
+            color="#7A5230",
+            size=14
+        )
+    )
+
+    fig.update_yaxes(range=[0, 85])
+
+    st.plotly_chart(
+        aplicar_estilo(fig),
+        use_container_width=True
+    )
+
+    texto("""
+La función <b>w(x,t)</b> conecta exactamente las temperaturas
+impuestas en ambos extremos.
+
+Su única misión consiste en satisfacer automáticamente
+las condiciones de frontera.
+
+Todavía no hemos resuelto la ecuación diferencial.
+
+Simplemente hemos construido una función conveniente.
 """)
 
-    st.latex(
+    bloque_latex(
+        "Una elección habitual para w(x,t)",
         rf"""
-{COLOR_MAP['w']}(x,t)
-=
+{COLOR_MAP['w']}(x,t)=
 {sp.latex(w_d)}
 """
     )
 
     st.info("""
-Observa que todavía no hemos resuelto la ecuación diferencial.
-
-Simplemente hemos construido una función que conecta correctamente
-las temperaturas de ambos extremos.
+💡 Observa que la función w queda completamente determinada
+por las temperaturas impuestas en los extremos.
 """)
 
     separador()
 
     # =========================================================================
-    # Solución estacionaria
+    # COMPARACIÓN
     # =========================================================================
 
     col1, col2 = st.columns(2)
@@ -1736,122 +1833,131 @@ las temperaturas de ambos extremos.
     with col1:
 
         mini_card(
-            "🔵 La parte estacionaria",
+            "🔥 Parte estacionaria",
             """
-Corresponde a la función w.
+Corresponde a la función w(x,t).
 
-Representa la parte conocida de la solución.
+Es completamente conocida.
 
-Su misión consiste únicamente en satisfacer las condiciones de
-frontera.
+Su misión consiste únicamente en satisfacer
+las condiciones de frontera.
 
-En muchos problemas básicos resulta ser simplemente una recta.
+En muchos problemas básicos es simplemente
+una recta.
 """
         )
 
     with col2:
 
         mini_card(
-            "🟢 La parte transitoria",
+            "🌡️ Parte transitoria",
             """
-Corresponde a la función v.
+Corresponde a la función v(x,t).
 
-Describe cómo evoluciona la temperatura con el tiempo una vez que
-la influencia de las fronteras ya ha sido incorporada mediante w.
+Describe la evolución de la temperatura
+una vez eliminada la influencia directa
+de las fronteras.
 
-Esta será la función que realmente resolveremos.
+Esta será la función que resolveremos
+mediante separación de variables.
 """
         )
 
     separador()
 
     # =========================================================================
-    # Consecuencia inmediata
+    # CONSECUENCIA
     # =========================================================================
 
-    st.markdown("## ¿Qué ocurre con la nueva incógnita?")
+    st.markdown("## 🔥 ¿Qué ocurre con la nueva incógnita?")
 
-    st.markdown(r"""
-Como
+    bloque_latex(
+        "Relación entre ambas funciones",
+        r"""
+u=w+v
+"""
+    )
 
-\[
-u=w+v,
-\]
+    bloque_latex(
+        "Despejando la nueva incógnita",
+        r"""
+v=u-w
+"""
+    )
 
-entonces
+    texto("""
+Si la función w fue construida correctamente,
+ocurre algo muy importante.
 
-\[
-v=u-w.
-\]
-
-Si la función \(w\) fue construida correctamente, ocurre algo muy
-importante.
-
-En ambos extremos,
-
-\[
-v(0,t)=0,
-\qquad
-v(L,t)=0.
-\]
-
-Es decir,
-
-**la nueva incógnita posee exactamente las condiciones de frontera
-que necesitábamos para aplicar separación de variables.**
+La nueva incógnita posee automáticamente
+fronteras homogéneas.
 """)
 
-    idea_clave(r"""
-No estamos obligando a la temperatura física a ser cero.
+    bloque_latex(
+        "Condiciones de frontera para v",
+        r"""
+v(0,t)=0
+""",
+        r"""
+v(L,t)=0
+"""
+    )
 
-La que vale cero en los extremos es únicamente la nueva incógnita
-\(v(x,t)\).
+    idea_clave(
+        r"""
+No estamos obligando a la temperatura física
+a ser cero.
+
+La que vale cero en los extremos es únicamente
+la nueva incógnita
+
+\[
+v(x,t).
+\]
 
 La temperatura original sigue siendo
 
 \[
-u=w+v.
+u(x,t)=w(x,t)+v(x,t).
 \]
-""")
+"""
+    )
 
     separador()
 
     # =========================================================================
-    # Nueva ecuación
+    # NUEVA ECUACIÓN
     # =========================================================================
 
-    st.markdown("## ¿Qué cambia al sustituir?")
+    st.markdown("## 🌡️ ¿Qué cambia después de sustituir?")
 
-    st.markdown(r"""
+    texto("""
 Al reemplazar
 
-\[
 u=w+v
-\]
 
-en la ecuación diferencial y reorganizar los términos,
-aparecen tres modificaciones naturales.
+en la ecuación diferencial aparecen tres
+modificaciones naturales.
 """)
 
     c1, c2, c3 = st.columns(3)
 
     with c1:
 
-        st.markdown("### ① Fronteras")
-
-        st.latex(r"""
+        bloque_latex(
+            "① Fronteras",
+            r"""
 v(0,t)=0
-
-\\
-
+""",
+            r"""
 v(L,t)=0
-""")
+"""
+        )
 
     with c2:
 
-        st.markdown("### ② Fuente")
-
-        st.latex(
+        bloque_latex(
+            "② Nueva fuente",
             rf"""
 {COLOR_MAP['F_tilde']}(x,t)=
 {sp.latex(F_t_d)}
@@ -1860,9 +1966,8 @@ v(L,t)=0
 
     with c3:
 
-        st.markdown("### ③ Condición inicial")
-
-        st.latex(
+        bloque_latex(
+            "③ Nueva condición inicial",
             rf"""
 {COLOR_MAP['v']}(x,0)=
 {sp.latex(f_t_d)}
@@ -1870,16 +1975,18 @@ v(L,t)=0
         )
 
     st.success("""
-Todo el efecto de las fronteras ahora ha quedado incorporado
-dentro de estas nuevas expresiones.
+🔥 Todo el efecto de las temperaturas impuestas
+en los extremos ha quedado absorbido por la función
+w(x,t).
 
-La ecuación resultante ya posee fronteras homogéneas.
+La nueva ecuación ya posee fronteras homogéneas y
+está lista para aplicar separación de variables.
 """)
 
     separador()
 
     # =========================================================================
-    # Preguntas frecuentes
+    # DUDAS2
     # =========================================================================
 
     duda(
