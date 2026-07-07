@@ -1500,11 +1500,15 @@ como una serie de autofunciones.
 
     separador()
 
-    st.markdown("Hola")
+    st.markdown("""
 
-    st.latex(r"x^2")
+<div style="background:red">
 
-    st.markdown("Adiós") 
+Hola
+
+</div>
+
+""",unsafe_allow_html=True)
 
     separador()
     
