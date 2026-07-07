@@ -1526,7 +1526,7 @@ coincida con cero únicamente en los extremos.
 """
     )
 
-    duda(
+duda(
         "¿Por qué el cero es tan especial?",
         r"""
 No existe nada físicamente especial en el número cero.
@@ -1551,7 +1551,7 @@ la solución.
 """
     )
 
-    duda(
+duda(
         "¿No sería posible resolver directamente el problema original?",
         r"""
 Sí.
@@ -1567,7 +1567,7 @@ mucho más sencilla.
 """
     )
 
-    duda(
+duda(
         "¿La solución cambia después de homogeneizar?",
         r"""
 No.
@@ -1577,109 +1577,6 @@ La temperatura física sigue siendo exactamente la misma.
 Únicamente cambia la forma de representarla matemáticamente.
 
 Al final del procedimiento recuperaremos la solución original.
-"""
-    )
-
-    # -------------------------------------------------------------------------
-    # Dudas frecuentes
-    # -------------------------------------------------------------------------
-
-    duda(
-        "¿Qué significa realmente que una frontera sea homogénea?",
-        r"""
-Una condición de frontera es **homogénea** cuando el valor
-impuesto sobre la incógnita es exactamente cero.
-
-Por ejemplo,
-
-\[
-u(0,t)=0,
-\qquad
-u(L,t)=0.
-\]
-
-No importa si la solución toma valores distintos de cero en el
-interior del dominio.
-
-Lo único que exige la frontera homogénea es que la función
-coincida con cero únicamente en los extremos.
-"""
-    )
-
-    # -------------------------------------------------------------------------
-
-    duda(
-        "¿Por qué el cero es tan especial?",
-        r"""
-No existe nada físicamente especial en el número cero.
-
-Lo importante es que las condiciones homogéneas permiten
-construir un problema de autovalores sencillo.
-
-Las funciones seno
-
-\[
-\sin\!\left(\frac{n\pi x}{L}\right)
-\]
-
-ya satisfacen automáticamente
-
-\[
-X(0)=X(L)=0.
-\]
-
-Eso convierte a estas funciones en una base natural para
-representar la solución.
-
-Si las fronteras fueran distintas de cero,
-esas mismas funciones dejarían de cumplir las condiciones
-de frontera.
-"""
-    )
-
-    # -------------------------------------------------------------------------
-
-    duda(
-        "¿No sería posible resolver directamente el problema original?",
-        r"""
-Sí.
-
-Existen métodos para trabajar con condiciones de frontera
-no homogéneas.
-
-Sin embargo, el desarrollo matemático suele ser bastante
-más largo.
-
-La homogeneización transforma el problema original en otro
-equivalente cuya resolución resulta mucho más sencilla mediante
-separación de variables.
-
-Por eso prácticamente todos los textos clásicos utilizan esta
-estrategia.
-"""
-    )
-
-    # -------------------------------------------------------------------------
-
-    duda(
-        "¿La solución cambia después de homogeneizar?",
-        r"""
-No.
-
-La temperatura física sigue siendo exactamente la misma.
-
-Lo único que cambia es la forma de describirla.
-
-En lugar de resolver directamente
-
-\[
-u(x,t),
-\]
-
-resolveremos otra función mucho más conveniente y al final
-recuperaremos la solución original mediante una suma.
-
-Es simplemente un cambio de representación matemática.
 """
     )
 
