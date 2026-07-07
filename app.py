@@ -473,7 +473,10 @@ def aplicar_estilo(fig):
 
         hoverlabel=dict(
             bgcolor=COLOR_BOX,
-            font_size=15
+            font=dict(
+                color=COLOR_TEXT,   # <-- Antes aparecía blanco
+                size=15
+            )
         ),
 
         showlegend=False
@@ -489,15 +492,13 @@ def aplicar_estilo(fig):
 
         ticktext=["0", "L"],
 
-        range=[-0.3, L + 0.3],
+        range=[-0.3, L+0.3],
 
         gridcolor=COLOR_GRID,
 
         linecolor="#7A5230",
 
         linewidth=2,
-
-        mirror=False,
 
         zeroline=False
     )
@@ -541,7 +542,11 @@ def grafico_frontera_homogenea():
                 width=4
             ),
 
-            hovertemplate="<b>x</b> = %{x:.2f}<br><b>u(x)</b> = %{y:.2f}<extra></extra>"
+            hovertemplate=(
+                "<b>x</b> = %{x:.2f}"
+                "<br><b>Temperatura</b> = %{y:.2f} °C"
+                "<extra></extra>"
+            )
         )
     )
 
@@ -580,7 +585,10 @@ def grafico_frontera_homogenea():
 
         yshift=22,
 
-        font=dict(color=COLOR_BORDER)
+        font=dict(
+            color=COLOR_BORDER,
+            size=14
+        )
     )
 
     fig.add_annotation(
@@ -594,7 +602,10 @@ def grafico_frontera_homogenea():
 
         yshift=22,
 
-        font=dict(color=COLOR_BORDER)
+        font=dict(
+            color=COLOR_BORDER,
+            size=14
+        )
     )
 
     fig.add_shape(
@@ -604,8 +615,8 @@ def grafico_frontera_homogenea():
         x0=0,
         x1=L,
 
-        y0=-3.6,
-        y1=-3.6,
+        y0=-0.35,
+        y1=-0.35,
 
         line=dict(
             color="#B77B40",
@@ -617,16 +628,26 @@ def grafico_frontera_homogenea():
 
         x=L/2,
 
-        y=-4.1,
+        y=-0.7,
 
         text="<b>Barra</b>",
 
         showarrow=False,
 
-        font=dict(color="#7A5230")
+        font=dict(
+            color="#7A5230",
+            size=14
+        )
+    )
+
+    # -------- Restricción de temperatura --------
+
+    fig.update_yaxes(
+        range=[0, 3.3]
     )
 
     return aplicar_estilo(fig)
+
 
 
 def grafico_frontera_no_homogenea():
@@ -653,7 +674,11 @@ def grafico_frontera_no_homogenea():
                 width=4
             ),
 
-            hovertemplate="<b>x</b> = %{x:.2f}<br><b>u(x)</b> = %{y:.2f}<extra></extra>"
+            hovertemplate=(
+                "<b>x</b> = %{x:.2f}"
+                "<br><b>Temperatura</b> = %{y:.2f} °C"
+                "<extra></extra>"
+            )
         )
     )
 
@@ -692,7 +717,10 @@ def grafico_frontera_no_homogenea():
 
         yshift=22,
 
-        font=dict(color=COLOR_BORDER)
+        font=dict(
+            color=COLOR_BORDER,
+            size=14
+        )
     )
 
     fig.add_annotation(
@@ -706,7 +734,10 @@ def grafico_frontera_no_homogenea():
 
         yshift=22,
 
-        font=dict(color=COLOR_BORDER)
+        font=dict(
+            color=COLOR_BORDER,
+            size=14
+        )
     )
 
     fig.add_shape(
@@ -716,8 +747,8 @@ def grafico_frontera_no_homogenea():
         x0=0,
         x1=L,
 
-        y0=-8,
-        y1=-8,
+        y0=0,
+        y1=0,
 
         line=dict(
             color="#B77B40",
@@ -729,16 +760,26 @@ def grafico_frontera_no_homogenea():
 
         x=L/2,
 
-        y=-13,
+        y=-6,
 
         text="<b>Barra</b>",
 
         showarrow=False,
 
-        font=dict(color="#7A5230")
+        font=dict(
+            color="#7A5230",
+            size=14
+        )
+    )
+
+    # -------- Restricción de temperatura --------
+
+    fig.update_yaxes(
+        range=[0, 85]
     )
 
     return aplicar_estilo(fig)
+
 
 def barra_progreso(): #Progreso homogenización
 
@@ -1517,18 +1558,6 @@ Gracias a ello podremos expresar posteriormente la solución
 como una serie de autofunciones.
 """
     )
-
-    separador()
-
-    st.markdown("""
-
-<div style="background:red">
-
-""",unsafe_allow_html=True)
-
-    st.latex(r"x^2")
-
-    st.markdown("</div>",unsafe_allow_html=True)
 
     separador()
     
