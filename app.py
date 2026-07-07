@@ -378,8 +378,158 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
 
 
 # =============================================================================
-# FUNCIONES
+# FUNKTIONEN
 # =============================================================================
+
+def grafico_frontera_homogenea():
+
+    x = np.linspace(0, 1, 400)
+    y = np.sin(np.pi*x)
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y,
+            mode="lines",
+            line=dict(width=4),
+            hovertemplate="x=%{x:.2f}<br>u=%{y:.2f}<extra></extra>",
+            name=""
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[0,1],
+            y=[0,0],
+            mode="markers",
+            marker=dict(size=10),
+            showlegend=False,
+            hoverinfo="skip"
+        )
+    )
+
+    fig.add_annotation(
+        x=0,
+        y=0,
+        text="u(0,t)=0",
+        showarrow=True,
+        yshift=22
+    )
+
+    fig.add_annotation(
+        x=1,
+        y=0,
+        text="u(L,t)=0",
+        showarrow=True,
+        yshift=22
+    )
+
+    fig.update_layout(
+
+        height=320,
+
+        margin=dict(l=20,r=20,t=25,b=20),
+
+        xaxis=dict(
+
+            title="Posición x",
+
+            range=[-0.05,1.05],
+
+            zeroline=False,
+
+            showgrid=False
+        ),
+
+        yaxis=dict(
+
+            title="Temperatura",
+
+            zeroline=True,
+
+            showgrid=True
+        )
+    )
+
+    return fig
+
+
+def grafico_frontera_no_homogenea():
+
+    x = np.linspace(0,1,400)
+
+    y = 20 + 55*x + 8*np.sin(np.pi*x)
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y,
+            mode="lines",
+            line=dict(width=4),
+            hovertemplate="x=%{x:.2f}<br>u=%{y:.2f}<extra></extra>",
+            name=""
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[0,1],
+            y=[20,75],
+            mode="markers",
+            marker=dict(size=10),
+            showlegend=False,
+            hoverinfo="skip"
+        )
+    )
+
+    fig.add_annotation(
+        x=0,
+        y=20,
+        text="20°C",
+        showarrow=True,
+        yshift=22
+    )
+
+    fig.add_annotation(
+        x=1,
+        y=75,
+        text="75°C",
+        showarrow=True,
+        yshift=22
+    )
+
+    fig.update_layout(
+
+        height=320,
+
+        margin=dict(l=20,r=20,t=25,b=20),
+
+        xaxis=dict(
+
+            title="Posición x",
+
+            range=[-0.05,1.05],
+
+            zeroline=False,
+
+            showgrid=False
+        ),
+
+        yaxis=dict(
+
+            title="Temperatura",
+
+            zeroline=True,
+
+            showgrid=True
+        )
+    )
+
+    return fig
 
 
 def barra_progreso(): #Progreso homogenización
@@ -992,7 +1142,7 @@ frontera) y concentramos el esfuerzo matemático únicamente en la
 parte realmente desconocida del problema.
 """)
 
-def slide_1(): #SLIDE 1 HOMOGENIZACION
+def slide_1(): 
 
     encabezado_slide(
         1,
@@ -1000,15 +1150,12 @@ def slide_1(): #SLIDE 1 HOMOGENIZACION
         """
 Antes de introducir una sustitución es importante entender
 qué problema estamos intentando resolver.
+
 La homogeneización no es un truco algebraico: aparece porque
-la separación de variables necesita un tipo muy particular de
-condiciones de frontera.
+la separación de variables necesita un tipo muy particular
+de condiciones de frontera.
 """
     )
-
-    # -------------------------------------------------------------------------
-    # Comparación gráfica
-    # -------------------------------------------------------------------------
 
     c1, c2 = st.columns(2)
 
@@ -1016,51 +1163,55 @@ condiciones de frontera.
 
         st.markdown("### ✅ Fronteras homogéneas")
 
-        svg_frontera_homogenea()
+        st.plotly_chart(
+            grafico_frontera_homogenea(),
+            use_container_width=True
+        )
 
-        st.markdown("""
-Una frontera homogénea significa que la función buscada satisface
+        st.markdown(
+            """
+Una frontera homogénea significa que la solución
+vale exactamente cero en ambos extremos.
+"""
+        )
 
-\[
-u(0,t)=0,
-\qquad
-u(L,t)=0.
-\]
+        st.latex(r"""
+u(0,t)=0
+""")
 
-En otras palabras, **la solución vale exactamente cero en ambos extremos**.
+        st.latex(r"""
+u(L,t)=0
 """)
 
     with c2:
 
         st.markdown("### ⚠️ Fronteras no homogéneas")
 
-        svg_frontera_no_homogenea()
+        st.plotly_chart(
+            grafico_frontera_no_homogenea(),
+            use_container_width=True
+        )
 
-        st.markdown("""
-En muchos problemas físicos aparecen temperaturas impuestas como
+        st.markdown(
+            """
+En muchos problemas físicos aparecen temperaturas
+impuestas en los extremos.
+"""
+        )
 
-\[
-u(0,t)=T_1,
-\qquad
-u(L,t)=T_2,
-\]
+        st.latex(r"""
+u(0,t)=T_1
+""")
 
-donde normalmente
+        st.latex(r"""
+u(L,t)=T_2
+""")
 
-\[
-T_1\neq0,
-\qquad
-T_2\neq0.
-\]
-
-Aquí la solución ya no se anula en los extremos.
+        st.latex(r"""
+T_1\neq0,\qquad T_2\neq0
 """)
 
     separador()
-
-    # -------------------------------------------------------------------------
-    # Explicación principal
-    # -------------------------------------------------------------------------
 
     tarjeta(
         "¿Por qué esto representa un inconveniente?",
@@ -1082,63 +1233,58 @@ funcionar directamente.
         "red"
     )
 
-    # -------------------------------------------------------------------------
-
     st.markdown("### ¿Qué ocurre matemáticamente?")
 
-    st.markdown(r"""
+    st.markdown(
+        """
 Supongamos que intentamos escribir la solución como
+"""
+    )
 
-\[
-u(x,t)=X(x)\,T(t).
-\]
+    st.latex(r"u(x,t)=X(x)\,T(t)")
 
-Al imponer
+    st.markdown(
+        """
+Al imponer fronteras homogéneas obtenemos
+"""
+    )
 
-\[
-u(0,t)=0,
-\qquad
-u(L,t)=0,
-\]
+    st.latex(r"""
+X(0)=0,\qquad X(L)=0
+""")
 
-obtenemos inmediatamente
-
-\[
-X(0)=0,
-\qquad
-X(L)=0,
-\]
-
-que son justamente las condiciones de frontera del problema
-de autovalores.
+    st.markdown(
+        """
+que son precisamente las condiciones del problema de autovalores.
 
 Gracias a ello aparecen las autofunciones que utilizaremos
 para construir la solución.
 
 Si, en cambio,
+"""
+    )
 
-\[
-u(0,t)=20,
-\qquad
-u(L,t)=75,
-\]
-
-la función espacial ya no puede satisfacer simultáneamente
-esas condiciones para todos los tiempos mediante una simple
-separación del tipo
-
-\[
-u=X(x)T(t).
-\]
-
-Por eso primero debemos transformar el problema.
+    st.latex(r"""
+u(0,t)=20,\qquad
+u(L,t)=75
 """)
 
-    separador()
+    st.markdown(
+        """
+la función espacial ya no puede satisfacer simultáneamente
+esas condiciones mediante una separación del tipo
+"""
+    )
 
-    # -------------------------------------------------------------------------
-    # Idea intuitiva
-    # -------------------------------------------------------------------------
+    st.latex(r"u=X(x)T(t)")
+
+    st.markdown(
+        """
+Por eso primero debemos transformar el problema.
+"""
+    )
+
+    separador()
 
     tarjeta(
         "Interpretación física",
@@ -1146,28 +1292,28 @@ Por eso primero debemos transformar el problema.
 Imagina una barra cuyos extremos están permanentemente
 mantenidos a temperaturas fijas.
 
-La mayor parte del comportamiento de la barra corresponde
-simplemente a conectar esas temperaturas.
+La mayor parte del comportamiento corresponde simplemente
+a conectar esas temperaturas.
 
-Lo verdaderamente interesante es estudiar cómo evoluciona la
-temperatura alrededor de ese estado impuesto.
+Lo verdaderamente interesante es estudiar cómo evoluciona
+la temperatura alrededor de ese estado impuesto.
 
 La homogeneización separa ambas contribuciones.
 """,
         "blue"
     )
 
-    # -------------------------------------------------------------------------
-
-    idea_clave(r"""
+    idea_clave(
+        """
 No modificamos la física del problema.
 
-Únicamente cambiamos la función que vamos a resolver para que
-sus extremos sean cero.
+Únicamente cambiamos la función que vamos a resolver para
+que sus extremos sean cero.
 
-Gracias a ello podremos desarrollar posteriormente la solución
-como una serie de autofunciones.
-""")
+Gracias a ello podremos desarrollar posteriormente la
+solución como una serie de autofunciones.
+"""
+    )
 
     separador()
 
