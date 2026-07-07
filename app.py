@@ -1512,7 +1512,7 @@ separador()
 ## DUDAS
 ############################
 
-    duda(
+duda(
         "¿Qué significa realmente que una frontera sea homogénea?",
         r"""
 Una condición de frontera es homogénea cuando el valor
