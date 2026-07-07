@@ -423,28 +423,31 @@ margin-bottom:0.5rem;
     )
 
 
-def caja_latex(expresion):
+def bloque_latex(titulo, *expresiones):
+    """
+    Muestra una tarjeta con un título y una o varias expresiones
+    matemáticas perfectamente integradas utilizando únicamente
+    componentes nativos de Streamlit.
+    """
 
-    st.markdown(
-        f"""
+    with st.container(border=True):
+
+        st.markdown(
+            f"""
 <div style="
-background:{COLOR_BOX};
-padding:0.55rem;
-border-left:5px solid {COLOR_CURVE};
-border-radius:10px;
-margin-top:0.4rem;
-margin-bottom:0.4rem;
+color:{COLOR_TEXT};
+font-size:17px;
+font-weight:600;
+margin-bottom:0.3rem;
 ">
+{titulo}
+</div>
 """,
-        unsafe_allow_html=True
-    )
+            unsafe_allow_html=True
+        )
 
-    st.latex(expresion)
-
-    st.markdown(
-        "</div>",
-        unsafe_allow_html=True
-    )
+        for expr in expresiones:
+            st.latex(expr)
 
 def aplicar_estilo(fig):
 
@@ -1381,9 +1384,11 @@ Una frontera homogénea significa que la temperatura vale
 exactamente cero en ambos extremos de la barra.
 """)
 
-        caja_latex(r"u(0,t)=0")
-
-        caja_latex(r"u(L,t)=0")
+        bloque_latex(
+    "Condiciones de frontera",
+    r"u(0,t)=0",
+    r"u(L,t)=0"
+)
 
     with c2:
 
@@ -1399,11 +1404,13 @@ En muchos problemas físicos los extremos permanecen a
 temperaturas constantes distintas de cero.
 """)
 
-        caja_latex(r"u(0,t)=T_1")
+        bloque_latex(
+    "Condiciones de frontera",
+    r"u(0,t)=T_1",
+    r"u(L,t)=T_2",
+    r"T_1\neq0,\qquad T_2\neq0"
+)
 
-        caja_latex(r"u(L,t)=T_2")
-
-        caja_latex(r"T_1\neq0,\qquad T_2\neq0")
 
     separador()
 
@@ -1434,11 +1441,19 @@ funcionar directamente.
 
     texto("Supongamos que intentamos escribir la solución como")
 
-    caja_latex(r"u(x,t)=X(x)\,T(t)")
+   bloque_latex(
+    "Separación de variables",
+    r"u(x,t)=X(x)\,T(t)"
+)
+
 
     texto("Si las fronteras son homogéneas obtenemos")
 
-    caja_latex(r"X(0)=0,\qquad X(L)=0")
+    bloque_latex(
+    "Condiciones para la función espacial",
+    r"X(0)=0,\qquad X(L)=0"
+)
+
 
     texto("""
 Estas son precisamente las condiciones del problema de
@@ -1450,12 +1465,17 @@ posteriormente para construir la solución.
 
     texto("Si en cambio imponemos")
 
-    caja_latex(r"u(0,t)=20,\qquad u(L,t)=75")
+    bloque_latex(
+    "Si las fronteras no son homogéneas",
+    r"u(0,t)=20,\qquad u(L,t)=75"
+)
 
     texto("la separación")
 
-    caja_latex(r"u(x,t)=X(x)T(t)")
-
+    bloque_latex(
+    "La separación",
+    r"u(x,t)=X(x)T(t)"
+)
     texto("""
 ya no puede satisfacer simultáneamente ambas condiciones
 para todo tiempo.
