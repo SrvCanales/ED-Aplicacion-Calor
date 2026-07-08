@@ -259,7 +259,7 @@ COLOR_MAP = {
     'v': rf"\color{{{C_TRANS}}}{{v}}",
     'a': rf"\color{{{C_TIME}}}{{a}}",
     'q': rf"\color{{{C_TIME}}}{{q}}",
-    'phi': rf"\color{{{C_SPACE}}}{{\phi}}",
+    'phi': rf"\color{{{C_SPACE}}}{{hi}}",
     'lam': rf"\color{{{C_SPACE}}}{{\lambda}}",
     'F_tilde': rf"\color{{{C_TRANS}}}{{\tilde{{F}}}}",
     'f_tilde': rf"\color{{{C_TRANS}}}{{\tilde{{f}}}}"
@@ -1217,7 +1217,7 @@ construir un problema de autovalores sencillo.
 Las funciones
 
 \[
-\sin\!\left(\frac{n\pi x}{L}\right)
+\sin\!\left(\frac{ni x}{L}\right)
 \]
 
 satisfacen automáticamente
@@ -2253,7 +2253,7 @@ sustituciones.
 w(x)
 =
 A\sin\!\left(
-\frac{\pi x}{L}
+\frac{i x}{L}
 \right)+B
 """
             )
@@ -2297,14 +2297,16 @@ curiosidad matemática y no como la estrategia principal.
 ##################################
 
 st.title("Resolviendo la Ecuación del Calor en 1D")
-st.markdown("Modela y analiza la evolución de la temperatura utilizando el formalismo riguroso de Sturm-Liouville paso a paso.")
+st.markdown(
+    "Modela y analiza la evolución de la temperatura utilizando el formalismo riguroso de Sturm-Liouville paso a paso."
+)
 st.divider()
 
 # =========================================================
-# INICIALIZACIÓN DEL SESSION STATE
+# SESSION STATE
 # =========================================================
 
-defaults = {
+DEFAULTS = {
     "step": 1,
     "in_L": "1",
     "in_alpha": "1",
@@ -2314,120 +2316,118 @@ defaults = {
     "in_f": "sin(pi*x)",
     "mostrar_ayuda": False,
     "help_slide": 0,
-    "help_max_slide": 0,}
+    "help_max_slide": 0,
+}
 
-if "step" not in st.session_state:
-    st.session_state.step = 1
+for k, v in DEFAULTS.items():
+    if k not in st.session_state:
+        st.session_state[k] = v
 
-if "in_L" not in st.session_state:
-    st.session_state.in_L = "1"
-
-if "in_alpha" not in st.session_state:
-    st.session_state.in_alpha = "1"
-
-if "in_F" not in st.session_state:
-    st.session_state.in_F = "0"
-
-if "in_A" not in st.session_state:
-    st.session_state.in_A = "0"
-
-if "in_B" not in st.session_state:
-    st.session_state.in_B = "0"
-
-if "in_f" not in st.session_state:
-    st.session_state.in_f = "sin(pi*x)"
-
-if "mostrar_ayuda" not in st.session_state:
-    st.session_state.mostrar_ayuda = False
-
-if "help_slide" not in st.session_state:
-    st.session_state.help_slide = 0
-
-if "help_max_slide" not in st.session_state:
-    st.session_state.help_max_slide = 0
-    
-for k, v in defaults.items():
-    st.session_state.setdefault(k, v)
-
-st.header("Planteando el problema")
-st.markdown("Escribe los términos que se incluirán dentro del problema de calor:")
-
-with st.container(border=True):
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.text_input(
-            "Longitud de la barra (L):",
-            key="in_L"
-        )
-
-        st.text_input(
-            "Difusividad térmica (α):",
-            key="in_alpha"
-        )
-
-        st.text_input(
-            "Fuente de calor F(x,t):",
-            key="in_F"
-        )
-
-    with col2:
-        st.text_input(
-            "Temperatura en extremo izquierdo u(0,t):",
-            key="in_A"
-        )
-
-        st.text_input(
-            "Temperatura en extremo derecho u(L,t):",
-            key="in_B"
-        )
-
-        st.text_input(
-            "Distribución inicial de calor u(x,0):",
-            key="in_f"
-        )
+# =========================================================
+# PARSER
+# =========================================================
 
 transformaciones = (
-    standard_transformations +
-    (implicit_multiplication_application,)
+    standard_transformations
+    + (implicit_multiplication_application,)
 )
 
-def parsear_seguro(expr_str):
-    if not expr_str.strip():
-        raise ValueError("Expresión vacía")
+LOCAL_DICT = {
+    "x": x,
+    "t": t,
+    "pi": sp.pi,
+    "sin": sp.sin,
+    "cos": sp.cos,
+    "exp": sp.exp,
+    "sqrt": sp.sqrt,
+    "log": sp.log,
+}
 
-    expr = parse_expr(
-        expr_str,
-        transformations=transformaciones
-        local_dict={
-            "x": x,
-            "t": t,
-            "pi": sp.pi,
-            "sin": sp.sin,
-            "cos": sp.cos,
-            "exp": sp.exp,
-            "sqrt": sp.sqrt,
-            "log": sp.log
-        })
 
-    reemplazos = {
-        sim: (
-            x if sim.name == "x"
-            else t if sim.name == "t"
-            else sim
+def parsear_seguro(expr):
+
+    expr = expr.strip()
+
+    if expr == "":
+        raise ValueError("Expresión vacía.")
+
+    salida = parse_expr(
+        expr,
+        transformations=transformaciones,
+        local_dict=LOCAL_DICT,
+    )
+
+    return salida.subs(
+        {
+            s: x if s.name == "x"
+            else t if s.name == "t"
+            else s
+            for s in salida.free_symbols
+        }
+    )
+
+
+# =========================================================
+# ENTRADAS
+# =========================================================
+
+st.header("Planteando el problema")
+st.markdown(
+    "Escribe los parámetros que definen el problema de calor."
+)
+
+with st.container(border=True):
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+
+        st.text_input(
+            "Longitud de la barra (L)",
+            key="in_L",
         )
-        for sim in expr.free_symbols
-    }
 
-    return expr.subs(reemplazos)
+        st.text_input(
+            "Difusividad térmica (α)",
+            key="in_alpha",
+        )
+
+        st.text_input(
+            "Fuente de calor F(x,t)",
+            key="in_F",
+        )
+
+    with c2:
+
+        st.text_input(
+            "Temperatura en x=0",
+            key="in_A",
+        )
+
+        st.text_input(
+            "Temperatura en x=L",
+            key="in_B",
+        )
+
+        st.text_input(
+            "Condición inicial u(x,0)",
+            key="in_f",
+        )
+
+# =========================================================
+# VISTA PREVIA
+# =========================================================
 
 st.subheader("Problema a resolver")
 
-try:
+L_s = None
+alpha_s = None
+F_s = None
+A_s = None
+B_s = None
+f_s = None
 
-    # =====================================================
-    # PARSEO DE ENTRADAS
-    # =====================================================
+try:
 
     L_s = parsear_seguro(st.session_state.in_L)
     alpha_s = parsear_seguro(st.session_state.in_alpha)
@@ -2435,10 +2435,6 @@ try:
     A_s = parsear_seguro(st.session_state.in_A)
     B_s = parsear_seguro(st.session_state.in_B)
     f_s = parsear_seguro(st.session_state.in_f)
-
-    # =====================================================
-    # HOMOGENEIZACIÓN PRELIMINAR
-    # =====================================================
 
     w_dyn = sp.simplify(
         A_s + (x / L_s) * (B_s - A_s)
@@ -2454,94 +2450,133 @@ try:
         f_s - w_dyn.subs(t, 0)
     )
 
-    alpha_term = sp.latex(alpha_s**2)
-
-    latex_sistema = rf"""
+    sistema = rf"""
     \begin{{cases}}
     \dfrac{{\partial u}}{{\partial t}}
     =
-    {alpha_term}
-    \dfrac{{\partial^2 {COLOR_MAP['u']}}}{{\partial x^2}}
+    {sp.latex(alpha_s**2)}
+    \dfrac{{\partial^2u}}{{\partial x^2}}
     +
     {sp.latex(F_s)},
     &
-    0<x<{sp.latex(L_s)},\quad t>0
-    \\[8pt]
+    0<x<{sp.latex(L_s)},\;t>0
+    \\[10pt]
 
-    {u}(0,t)
+    u(0,t)
     =
     {sp.latex(A_s)},
     &
     t>0
-    \\[8pt]
+    \\[10pt]
 
-    {u}({sp.latex(L_s)},t)
+    u({sp.latex(L_s)},t)
     =
     {sp.latex(B_s)},
     &
     t>0
-    \\[8pt]
+    \\[10pt]
 
-    {u}(x,0)
+    u(x,0)
     =
     {sp.latex(f_s)},
     &
     0\le x\le {sp.latex(L_s)}
-
     \end{{cases}}
     """
 
     with st.container(border=True):
-        st.latex(latex_sistema)
+        st.latex(sistema)
 
-    col_help, _ = st.columns([1, 2])
+except Exception:
 
-    with col_help:
-        if st.button(
-    "Teoría - Homogeneización",
-    use_container_width=True):
-    
-            mostrar_ayuda = True
-            help_slide = 0
-            help_max_slide = 0
-            st.rerun()
+    with st.container(border=True):
 
-            if st.session_state.mostrar_ayuda:
-                mostrar_ayuda_profunda(
-        w_dyn,
-        F_t_dyn,
-        f_t_dyn
+        st.latex(
+            rf"""
+            \begin{{cases}}
+            \dfrac{{\partial u}}{{\partial t}}
+            =
+            ({st.session_state.in_alpha})^2
+            \dfrac{{\partial^2u}}{{\partial x^2}}
+            +
+            {st.session_state.in_F}
+            \\[10pt]
+
+            u(0,t)
+            =
+            {st.session_state.in_A}
+            \\[10pt]
+
+            u({st.session_state.in_L})
+            =
+            {st.session_state.in_B}
+            \\[10pt]
+
+            u(x,0)
+            =
+            {st.session_state.in_f}
+            \end{{cases}}
+            """
         )
-    
-#except Exception:
- #   with st.container(border=True):
-  #      st.latex(
-   #         r"\text{Esperando especificaciones matemáticas válidas para actualizar el sistema...}"
-    #    )
- except Exception as e:
-    st.exception(e)
+
+# =========================================================
+# AYUDA
+# =========================================================
+
+col_help, _ = st.columns([1, 2])
+
+with col_help:
+
+    if st.button(
+        "Teoría - Homogeneización",
+        use_container_width=True,
+    ):
+
+        st.session_state.mostrar_ayuda = True
+        st.session_state.help_slide = 0
+        st.session_state.help_max_slide = 0
+        st.rerun()
+
+if st.session_state.mostrar_ayuda:
+
+    mostrar_ayuda_profunda(
+        w_dyn if L_s is not None else 0,
+        F_t_dyn if L_s is not None else 0,
+        f_t_dyn if L_s is not None else 0,
+    )
 
 # =========================================================
 # BOTÓN PRINCIPAL
 # =========================================================
 
-if st.button(
+guardar = st.button(
     "Guardar problema y avanzar",
-    type="primary"
-):
+    type="primary",
+)
 
-    exito = calcular_matematicas(
-        st.session_state.in_L,
-        st.session_state.in_alpha,
-        st.session_state.in_F,
-        st.session_state.in_A,
-        st.session_state.in_B,
-        st.session_state.in_f
-    )
+if guardar:
 
-    if exito:
-        avanzar()
-        st.rerun()
+    if None in (L_s, alpha_s, F_s, A_s, B_s, f_s):
+
+        st.error(
+            "Debes ingresar expresiones matemáticas válidas."
+        )
+
+    else:
+
+        exito = calcular_matematicas(
+            str(L_s),
+            str(alpha_s),
+            str(F_s),
+            str(A_s),
+            str(B_s),
+            str(f_s),
+        )
+
+        if exito:
+
+            avanzar()
+            st.rerun()
 
 st.divider()
 
@@ -2631,7 +2666,7 @@ if st.session_state.step >= 6:
     
     L_tex = sp.latex(data['L'])
     w_tex = sp.latex(data['w'])
-    sin_term = rf"\sin\left(\frac{{n\pi x}}{{{L_tex}}}\right)"
+    sin_term = rf"\sin\left(\frac{{ni x}}{{{L_tex}}}\right)"
     sum_tex = rf"\sum_{{n=1}}^{{\infty}} {COLOR_MAP['a']}_n(t) \cdot {sin_term}"
     
     with st.container(border=True):
