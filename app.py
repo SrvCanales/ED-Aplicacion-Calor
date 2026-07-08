@@ -718,7 +718,7 @@ def botones_navegacion(): #Navegación homogenización
                 
 
 @st.dialog("📖 Profundización matemática: Homogeneización", width="large") ##!!!!
-def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
+def _profunda(w_d, F_t_d, f_t_d):
     
     st.markdown("""
     <div class="help-title">
@@ -773,7 +773,7 @@ def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
             type="primary",
             use_container_width=True
         ):
-            st.session_state.mostrar_ayuda = False
+            st.session_state. = False
             st.session_state.help_slide = 0
             st.rerun()
 
@@ -2468,11 +2468,11 @@ try:
             st.rerun()
 
             if st.session_state.mostrar_ayuda:
-    mostrar_ayuda_profunda(
+                mostrar_ayuda_profunda(
         w_dyn,
         F_t_dyn,
         f_t_dyn
-    )
+        )
     
 except Exception:
     with st.container(border=True):
