@@ -1882,8 +1882,8 @@ if tipo == "Lineal":
     # DEPENDIENTE DEL TIEMPO
     # =========================================================================
     
-    elif tipo == "Dependiente del tiempo":
-        st.markdown("## ⏳ Sustitución dependiente del tiempo")
+        elif tipo == "Dependiente del tiempo":
+            st.markdown("## ⏳ Sustitución dependiente del tiempo")
 
         tarjeta(
             "Más allá del caso básico",
