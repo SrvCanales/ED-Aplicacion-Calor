@@ -2436,7 +2436,7 @@ try:
     B_s = parsear_seguro(st.session_state.in_B)
     f_s = parsear_seguro(st.session_state.in_f)
 
-    w_dyn = sp.simplify(
+      w_dyn = sp.simplify(
         A_s + (x / L_s) * (B_s - A_s)
     )
 
@@ -2450,38 +2450,41 @@ try:
         f_s - w_dyn.subs(t, 0)
     )
 
-    sistema = rf"""
-    \\begin{{cases}}
-    \\dfrac{{\\partial u}}{{\\partial t}}
+    alpha_term = sp.latex(alpha_s**2)
+
+    latex_sistema = rf"""
+    \begin{{cases}}
+    \dfrac{{\partial u}}{{\partial t}}
     =
-    {sp.latex(alpha_s**2)}
-    \\dfrac{{\\partial^2u}}{{\\partial x^2}}
+    {alpha_term}
+    \dfrac{{\partial^2 {COLOR_MAP['u']}}}{{\partial x^2}}
     +
     {sp.latex(F_s)},
     &
-    0<x<{sp.latex(L_s)},\\;t>0
-    \\\\[10pt]
+    0<x<{sp.latex(L_s)},\quad t>0
+    \\[8pt]
 
-    u(0,t)
+    {u}(0,t)
     =
     {sp.latex(A_s)},
     &
     t>0
-    \\\\[10pt]
+    \\[8pt]
 
-    u({sp.latex(L_s)},t)
+    {u}({sp.latex(L_s)},t)
     =
     {sp.latex(B_s)},
     &
     t>0
-    \\\\[10pt]
+    \\[8pt]
 
-    u(x,0)
+    {u}(x,0)
     =
     {sp.latex(f_s)},
     &
-    0\\le x\\le {sp.latex(L_s)}
-    \\end{{cases}}
+    0\le x\le {sp.latex(L_s)}
+
+    \end{{cases}}
     """
 
     with st.container(border=True):
