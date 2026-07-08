@@ -1882,10 +1882,10 @@ if tipo == "Lineal":
     # DEPENDIENTE DEL TIEMPO
     # =========================================================================
     
-        elif tipo == "Dependiente del tiempo":
-            st.markdown("## ⏳ Sustitución dependiente del tiempo")
+elif tipo == "Dependiente del tiempo":
+    st.markdown("## ⏳ Sustitución dependiente del tiempo")
 
-        tarjeta(
+         tarjeta(
             "Más allá del caso básico",
             """
             La idea de la homogeneización no cambia.
@@ -1985,8 +1985,8 @@ if tipo == "Lineal":
     # CUADRÁTICA
     # =========================================================================
 
-    elif tipo == "Cuadrática":
-        st.markdown("## 📈 Sustitución cuadrática")
+elif tipo == "Cuadrática":
+    st.markdown("## 📈 Sustitución cuadrática")
 
         col1, col2 = st.columns([1.3, 1])
 
@@ -2080,8 +2080,8 @@ if tipo == "Lineal":
     # TRIGONOMÉTRICA
     # =========================================================================
 
-    elif tipo == "Trigonométrica":
-        st.markdown("## 🌊 Sustitución trigonométrica")
+elif tipo == "Trigonométrica":
+    st.markdown("## 🌊 Sustitución trigonométrica")
 
         col1, col2 = st.columns([1.3, 1])
 
