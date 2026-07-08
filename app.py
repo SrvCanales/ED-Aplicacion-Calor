@@ -1881,7 +1881,7 @@ if tipo == "Lineal":
     # =========================================================================
     # DEPENDIENTE DEL TIEMPO
     # =========================================================================
-
+    
     elif tipo == "Dependiente del tiempo":
         st.markdown("## ⏳ Sustitución dependiente del tiempo")
 
