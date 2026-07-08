@@ -2354,7 +2354,7 @@ def parsear_seguro(expr):
     salida = parse_expr(
         expr,
         transformations=transformaciones,
-        local_dict=LOCAL_DICT,
+        local_dict=local_dict,
     )
 
     return salida.subs(
