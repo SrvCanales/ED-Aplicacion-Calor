@@ -2487,6 +2487,15 @@ try:
     with st.container(border=True):
         st.latex(sistema)
 
+st.latex(r"""
+\begin{aligned}
+u_t &= u_{xx}\\
+u(0,t) &= 0\\
+u(1,t) &= 0\\
+u(x,0) &= \sin(\pi x)
+\end{aligned}
+""")
+
 except Exception:
 
     with st.container(border=True):
