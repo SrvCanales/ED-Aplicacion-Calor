@@ -350,13 +350,13 @@ local_dict={'pi': sp.pi}
       u_num_func = sp.lambdify((x, t), u_final_num, modules=['numpy', 'math'])
 
       st.session_state.math_data = {
-      L': L, 
+      'L': L, 
       'alpha': alpha, 
       'F': F, 
       'A': A, 
       'B': B, 
       'f': f,
-      w': w, 
+      'w': w, 
       'F_tilde': F_tilde, 
       'f_tilde': f_tilde,
       'lam_n': lam_n, 
