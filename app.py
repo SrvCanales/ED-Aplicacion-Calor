@@ -2399,7 +2399,16 @@ def parsear_seguro(expr_str):
     expr = parse_expr(
         expr_str,
         transformations=transformaciones
-    )
+        local_dict={
+            "x": x,
+            "t": t,
+            "pi": sp.pi,
+            "sin": sp.sin,
+            "cos": sp.cos,
+            "exp": sp.exp,
+            "sqrt": sp.sqrt,
+            "log": sp.log
+        })
 
     reemplazos = {
         sim: (
@@ -2504,11 +2513,13 @@ try:
         f_t_dyn
         )
     
-except Exception:
-    with st.container(border=True):
-        st.latex(
-            r"\text{Esperando especificaciones matemáticas válidas para actualizar el sistema...}"
-        )
+#except Exception:
+ #   with st.container(border=True):
+  #      st.latex(
+   #         r"\text{Esperando especificaciones matemáticas válidas para actualizar el sistema...}"
+    #    )
+ except Exception as e:
+    st.exception(e)
 
 # =========================================================
 # BOTÓN PRINCIPAL
