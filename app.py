@@ -2598,7 +2598,7 @@ st.latex(rf"{COLOR_MAP['w']}(x,t) = {w_tex}")
 elif vista == "Ondas Transitorias Dispersivas":
 st.latex(rf"{COLOR_MAP['v']}(x,t) = {sum_tex}")
 else:
-w_part = f"{w_tex} + " if data['w'] != 0 else ""
+w_part = rf"{w_tex} + " if data['w'] != 0 else ""
 st.latex(rf"{COLOR_MAP['u']}(x,t) = {w_part} {sum_tex}")
 
 # SIMULADOR NUMÉRICO ASOCIADO (Estilo Térmico Caliente)
