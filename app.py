@@ -651,128 +651,101 @@ range=[0, 85]
 return aplicar_estilo(fig)
 
 
-def barra_progreso(): #Progreso homogenización
+def barra_progreso():  # Progreso homogenización
+    progreso = (st.session_state.help_slide + 1) / 3
+    st.progress(progreso)
+    c1, c2, c3 = st.columns(3)
 
-progreso=(st.session_state.help_slide+1)/3
+    with c1:
+        if st.session_state.help_slide == 0:
+            st.success("① ¿Por qué?")
+        else:
+            st.write("① ¿Por qué? ✓")
 
-st.progress(progreso)
+    with c2:
+        if st.session_state.help_slide == 1:
+            st.success("② ¿Cómo?")
+        elif st.session_state.help_slide > 1:
+            st.write("② ¿Cómo? ✓")
+        else:
+            st.write("② ¿Cómo?")
 
-c1,c2,c3=st.columns(3)
-
-with c1:
-
-if st.session_state.help_slide==0:
-   st.success("① ¿Por qué?")
-else:
-   st.write("① ¿Por qué? ✓")
-
-with c2:
-
-if st.session_state.help_slide==1:
-   st.success("② ¿Cómo?")
-elif st.session_state.help_slide>1:
-   st.write("② ¿Cómo? ✓")
-else:
-   st.write("② ¿Cómo?")
-
-with c3:
-
-if st.session_state.help_slide==2:
-   st.success("③ ¿Otra sustitución?")
-else:
-   st.write("③ ¿Otra sustitución?")
+    with c3:
+        if st.session_state.help_slide == 2:
+            st.success("③ ¿Otra sustitución?")
+        else:
+            st.write("③ ¿Otra sustitución?")
 
 
-def botones_navegacion(): #Navegación homogenización
+def botones_navegacion():  # Navegación homogenización
+    st.divider()
+    c1, c2, c3 = st.columns([1, 4, 1])
 
-   st.divider()
+    with c1:
+        if st.session_state.help_slide > 0:
+            if st.button("⬅ Anterior", use_container_width=True):
+                st.session_state.help_slide -= 1
+                st.rerun()
 
-   c1,c2,c3=st.columns([1,4,1])
-
-with c1:
-
-if st.session_state.help_slide>0:
-
-if st.button("⬅ Anterior",use_container_width=True):
-
-   st.session_state.help_slide-=1
-   st.rerun()
-
-with c3:
-
-if st.session_state.help_slide<2:
-
-if st.button("Siguiente ➜",use_container_width=True):
-
-   st.session_state.help_slide+=1
-
-   st.session_state.help_max_slide=max(
-   st.session_state.help_slide,
-   st.session_state.help_max_slide
-   )
-
-   st.rerun()
+    with c3:
+        if st.session_state.help_slide < 2:
+            if st.button("Siguiente ➜", use_container_width=True):
+                st.session_state.help_slide += 1
+                st.session_state.help_max_slide = max(
+                    st.session_state.help_slide,
+                    st.session_state.help_max_slide
+                )
+                st.rerun()
 
 
-@st.dialog("📖 Profundización matemática: Homogeneización", width="large") ##!!!!
+@st.dialog("📖 Profundización matemática: Homogeneización", width="large")  ##!!!!
 def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
+    st.markdown("""
+        <div class="help-title">
+        Homogeneización de las condiciones de frontera
+        </div>
+        """, unsafe_allow_html=True)
 
-   st.markdown("""
-      <div class="help-title">
-      Homogeneización de las condiciones de frontera
-      </div>
-      """, unsafe_allow_html=True)
+    st.markdown("""
+        <div class="help-subtitle">
+        En esta guía recorrerás paso a paso la idea detrás de la homogeneización.
+        La intención no es memorizar una sustitución, sino comprender por qué surge
+        naturalmente al resolver la ecuación de calor mediante separación de variables.
+        </div>
+    """, unsafe_allow_html=True)
 
-   st.markdown("""
-      <div class="help-subtitle">
+    # -------------------------------------------------------------------------
+    # Barra de progreso
+    # -------------------------------------------------------------------------
+    barra_progreso()
+    st.divider()
 
-   En esta guía recorrerás paso a paso la idea detrás de la homogeneización.
-   La intención no es memorizar una sustitución, sino comprender por qué surge
-   naturalmente al resolver la ecuación de calor mediante separación de variables.
+    if st.session_state.help_slide == 0:
+        slide_1()
 
-   </div>
-   """, unsafe_allow_html=True)
+    elif st.session_state.help_slide == 1:
+        slide_2(
+            w_d=w_d,
+            F_t_d=F_t_d,
+            f_t_d=f_t_d
+        )
 
-# -------------------------------------------------------------------------
-# Barra de progreso
-# -------------------------------------------------------------------------
+    else:
+        slide_3()
 
-barra_progreso()
+    botones_navegacion()
+    st.divider()
 
-st.divider()
-
-if st.session_state.help_slide == 0:
-
-   slide_1()
-
-elif st.session_state.help_slide == 1:
-
-   slide_2(
-   w_d=w_d,
-   F_t_d=F_t_d,
-   f_t_d=f_t_d
-   )
-
-else:
-
-   slide_3()
-
-   botones_navegacion()
-
-   st.divider()
-
-    _, c, _ = st.columns([3,2,3])
-
-with c:
-
-if st.button(
-"Cerrar ayuda",
-type="primary",
-use_container_width=True
-):
-   st.session_state.mostrar_ayuda = False
-   st.session_state.help_slide = 0
-   st.rerun()
+    _, c, _ = st.columns([3, 2, 3])
+    with c:
+        if st.button(
+            "Cerrar ayuda",
+            type="primary",
+            use_container_width=True
+        ):
+            st.session_state.mostrar_ayuda = False
+            st.session_state.help_slide = 0
+            st.rerun()
 
 
 # =============================================================================
@@ -781,35 +754,29 @@ use_container_width=True
 # =============================================================================
 
 def tarjeta(titulo, texto, color="blue"):
+    colores = {
+        "blue": "box-blue",
+        "green": "box-green",
+        "yellow": "box-yellow",
+        "red": "box-red",
+        "gray": "box-gray"
+    }
 
-colores = {
-"blue": "box-blue",
-"green": "box-green",
-"yellow": "box-yellow",
-"red": "box-red",
-"gray": "box-gray"
-}
-
-st.markdown(
-f"""
-<div class="{colores[color]}">
-
-<h4 style="margin-top:0px">
-{titulo}
-</h4>
-
-<p style="font-size:16px;
-line-height:1.8;
-margin-bottom:0px">
-
-{texto}
-
-</p>
-
-</div>
-""",
-unsafe_allow_html=True
-)
+    st.markdown(
+        f"""
+        <div class="{colores[color]}">
+        <h4 style="margin-top:0px">
+        {titulo}
+        </h4>
+        <p style="font-size:16px;
+        line-height:1.8;
+        margin-bottom:0px">
+        {texto}
+        </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # =============================================================================
@@ -818,25 +785,20 @@ unsafe_allow_html=True
 # =============================================================================
 
 def encabezado_slide(numero, titulo, subtitulo):
-
-st.markdown(
-f"""
-<div class="badge">
-Paso {numero} de 3
-</div>
-
-<div class="step-title">
-{titulo}
-</div>
-
-<div class="note">
-
-{subtitulo}
-
-</div>
-""",
-unsafe_allow_html=True
-)
+    st.markdown(
+        f"""
+        <div class="badge">
+        Paso {numero} de 3
+        </div>
+        <div class="step-title">
+        {titulo}
+        </div>
+        <div class="note">
+        {subtitulo}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # =============================================================================
@@ -845,10 +807,8 @@ unsafe_allow_html=True
 # =============================================================================
 
 def idea_clave(texto):
-
-st.success("💡 Idea clave")
-
-st.markdown(texto)
+    st.success("💡 Idea clave")
+    st.markdown(texto)
 
 
 # =============================================================================
@@ -857,13 +817,11 @@ st.markdown(texto)
 # =============================================================================
 
 def duda(titulo, contenido):
-
-with st.expander(
-"❓ " + titulo,
-expanded=False
-):
-
-st.markdown(contenido)
+    with st.expander(
+        "❓ " + titulo,
+        expanded=False
+    ):
+        st.markdown(contenido)
 
 
 # =============================================================================
@@ -872,14 +830,11 @@ st.markdown(contenido)
 # =============================================================================
 
 def comparacion(col_izq, col_der):
-
-c1, c2 = st.columns(2)
-
-with c1:
-col_izq()
-
-with c2:
-col_der()
+    c1, c2 = st.columns(2)
+    with c1:
+        col_izq()
+    with c2:
+        col_der()
 
 
 # =============================================================================
@@ -888,18 +843,17 @@ col_der()
 # =============================================================================
 
 def separador():
-
-st.markdown(
-"""
-<hr style="
-margin-top:25px;
-margin-bottom:25px;
-border:none;
-border-top:1px solid #E5E7EB;
-">
-""",
-unsafe_allow_html=True
-)
+    st.markdown(
+        """
+        <hr style="
+        margin-top:25px;
+        margin-bottom:25px;
+        border:none;
+        border-top:1px solid #E5E7EB;
+        ">
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # =============================================================================
@@ -907,29 +861,23 @@ unsafe_allow_html=True
 # =============================================================================
 
 def mini_card(titulo, cuerpo):
-
-st.markdown(
-f"""
-<div class="card">
-
-<h4 style="margin-bottom:8px">
-{titulo}
-</h4>
-
-<p style="
-font-size:15px;
-line-height:1.7;
-margin-bottom:0px;
-">
-
-{cuerpo}
-
-</p>
-
-</div>
-""",
-unsafe_allow_html=True
-)
+    st.markdown(
+        f"""
+        <div class="card">
+        <h4 style="margin-bottom:8px">
+        {titulo}
+        </h4>
+        <p style="
+        font-size:15px;
+        line-height:1.7;
+        margin-bottom:0px;
+        ">
+        {cuerpo}
+        </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # =============================================================================
@@ -937,22 +885,19 @@ unsafe_allow_html=True
 # =============================================================================
 
 def cuadro_formula(texto_latex):
-
-st.markdown(
-"""
-<div class="box-gray">
-""",
-unsafe_allow_html=True
-)
-
-st.latex(texto_latex)
-
-st.markdown(
-"""
-</div>
-""",
-unsafe_allow_html=True
-)
+    st.markdown(
+        """
+        <div class="box-gray">
+        """,
+        unsafe_allow_html=True
+    )
+    st.latex(texto_latex)
+    st.markdown(
+        """
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # =============================================================================
@@ -961,229 +906,190 @@ unsafe_allow_html=True
 # =============================================================================
 
 def introduccion(texto):
+    st.markdown(
+        f"""
+        <div class="note">
+        {textwrap.dedent(texto)}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-st.markdown(
-f"""
-<div class="note">
+def recordatorio():  # HOMOGENIZACION
+    st.markdown(
+        """
+        <div class="box-green">
+        <h4 style="margin-top:0px">
+        🎯 Idea para recordar
+        </h4>
+        <p style="font-size:16px; line-height:1.8;">
+        La homogeneización no consiste en "inventar" una función.
+        Consiste en escoger una función conocida que satisfaga las
+        condiciones de frontera para que la nueva incógnita tenga
+        fronteras homogéneas.
+        </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-{textwrap.dedent(texto)}
+def mensaje_final():  # HOMOGENIZACION
+    st.success("""
+    ¡Excelente!
 
-</div>
-""",
-unsafe_allow_html=True
-)
+    La homogeneización suele parecer un paso artificial cuando se ve
+    por primera vez.
 
-def recordatorio(): #HOMOGENIZACION
-
-st.markdown(
-"""
-<div class="box-green">
-
-<h4 style="margin-top:0px">
-
-🎯 Idea para recordar
-
-</h4>
-
-<p style="font-size:16px; line-height:1.8;">
-
-La homogeneización no consiste en "inventar" una función.
-
-Consiste en escoger una función conocida que satisfaga las
-condiciones de frontera para que la nueva incógnita tenga
-fronteras homogéneas.
-
-</p>
-
-</div>
-""",
-unsafe_allow_html=True
-)
-
-def mensaje_final(): #HOMOGENIZACION
-
-st.success("""
-¡Excelente!
-
-La homogeneización suele parecer un paso artificial cuando se ve
-por primera vez.
-
-Sin embargo, una vez comprendida, se convierte en una herramienta
-muy natural: antes de intentar resolver la ecuación diferencial,
-eliminamos primero aquello que ya conocemos (las condiciones de
-frontera) y concentramos el esfuerzo matemático únicamente en la
-parte realmente desconocida del problema.
-""")
+    Sin embargo, una vez comprendida, se convierte en una herramienta
+    muy natural: antes de intentar resolver la ecuación diferencial,
+    eliminamos primero aquello que ya conocemos (las condiciones de
+    frontera) y concentramos el esfuerzo matemático únicamente en la
+    parte realmente desconocida del problema.
+    """)
 
 def slide_1():
+    encabezado_slide(
+        1,
+        "¿Por qué debemos homogeneizar?",
+        """
+        Antes de introducir una sustitución es importante comprender qué
+        problema estamos intentando resolver.
 
-encabezado_slide(
+        La homogeneización no es un truco algebraico; aparece porque el
+        método de separación de variables requiere un tipo muy particular
+        de condiciones de frontera.
+        """
+    )
 
-1,
+    c1, c2 = st.columns(2)
 
-"¿Por qué debemos homogeneizar?",
+    with c1:
+        st.markdown("### 🔥 Fronteras homogéneas")
+        st.plotly_chart(
+            grafico_frontera_homogenea(),
+            use_container_width=True
+        )
+        texto("""
+        Una frontera homogénea significa que la temperatura vale
+        exactamente cero en ambos extremos de la barra.
+        """)
+        bloque_latex(
+            "Condiciones de frontera",
+            r"u(0,t)=0",
+            r"u(L,t)=0"
+        )
 
-"""
-Antes de introducir una sustitución es importante comprender qué
-problema estamos intentando resolver.
+    with c2:
+        st.markdown("### 🌡️ Fronteras no homogéneas")
+        st.plotly_chart(
+            grafico_frontera_no_homogenea(),
+            use_container_width=True
+        )
+        texto("""
+        En muchos problemas físicos los extremos permanecen a
+        temperaturas constantes distintas de cero.
+        """)
+        bloque_latex(
+            "Condiciones de frontera",
+            r"u(0,t)=T_1",
+            r"u(L,t)=T_2",
+            r"T_1\neq0,\qquad T_2\neq0"
+        )
 
-La homogeneización no es un truco algebraico; aparece porque el
-método de separación de variables requiere un tipo muy particular
-de condiciones de frontera.
-"""
-)
+    separador()
 
-c1, c2 = st.columns(2)
+    tarjeta(
+        "¿Por qué esto representa un inconveniente?",
+        """
+        El método de separación de variables construye la solución
+        como combinación de autofunciones.
 
-with c1:
+        Estas funciones deben satisfacer exactamente las mismas
+        condiciones de frontera que la incógnita.
 
-st.markdown("### 🔥 Fronteras homogéneas")
+        Cuando las fronteras son homogéneas aparecen familias muy
+        simples de funciones (senos, cosenos, funciones hiperbólicas,
+        etc.) que forman una base del espacio solución.
 
-st.plotly_chart(
-grafico_frontera_homogenea(),
-use_container_width=True
-)
+        Si las fronteras no son homogéneas, esas funciones dejan de
+        cumplir las condiciones requeridas y el procedimiento deja de
+        funcionar directamente.
+        """,
+        "red"
+    )
 
-texto("""
-Una frontera homogénea significa que la temperatura vale
-exactamente cero en ambos extremos de la barra.
-""")
+    st.markdown("### ¿Qué ocurre matemáticamente?")
+    texto("Supongamos que intentamos escribir la solución como")
+    bloque_latex(
+        "Separación de variables",
+        r"u(x,t)=X(x)\,T(t)"
+    )
 
-bloque_latex(
-"Condiciones de frontera",
-r"u(0,t)=0",
-r"u(L,t)=0"
-)
+    texto("Si las fronteras son homogéneas obtenemos")
+    bloque_latex(
+        "Condiciones para la función espacial",
+        r"X(0)=0,\qquad X(L)=0"
+    )
 
-with c2:
+    texto("""
+    Estas son precisamente las condiciones del problema de
+    autovalores.
 
-st.markdown("### 🌡️ Fronteras no homogéneas")
+    Gracias a ello aparecen las autofunciones que utilizaremos
+    posteriormente para construir la solución.
+    """)
 
-st.plotly_chart(
-grafico_frontera_no_homogenea(),
-use_container_width=True
-)
+    texto("Si en cambio imponemos")
+    bloque_latex(
+        "Si las fronteras no son homogéneas",
+        r"u(0,t)=20,\qquad u(L,t)=75"
+    )
 
-texto("""
-En muchos problemas físicos los extremos permanecen a
-temperaturas constantes distintas de cero.
-""")
+    texto("la separación")
+    bloque_latex(
+        "La separación",
+        r"u(x,t)=X(x)T(t)"
+    )
+    texto("""
+    ya no puede satisfacer simultáneamente ambas condiciones
+    para todo tiempo.
 
-bloque_latex(
-"Condiciones de frontera",
-r"u(0,t)=T_1",
-r"u(L,t)=T_2",
-r"T_1\neq0,\qquad T_2\neq0"
-)
+    Por ello primero transformamos el problema mediante la
+    homogeneización.
+    """)
 
+    separador()
 
-separador()
+    tarjeta(
+        "Interpretación física",
+        """
+        Imagina una barra cuyos extremos permanecen a temperaturas
+        fijas.
 
-tarjeta(
+        Una parte de la distribución de temperatura simplemente conecta
+        ambos extremos.
 
-"¿Por qué esto representa un inconveniente?",
+        Lo realmente interesante es estudiar cómo evoluciona la
+        temperatura alrededor de ese estado impuesto.
 
-"""
-El método de separación de variables construye la solución
-como combinación de autofunciones.
+        La homogeneización separa ambas contribuciones.
+        """,
+        "blue"
+    )
 
-Estas funciones deben satisfacer exactamente las mismas
-condiciones de frontera que la incógnita.
+    idea_clave(
+        """
+        No modificamos la física del problema.
 
-Cuando las fronteras son homogéneas aparecen familias muy
-simples de funciones (senos, cosenos, funciones hiperbólicas,
-etc.) que forman una base del espacio solución.
+        Únicamente cambiamos la función que vamos a resolver para que
+        sus extremos sean cero.
 
-Si las fronteras no son homogéneas, esas funciones dejan de
-cumplir las condiciones requeridas y el procedimiento deja de
-funcionar directamente.
-""",
+        Gracias a ello podremos expresar posteriormente la solución
+        como una serie de autofunciones.
+        """
+    )
 
-"red"
-)
-
-st.markdown("### ¿Qué ocurre matemáticamente?")
-
-texto("Supongamos que intentamos escribir la solución como")
-
-bloque_latex(
-"Separación de variables",
-r"u(x,t)=X(x)\,T(t)"
-)
-
-
-texto("Si las fronteras son homogéneas obtenemos")
-
-bloque_latex(
-"Condiciones para la función espacial",
-r"X(0)=0,\qquad X(L)=0"
-)
-
-
-texto("""
-Estas son precisamente las condiciones del problema de
-autovalores.
-
-Gracias a ello aparecen las autofunciones que utilizaremos
-posteriormente para construir la solución.
-""")
-
-texto("Si en cambio imponemos")
-
-bloque_latex(
-"Si las fronteras no son homogéneas",
-r"u(0,t)=20,\qquad u(L,t)=75"
-)
-
-texto("la separación")
-
-bloque_latex(
-"La separación",
-r"u(x,t)=X(x)T(t)"
-)
-texto("""
-ya no puede satisfacer simultáneamente ambas condiciones
-para todo tiempo.
-
-Por ello primero transformamos el problema mediante la
-homogeneización.
-""")
-
-separador()
-
-tarjeta(
-
-"Interpretación física",
-
-"""
-Imagina una barra cuyos extremos permanecen a temperaturas
-fijas.
-
-Una parte de la distribución de temperatura simplemente conecta
-ambos extremos.
-
-Lo realmente interesante es estudiar cómo evoluciona la
-temperatura alrededor de ese estado impuesto.
-
-La homogeneización separa ambas contribuciones.
-""",
-
-"blue"
-)
-
-idea_clave(
-"""
-No modificamos la física del problema.
-
-Únicamente cambiamos la función que vamos a resolver para que
-sus extremos sean cero.
-
-Gracias a ello podremos expresar posteriormente la solución
-como una serie de autofunciones.
-"""
-)
-
-separador()
+    separador()
 
 ############################
 ## DUDAS1
