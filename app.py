@@ -1884,7 +1884,7 @@ if tipo == "Lineal":
     
 elif tipo == "Dependiente del tiempo":
     st.markdown("## ⏳ Sustitución dependiente del tiempo")
-        tarjeta(
+       tarjeta(
             "Más allá del caso básico",
             """
             La idea de la homogeneización no cambia.
