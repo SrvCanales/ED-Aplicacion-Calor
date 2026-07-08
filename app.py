@@ -271,13 +271,54 @@ COLOR_MAP = {
 def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
     """Calcula algebraicamente la solución general utilizando n simbólico."""
     try:
-        L = sp.sympify(L_str, locals={'pi': sp.pi})
-        alpha = sp.sympify(alpha_str)
-        F = sp.sympify(F_str, locals={'x': x, 't': t, 'sin': sp.sin, 'cos': sp.cos, 'exp': sp.exp})
-        A = sp.sympify(A_str)
-        B = sp.sympify(B_str)
-        f = sp.sympify(f_str, locals={'x': x, 'pi': sp.pi, 'sin': sp.sin})
-        
+        L = parse_expr(
+    L_str,
+    transformations=transformaciones,
+    local_dict={'pi': sp.pi}
+)
+
+alpha = parse_expr(
+    alpha_str,
+    transformations=transformaciones,
+    local_dict={'pi': sp.pi}
+)
+
+        F = parse_expr(
+    F_str,
+    transformations=transformaciones,
+    local_dict={
+        'x': x,
+        't': t,
+        'pi': sp.pi,
+        'sin': sp.sin,
+        'cos': sp.cos,
+        'exp': sp.exp
+    }
+)
+
+        A = parse_expr(
+    A_str,
+    transformations=transformaciones,
+    local_dict={'pi': sp.pi}
+)
+
+        B = parse_expr(
+    B_str,
+    transformations=transformaciones,
+    local_dict={'pi': sp.pi}
+)
+
+        f = parse_expr(
+    f_str,
+    transformations=transformaciones,
+    local_dict={
+        'x': x,
+        'pi': sp.pi,
+        'sin': sp.sin,
+        'cos': sp.cos,
+        'exp': sp.exp
+    }
+)
         # Homogeneización
         w = sp.simplify(A + (x / L) * (B - A))
         F_tilde = sp.simplify(F - sp.diff(w, t) + alpha**2 * sp.diff(w, x, 2))
@@ -322,11 +363,6 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
 
 # =============================================================================
 # FUNKTIONEN
-# =============================================================================
-
-
-# =============================================================================
-# ESTILOS
 # =============================================================================
 
 def texto(txt):
@@ -407,38 +443,23 @@ def aplicar_estilo(fig):
     )
 
     fig.update_xaxes(
-
         title="Posición sobre la barra",
-
         tickmode="array",
-
         tickvals=[0, L],
-
         ticktext=["0", "L"],
-
         range=[-0.3, L+0.3],
-
         gridcolor=COLOR_GRID,
-
         linecolor="#7A5230",
-
         linewidth=2,
-
         zeroline=False
     )
 
     fig.update_yaxes(
-
         title="Temperatura",
-
         gridcolor=COLOR_GRID,
-
         linecolor="#7A5230",
-
         linewidth=2,
-
         zeroline=True,
-
         zerolinecolor="#C7B6A3"
     )
 
@@ -447,25 +468,17 @@ def aplicar_estilo(fig):
 def grafico_frontera_homogenea():
 
     x = np.linspace(0, L, 500)
-
     y = 2.8*np.sin(np.pi*x/L)
-
     fig = go.Figure()
-
     fig.add_trace(
-
         go.Scatter(
-
             x=x,
             y=y,
-
             mode="lines",
-
             line=dict(
                 color=COLOR_CURVE,
                 width=4
             ),
-
             hovertemplate=(
                 "<b>x</b> = %{x:.2f}"
                 "<br><b>Temperatura</b> = %{y:.2f} °C"
@@ -475,21 +488,13 @@ def grafico_frontera_homogenea():
     )
 
     fig.add_trace(
-
         go.Scatter(
-
             x=[0, L],
-
             y=[0, 0],
-
             mode="markers",
-
             marker=dict(
-
                 color=COLOR_BORDER,
-
                 size=10,
-
                 line=dict(
                     color="white",
                     width=2
@@ -499,16 +504,11 @@ def grafico_frontera_homogenea():
     )
 
     fig.add_annotation(
-
         x=0,
         y=0,
-
         text="<b>0°C</b>",
-
         showarrow=True,
-
         yshift=22,
-
         font=dict(
             color=COLOR_BORDER,
             size=14
@@ -516,16 +516,11 @@ def grafico_frontera_homogenea():
     )
 
     fig.add_annotation(
-
         x=L,
         y=0,
-
         text="<b>0°C</b>",
-
         showarrow=True,
-
         yshift=22,
-
         font=dict(
             color=COLOR_BORDER,
             size=14
@@ -533,15 +528,11 @@ def grafico_frontera_homogenea():
     )
 
     fig.add_shape(
-
         type="line",
-
         x0=0,
         x1=L,
-
         y0=-0.35,
         y1=-0.35,
-
         line=dict(
             color="#B77B40",
             width=9
@@ -549,15 +540,10 @@ def grafico_frontera_homogenea():
     )
 
     fig.add_annotation(
-
         x=L/2,
-
         y=-0.7,
-
         text="<b>Barra</b>",
-
         showarrow=False,
-
         font=dict(
             color="#7A5230",
             size=14
@@ -575,26 +561,16 @@ def grafico_frontera_homogenea():
 
 
 def grafico_frontera_no_homogenea():
-
     x = np.linspace(0, L, 500)
-
     y = 20 + (75-20)*x/L + 6*np.sin(np.pi*x/L)
-
     fig = go.Figure()
-
     fig.add_trace(
-
         go.Scatter(
-
             x=x,
             y=y,
-
             mode="lines",
-
             line=dict(
-
                 color=COLOR_CURVE,
-
                 width=4
             ),
 
@@ -607,21 +583,13 @@ def grafico_frontera_no_homogenea():
     )
 
     fig.add_trace(
-
         go.Scatter(
-
             x=[0, L],
-
             y=[20, 75],
-
             mode="markers",
-
             marker=dict(
-
                 color=COLOR_BORDER,
-
                 size=10,
-
                 line=dict(
                     color="white",
                     width=2
@@ -631,16 +599,11 @@ def grafico_frontera_no_homogenea():
     )
 
     fig.add_annotation(
-
         x=0,
         y=20,
-
         text="<b>20°C</b>",
-
         showarrow=True,
-
         yshift=22,
-
         font=dict(
             color=COLOR_BORDER,
             size=14
@@ -648,16 +611,11 @@ def grafico_frontera_no_homogenea():
     )
 
     fig.add_annotation(
-
         x=L,
         y=75,
-
         text="<b>75°C</b>",
-
         showarrow=True,
-
         yshift=22,
-
         font=dict(
             color=COLOR_BORDER,
             size=14
@@ -665,15 +623,11 @@ def grafico_frontera_no_homogenea():
     )
 
     fig.add_shape(
-
         type="line",
-
         x0=0,
         x1=L,
-
         y0=0,
         y1=0,
-
         line=dict(
             color="#B77B40",
             width=9
@@ -681,15 +635,10 @@ def grafico_frontera_no_homogenea():
     )
 
     fig.add_annotation(
-
         x=L/2,
-
         y=-6,
-
         text="<b>Barra</b>",
-
         showarrow=False,
-
         font=dict(
             color="#7A5230",
             size=14
@@ -767,255 +716,10 @@ def botones_navegacion(): #Navegación homogenización
 
                 st.rerun()
                 
-def svg_frontera_homogenea(): #SVG1, frontera homogenea
-
-    svg="""
-
-<svg width="520" height="250"
-xmlns="http://www.w3.org/2000/svg">
-
-<rect width="100%" height="100%" fill="white"/>
-
-<line x1="60" y1="200"
-x2="470"
-y2="200"
-stroke="black"
-stroke-width="2"/>
-
-<line x1="60"
-y1="200"
-x2="60"
-y2="30"
-stroke="black"
-stroke-width="2"/>
-
-<text x="480" y="208"
-font-size="20">x</text>
-
-<text x="50" y="25"
-font-size="20">u</text>
-
-<text x="45"
-y="220"
-font-size="18">0</text>
-
-<text x="445"
-y="220"
-font-size="18">L</text>
-
-<path
-
-d="M60 200
-C130 180,
-180 90,
-260 80
-C330 90,
-390 180,
-460 200"
-
-stroke="#16A34A"
-
-stroke-width="4"
-
-fill="none"/>
-
-<circle cx="60" cy="200" r="5" fill="#16A34A"/>
-
-<circle cx="460" cy="200" r="5" fill="#16A34A"/>
-
-<text
-
-x="150"
-
-y="40"
-
-fill="#15803D"
-
-font-size="20"
-
-font-weight="bold">
-
-Frontera homogénea
-
-</text>
-
-</svg>
-
-"""
-
-    components.html(svg,height=260)
-
-def svg_frontera_no_homogenea(): #SVG 2, fontera no homogenea
-
-    svg="""
-
-<svg width="520" height="250"
-xmlns="http://www.w3.org/2000/svg">
-
-<rect width="100%" height="100%" fill="white"/>
-
-<line x1="60" y1="200"
-x2="470"
-y2="200"
-stroke="black"
-stroke-width="2"/>
-
-<line x1="60"
-y1="200"
-x2="60"
-y2="30"
-stroke="black"
-stroke-width="2"/>
-
-<text x="480" y="208"
-font-size="20">x</text>
-
-<text x="50"
-y="25"
-font-size="20">u</text>
-
-<text x="45"
-y="220"
-font-size="18">0</text>
-
-<text x="445"
-y="220"
-font-size="18">L</text>
-
-<path
-
-d="M60 150
-C140 90,
-200 140,
-280 120
-C360 95,
-420 80,
-460 70"
-
-stroke="#DC2626"
-
-stroke-width="4"
-
-fill="none"/>
-
-<circle cx="60" cy="150"
-r="5"
-fill="#DC2626"/>
-
-<circle cx="460"
-cy="70"
-r="5"
-fill="#DC2626"/>
-
-<text
-
-x="105"
-
-y="40"
-
-fill="#B91C1C"
-
-font-size="20"
-
-font-weight="bold">
-
-Frontera no homogénea
-
-</text>
-
-</svg>
-
-"""
-
-    components.html(svg,height=260)
-
-def svg_recta(): #SVG3, recta de homogenización
-
-    svg="""
-
-<svg width="520" height="260"
-xmlns="http://www.w3.org/2000/svg">
-
-<rect width="100%" height="100%" fill="white"/>
-
-<line x1="60"
-y1="210"
-x2="470"
-y2="210"
-stroke="black"
-stroke-width="2"/>
-
-<line x1="60"
-y1="210"
-x2="60"
-y2="30"
-stroke="black"
-stroke-width="2"/>
-
-<circle
-cx="60"
-cy="170"
-r="5"
-fill="#2563EB"/>
-
-<circle
-cx="460"
-cy="70"
-r="5"
-fill="#2563EB"/>
-
-<line
-
-x1="60"
-y1="170"
-x2="460"
-y2="70"
-
-stroke="#2563EB"
-
-stroke-width="4"/>
-
-<text
-x="95"
-y="95"
-font-size="18"
-fill="#1D4ED8">
-
-w(x)
-
-</text>
-
-<text
-x="40"
-y="225"
-font-size="18">
-
-0
-
-</text>
-
-<text
-x="445"
-y="225"
-font-size="18">
-
-L
-
-</text>
-
-</svg>
-
-"""
-
-    components.html(svg,height=270)
 
 @st.dialog("📖 Profundización matemática: Homogeneización", width="large") ##!!!!
 def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
-
-    # -------------------------------------------------------------------------
-    # TÍTULO
-    # -------------------------------------------------------------------------
-
+    
     st.markdown("""
     <div class="help-title">
     Homogeneización de las condiciones de frontera
@@ -1040,17 +744,9 @@ def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
 
     st.divider()
 
-    # =========================================================================
-    # SLIDE 1
-    # =========================================================================
-
     if st.session_state.help_slide == 0:
 
         slide_1()
-
-    # =========================================================================
-    # SLIDE 2
-    # =========================================================================
 
     elif st.session_state.help_slide == 1:
 
@@ -1060,19 +756,26 @@ def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
             f_t_d=f_t_d
         )
 
-    # =========================================================================
-    # SLIDE 3
-    # =========================================================================
-
     else:
 
         slide_3()
 
-    # -------------------------------------------------------------------------
-    # Navegación
-    # -------------------------------------------------------------------------
-
     botones_navegacion()
+
+    st.divider()
+    
+        _, c, _ = st.columns([3,2,3])
+
+    with c:
+
+        if st.button(
+            "Cerrar ayuda",
+            type="primary",
+            use_container_width=True
+        ):
+            st.session_state.mostrar_ayuda = False
+            st.session_state.help_slide = 0
+            st.rerun()
 
 
 # =============================================================================
@@ -2589,79 +2292,213 @@ curiosidad matemática y no como la estrategia principal.
 
         separador()
 
-
-
 ##################################
 # CONTENIDOS
 ##################################
 
-st.title("🔥 Simulador Analítico de la Ecuación del Calor 1D")
+st.title("Resolviendo la Ecuación del Calor en 1D")
 st.markdown("Modela y analiza la evolución de la temperatura utilizando el formalismo riguroso de Sturm-Liouville paso a paso.")
 st.divider()
 
-st.header("1. Configuración del Campo Térmico")
-st.markdown("Determina las dimensiones, la difusividad del material y las fronteras de energía:")
+# =========================================================
+# INICIALIZACIÓN DEL SESSION STATE
+# =========================================================
+defaults = {
+    "step": 1,
+    "in_L": "1",
+    "in_alpha": "1",
+    "in_F": "0",
+    "in_A": "0",
+    "in_B": "0",
+    "in_f": "sin(pi*x)"
+    "mostrar_ayuda": False,
+    "help_slide": 0,
+    "help_max_slide": 0,}
+
+for k, v in defaults.items():
+    st.session_state.setdefault(k, v)
+
+st.header("Planteando el problema")
+st.markdown("Escribe los términos que se incluirán dentro del problema de calor:")
 
 with st.container(border=True):
     col1, col2 = st.columns(2)
-    with col1:
-        st.session_state.in_L = st.text_input("Longitud geométrica de la barra (L):", value=st.session_state.in_L)
-        st.session_state.in_alpha = st.text_input("Parámetro de difusividad térmica (α):", value=st.session_state.in_alpha)
-        st.session_state.in_F = st.text_input("Fuente de calor interna F(x,t):", value=st.session_state.in_F)
-    with col2:
-        st.session_state.in_A = st.text_input("Temperatura en extremo izquierdo u(0,t):", value=st.session_state.in_A)
-        st.session_state.in_B = st.text_input("Temperatura en extremo derecho u(L,t):", value=st.session_state.in_B)
-        st.session_state.in_f = st.text_input("Distribución inicial de calor u(x,0):", value=st.session_state.in_f)
 
-transformaciones = (standard_transformations + (implicit_multiplication_application,))
+    with col1:
+        st.text_input(
+            "Longitud de la barra (L):",
+            key="in_L"
+        )
+
+        st.text_input(
+            "Difusividad térmica (α):",
+            key="in_alpha"
+        )
+
+        st.text_input(
+            "Fuente de calor F(x,t):",
+            key="in_F"
+        )
+
+    with col2:
+        st.text_input(
+            "Temperatura en extremo izquierdo u(0,t):",
+            key="in_A"
+        )
+
+        st.text_input(
+            "Temperatura en extremo derecho u(L,t):",
+            key="in_B"
+        )
+
+        st.text_input(
+            "Distribución inicial de calor u(x,0):",
+            key="in_f"
+        )
+
+transformaciones = (
+    standard_transformations +
+    (implicit_multiplication_application,)
+)
 
 def parsear_seguro(expr_str):
-    if not expr_str.strip(): raise ValueError("Expresión vacía")
-    expr = parse_expr(expr_str, transformations=transformaciones)
-    reemplazos = {sim: (x if sim.name == 'x' else (t if sim.name == 't' else sim)) for sim in expr.free_symbols}
+    if not expr_str.strip():
+        raise ValueError("Expresión vacía")
+
+    expr = parse_expr(
+        expr_str,
+        transformations=transformaciones
+    )
+
+    reemplazos = {
+        sim: (
+            x if sim.name == "x"
+            else t if sim.name == "t"
+            else sim
+        )
+        for sim in expr.free_symbols
+    }
+
     return expr.subs(reemplazos)
 
-st.subheader("Planteamiento Físico del Sistema")
+st.subheader("Problema a resolver")
 
 try:
+
+    # =====================================================
+    # PARSEO DE ENTRADAS
+    # =====================================================
+
     L_s = parsear_seguro(st.session_state.in_L)
     alpha_s = parsear_seguro(st.session_state.in_alpha)
     F_s = parsear_seguro(st.session_state.in_F)
     A_s = parsear_seguro(st.session_state.in_A)
     B_s = parsear_seguro(st.session_state.in_B)
     f_s = parsear_seguro(st.session_state.in_f)
-    
-    w_dyn = sp.simplify(A_s + (x / L_s) * (B_s - A_s))
-    F_t_dyn = sp.simplify(F_s - sp.diff(w_dyn, t) + alpha_s**2 * sp.diff(w_dyn, x, 2))
-    f_t_dyn = sp.simplify(f_s - w_dyn.subs(t, 0))
-    
+
+    # =====================================================
+    # HOMOGENEIZACIÓN PRELIMINAR
+    # =====================================================
+
+    w_dyn = sp.simplify(
+        A_s + (x / L_s) * (B_s - A_s)
+    )
+
+    F_t_dyn = sp.simplify(
+        F_s
+        - sp.diff(w_dyn, t)
+        + alpha_s**2 * sp.diff(w_dyn, x, 2)
+    )
+
+    f_t_dyn = sp.simplify(
+        f_s - w_dyn.subs(t, 0)
+    )
+
     alpha_term = sp.latex(alpha_s**2)
-    
+
     latex_sistema = rf"""
     \begin{{cases}}
-    \frac{{\partial {COLOR_MAP['u']}}}{{\partial t}} = {alpha_term} \frac{{\partial^2 {COLOR_MAP['u']}}}{{\partial x^2}} + {sp.latex(F_s)}, & 0 < x < {sp.latex(L_s)}, \quad t > 0 \\[8pt]
-    {COLOR_MAP['u']}(0,t) = {sp.latex(A_s)}, & t > 0 \\[8pt]
-    {COLOR_MAP['u']}({sp.latex(L_s)},t) = {sp.latex(B_s)}, & t > 0 \\[8pt]
-    {COLOR_MAP['u']}(x,0) = {sp.latex(f_s)}, & 0 \le x \le {sp.latex(L_s)}
+    \dfrac{{\partial u}}{{\partial t}}
+    =
+    {alpha_term}
+    \dfrac{{\partial^2 {COLOR_MAP['u']}}}{{\partial x^2}}
+    +
+    {sp.latex(F_s)},
+    &
+    0<x<{sp.latex(L_s)},\quad t>0
+    \\[8pt]
+
+    {u}(0,t)
+    =
+    {sp.latex(A_s)},
+    &
+    t>0
+    \\[8pt]
+
+    {u}({sp.latex(L_s)},t)
+    =
+    {sp.latex(B_s)},
+    &
+    t>0
+    \\[8pt]
+
+    {u}(x,0)
+    =
+    {sp.latex(f_s)},
+    &
+    0\le x\le {sp.latex(L_s)}
+
     \end{{cases}}
     """
-    
+
     with st.container(border=True):
         st.latex(latex_sistema)
-        
-    col_help, _ = st.columns([1, 2])
-    with col_help:
-        if st.button("📖 Ver Fundamentos Analíticos del Calor", use_container_width=True):
-            mostrar_ayuda_profunda(w_dyn, F_t_dyn, f_t_dyn)
 
+    col_help, _ = st.columns([1, 2])
+
+    with col_help:
+        if st.button(
+    "Teoría - Homogeneización",
+    use_container_width=True
+):
+    st.session_state.mostrar_ayuda = True
+    st.session_state.help_slide = 0
+    st.session_state.help_max_slide = 0
+    st.rerun()
+
+        if st.session_state.mostrar_ayuda:
+    mostrar_ayuda_profunda(
+        w_dyn,
+        F_t_dyn,
+        f_t_dyn
+    )
+    
 except Exception:
     with st.container(border=True):
-        st.latex(r"\text{Esperando especificaciones matemáticas válidas para actualizar el sistema...}")
+        st.latex(
+            r"\text{Esperando especificaciones matemáticas válidas para actualizar el sistema...}"
+        )
 
-if st.button("Guardar Parámetros y Avanzar 🚀", type="primary"):
-    exito = calcular_matematicas(st.session_state.in_L, st.session_state.in_alpha, st.session_state.in_F, st.session_state.in_A, st.session_state.in_B, st.session_state.in_f)
+# =========================================================
+# BOTÓN PRINCIPAL
+# =========================================================
+
+if st.button(
+    "Guardar problema y avanzar",
+    type="primary"
+):
+
+    exito = calcular_matematicas(
+        st.session_state.in_L,
+        st.session_state.in_alpha,
+        st.session_state.in_F,
+        st.session_state.in_A,
+        st.session_state.in_B,
+        st.session_state.in_f
+    )
+
     if exito:
-        if st.session_state.step == 1: avanzar()
+        avanzar()
         st.rerun()
 
 st.divider()
