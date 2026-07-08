@@ -2460,14 +2460,14 @@ try:
     with col_help:
         if st.button(
     "Teoría - Homogeneización",
-    use_container_width=True
-):
+    use_container_width=True):
+    
             mostrar_ayuda = True
             help_slide = 0
             help_max_slide = 0
             st.rerun()
 
-        if st.session_state.mostrar_ayuda:
+            if st.session_state.mostrar_ayuda:
     mostrar_ayuda_profunda(
         w_dyn,
         F_t_dyn,
