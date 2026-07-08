@@ -271,19 +271,19 @@ COLOR_MAP = {
 def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
     """Calcula algebraicamente la solución general utilizando n simbólico."""
     try:
-        L = parse_expr(
+        L = _expr(
     L_str,
     transformations=transformaciones,
     local_dict={'pi': sp.pi}
 )
 
-        alpha = parse_expr(
+        alpha = _expr(
     alpha_str,
     transformations=transformaciones,
     local_dict={'pi': sp.pi}
 )
 
-        F = parse_expr(
+        F = _expr(
     F_str,
     transformations=transformaciones,
     local_dict={
@@ -296,19 +296,19 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
     }
 )
 
-        A = parse_expr(
+        A = _expr(
     A_str,
     transformations=transformaciones,
     local_dict={'pi': sp.pi}
 )
 
-        B = parse_expr(
+        B = _expr(
     B_str,
     transformations=transformaciones,
     local_dict={'pi': sp.pi}
 )
 
-        f = parse_expr(
+        f = _expr(
     f_str,
     transformations=transformaciones,
     local_dict={
@@ -718,7 +718,7 @@ def botones_navegacion(): #Navegación homogenización
                 
 
 @st.dialog("📖 Profundización matemática: Homogeneización", width="large") ##!!!!
-def _profunda(w_d, F_t_d, f_t_d):
+def ayuda_profunda(w_d, F_t_d, f_t_d):
     
     st.markdown("""
     <div class="help-title">
@@ -2324,7 +2324,7 @@ for k, v in DEFAULTS.items():
         st.session_state[k] = v
 
 # =========================================================
-# PARSER
+# R
 # =========================================================
 
 transformaciones = (
@@ -2344,7 +2344,7 @@ LOCAL_DICT = {
 }
 
 
-def parsear_seguro(expr):
+def ar_seguro(expr):
 
     expr = expr.strip()
 
