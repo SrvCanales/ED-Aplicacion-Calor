@@ -277,7 +277,7 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
     local_dict={'pi': sp.pi}
 )
 
-alpha = parse_expr(
+        alpha = parse_expr(
     alpha_str,
     transformations=transformaciones,
     local_dict={'pi': sp.pi}
