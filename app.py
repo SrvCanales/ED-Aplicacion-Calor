@@ -1662,7 +1662,7 @@ def slide_3():
 # LINEAL
 # =========================================================================
 
-   if tipo == "Lineal":
+    if tipo == "Lineal":
     st.markdown("## 🔥 Sustitución lineal")
 
     texto("""
