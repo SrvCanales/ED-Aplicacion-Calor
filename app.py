@@ -308,7 +308,7 @@ transformations=transformaciones,
 local_dict={'pi': sp.pi}
 )
 
-f = parse_expr(
+   f = parse_expr(
         f_str,
         transformations=transformaciones,
         local_dict={
@@ -316,9 +316,8 @@ f = parse_expr(
             'pi': sp.pi,
             'sin': sp.sin,
             'cos': sp.cos,
-            'exp': sp.exp
-        }
-    )
+            'exp': sp.exp}
+)
     # Homogeneización
     w = sp.simplify(A + (x / L) * (B - A))
     F_tilde = sp.simplify(F - sp.diff(w, t) + alpha**2 * sp.diff(w, x, 2))
