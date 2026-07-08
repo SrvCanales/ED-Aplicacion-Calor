@@ -214,7 +214,7 @@ if 'in_B' not in st.session_state: st.session_state.in_B = "T_2"
 if 'in_f' not in st.session_state: st.session_state.in_f = "T_0 * sin(pi*x/L)"
 
 def avanzar():
-st.session_state.step += 1
+   st.session_state.step += 1
 
 # ==========================================
 # BARRA LATERAL (Progreso)
