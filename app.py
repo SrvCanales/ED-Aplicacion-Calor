@@ -334,41 +334,44 @@ local_dict={'pi': sp.pi}
    v_sol_num = 0
     
    for n_val in range(1, 7):
-      lam_val = n_val * sp.pi / L
-      phi_val = sp.sin(lam_val * x)
-      q_n_val = (2/L) * sp.integrate(F_tilde * phi_val, (x, 0, L))
-      a_n_0 = (2/L) * sp.integrate(f_tilde * phi_val, (x, 0, L))
+        lam_val = n_val * sp.pi / L
+        phi_val = sp.sin(lam_val * x)
+        q_n_val = (2/L) * sp.integrate(F_tilde * phi_val, (x, 0, L))
+        a_n_0 = (2/L) * sp.integrate(f_tilde * phi_val, (x, 0, L))
 
-      factor_k = alpha**2 * lam_val**2
-      int_part = sp.integrate(q_n_val.subs(t, tau) * sp.exp(factor_k * tau), tau)
-      int_eval = int_part.subs(tau, t) - int_part.subs(tau, 0)
+        factor_k = alpha**2 * lam_val**2
+        int_part = sp.integrate(q_n_val.subs(t, tau) * sp.exp(factor_k * tau), tau)
+        int_eval = int_part.subs(tau, t) - int_part.subs(tau, 0)
 
-      a_n_t = sp.exp(-factor_k * t) * (int_eval + a_n_0)
-      v_sol_num += a_n_t * phi_val
+        a_n_t = sp.exp(-factor_k * t) * (int_eval + a_n_0)
+        v_sol_num += a_n_t * phi_val
     
-      u_final_num = sp.simplify(w + v_sol_num)
-      u_num_func = sp.lambdify((x, t), u_final_num, modules=['numpy', 'math'])
+    # Esto va fuera del bucle for
+    u_final_num = sp.simplify(w + v_sol_num)
+    u_num_func = sp.lambdify((x, t), u_final_num, modules=['numpy', 'math'])
 
-      st.session_state.math_data = {
-      'L': L, 
-      'alpha': alpha, 
-      'F': F, 
-      'A': A, 
-      'B': B, 
-      'f': f,
-      'w': w, 
-      'F_tilde': F_tilde, 
-      'f_tilde': f_tilde,
-      'lam_n': lam_n, 
-      'phi_n': phi_n, 
-      'q_n_expr': q_n_expr,
-      'u_num_func': u_num_func, 
-      'L_num': float(L.evalf()) 
-      return True 
-      }
+    st.session_state.math_data = {
+        'L': L, 
+        'alpha': alpha, 
+        'F': F, 
+        'A': A, 
+        'B': B, 
+        'f': f,
+        'w': w, 
+        'F_tilde': F_tilde, 
+        'f_tilde': f_tilde,
+        'lam_n': lam_n, 
+        'phi_n': phi_n, 
+        'q_n_expr': q_n_expr,
+        'u_num_func': u_num_func, 
+        'L_num': float(L.evalf()) 
+    }
+    
+    return True 
+
 except Exception as e:
-   st.error(f"Error en los cálculos matemáticos: {e}")
-   return False
+    st.error(f"Error en los cálculos matemáticos: {e}")
+    return False
 
 
 # =============================================================================
