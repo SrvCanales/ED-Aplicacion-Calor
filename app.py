@@ -350,10 +350,20 @@ local_dict={'pi': sp.pi}
       u_num_func = sp.lambdify((x, t), u_final_num, modules=['numpy', 'math'])
 
       st.session_state.math_data = {
-      L': L, 'alpha': alpha, 'F': F, 'A': A, 'B': B, 'f': f,
-      w': w, 'F_tilde': F_tilde, 'f_tilde': f_tilde,
-      'lam_n': lam_n, 'phi_n': phi_n, 'q_n_expr': q_n_expr,
-      'u_num_func': u_num_func, 'L_num': float(L.evalf()) }
+      L': L, 
+      'alpha': alpha, 
+      'F': F, 
+      'A': A, 
+      'B': B, 
+      'f': f,
+      w': w, 
+      'F_tilde': F_tilde, 
+      'f_tilde': f_tilde,
+      'lam_n': lam_n, 
+      'phi_n': phi_n, 
+      'q_n_expr': q_n_expr,
+      'u_num_func': u_num_func, 
+      'L_num': float(L.evalf()) }
       return True
 except Exception as e:
    st.error(f"Error en los cálculos matemáticos: {e}")
