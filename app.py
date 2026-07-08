@@ -2311,7 +2311,7 @@ defaults = {
     "in_F": "0",
     "in_A": "0",
     "in_B": "0",
-    "in_f": "sin(pi*x)"
+    "in_f": "sin(pi*x)",
     "mostrar_ayuda": False,
     "help_slide": 0,
     "help_max_slide": 0,}
