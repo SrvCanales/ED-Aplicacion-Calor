@@ -1662,216 +1662,216 @@ def slide_3():
 # LINEAL
 # =========================================================================
 
-if tipo == "Lineal":
-        st.markdown("## 🔥 Sustitución lineal")
-
-        texto("""
-        La sustitución lineal es la que utilizaremos durante todo el curso.
-
-        Conecta las temperaturas impuestas en ambos extremos mediante
-        la función más sencilla posible.
-        """)
-
-        col1, col2 = st.columns([1.3, 1])
-
-        with col1:
-            T1 = 20
-            T2 = 75
-
-            x = np.linspace(0, L, 400)
-            y = T1 + (T2-T1)*x/L
-
-            fig = go.Figure()
-
-            fig.add_trace(
-                go.Scatter(
-                    x=x,
-                    y=y,
-                    mode="lines",
-                    line=dict(
-                        color=COLOR_CURVE,
-                        width=4
-                    ),
-                    hovertemplate=
-                    "<b>x</b> = %{x:.2f}"
-                    "<br><b>w(x)</b> = %{y:.2f} °C"
-                    "<extra></extra>"
-                )
-            )
-
-            fig.add_trace(
-                go.Scatter(
-                    x=[0, L],
-                    y=[T1, T2],
-                    mode="markers",
-                    marker=dict(
-                        color=COLOR_BORDER,
-                        size=11,
+    if tipo == "Lineal":
+            st.markdown("## 🔥 Sustitución lineal")
+   
+            texto("""
+            La sustitución lineal es la que utilizaremos durante todo el curso.
+   
+            Conecta las temperaturas impuestas en ambos extremos mediante
+            la función más sencilla posible.
+            """)
+   
+            col1, col2 = st.columns([1.3, 1])
+   
+            with col1:
+                T1 = 20
+                T2 = 75
+   
+                x = np.linspace(0, L, 400)
+                y = T1 + (T2-T1)*x/L
+   
+                fig = go.Figure()
+   
+                fig.add_trace(
+                    go.Scatter(
+                        x=x,
+                        y=y,
+                        mode="lines",
                         line=dict(
-                            color="white",
-                            width=2
+                            color=COLOR_CURVE,
+                            width=4
+                        ),
+                        hovertemplate=
+                        "<b>x</b> = %{x:.2f}"
+                        "<br><b>w(x)</b> = %{y:.2f} °C"
+                        "<extra></extra>"
+                    )
+                )
+   
+                fig.add_trace(
+                    go.Scatter(
+                        x=[0, L],
+                        y=[T1, T2],
+                        mode="markers",
+                        marker=dict(
+                            color=COLOR_BORDER,
+                            size=11,
+                            line=dict(
+                                color="white",
+                                width=2
+                            )
                         )
                     )
                 )
-            )
-
-            fig.add_annotation(
-                x=0,
-                y=T1,
-                text="<b>T₁</b>",
-                showarrow=True,
-                yshift=18,
-                font=dict(color=COLOR_BORDER)
-            )
-
-            fig.add_annotation(
-                x=L,
-                y=T2,
-                text="<b>T₂</b>",
-                showarrow=True,
-                yshift=18,
-                font=dict(color=COLOR_BORDER)
-            )
-
-            fig.add_shape(
-                type="line",
-                x0=0,
-                x1=L,
-                y0=0,
-                y1=0,
-                line=dict(
-                    color="#B77B40",
-                    width=9
+   
+                fig.add_annotation(
+                    x=0,
+                    y=T1,
+                    text="<b>T₁</b>",
+                    showarrow=True,
+                    yshift=18,
+                    font=dict(color=COLOR_BORDER)
                 )
-            )
-
-            fig.add_annotation(
-                x=L/2,
-                y=-6,
-                text="<b>Barra</b>",
-                showarrow=False,
-                font=dict(
-                    color="#7A5230",
-                    size=14
+   
+                fig.add_annotation(
+                    x=L,
+                    y=T2,
+                    text="<b>T₂</b>",
+                    showarrow=True,
+                    yshift=18,
+                    font=dict(color=COLOR_BORDER)
                 )
+   
+                fig.add_shape(
+                    type="line",
+                    x0=0,
+                    x1=L,
+                    y0=0,
+                    y1=0,
+                    line=dict(
+                        color="#B77B40",
+                        width=9
+                    )
+                )
+   
+                fig.add_annotation(
+                    x=L/2,
+                    y=-6,
+                    text="<b>Barra</b>",
+                    showarrow=False,
+                    font=dict(
+                        color="#7A5230",
+                        size=14
+                    )
+                )
+   
+                fig.update_yaxes(range=[0, 85])
+   
+                st.plotly_chart(
+                    aplicar_estilo(fig),
+                    use_container_width=True
+                )
+   
+            with col2:
+                bloque_latex(
+                    "Sustitución utilizada",
+                    r"""
+                    w(x)=
+                    T_1+
+                    \frac{T_2-T_1}{L}x
+                    """
+                )
+   
+                texto("""
+                La recta conecta exactamente ambas temperaturas.
+   
+                No intenta resolver la ecuación diferencial.
+   
+                Su única misión consiste en satisfacer
+                las condiciones de frontera.
+                """)
+   
+            separador()
+   
+            tarjeta(
+                "🌡️ Interpretación",
+                """
+                La función w representa el perfil estacionario más sencillo
+                compatible con las temperaturas impuestas.
+   
+                Después de restarla a la temperatura original,
+                la nueva incógnita será cero en ambos extremos.
+   
+                Gracias a ello podremos aplicar separación de variables.
+                """,
+                "blue"
             )
-
-            fig.update_yaxes(range=[0, 85])
-
-            st.plotly_chart(
-                aplicar_estilo(fig),
-                use_container_width=True
-            )
-
-        with col2:
-            bloque_latex(
-                "Sustitución utilizada",
+   
+            separador()
+   
+            st.markdown("### 📋 Resumen")
+   
+            c1, c2, c3, c4 = st.columns(4)
+   
+            with c1:
+                st.metric(
+                    "Complejidad",
+                    "⭐"
+                )
+   
+            with c2:
+                st.metric(
+                    "Uso",
+                    "Curso"
+                )
+   
+            with c3:
+                st.metric(
+                    "Álgebra",
+                    "Muy simple"
+                )
+   
+            with c4:
+                st.metric(
+                    "Recomendada",
+                    "✅ Sí"
+                )
+   
+            st.progress(.18)
+   
+            texto("""
+            Es la elección más sencilla cuando las temperaturas
+            de los extremos permanecen constantes.
+            """)
+   
+            separador()
+   
+            idea_clave(
                 r"""
-                w(x)=
-                T_1+
-                \frac{T_2-T_1}{L}x
+                Cuando
+   
+                \[
+                u(0,t)=T_1,
+                \qquad
+                u(L,t)=T_2,
+                \]
+   
+                permanecen constantes, una recta ya satisface exactamente
+                las condiciones de frontera.
+   
+                No necesitamos una función más complicada.
                 """
             )
-
-            texto("""
-            La recta conecta exactamente ambas temperaturas.
-
-            No intenta resolver la ecuación diferencial.
-
-            Su única misión consiste en satisfacer
-            las condiciones de frontera.
-            """)
-
-        separador()
-
-        tarjeta(
-            "🌡️ Interpretación",
-            """
-            La función w representa el perfil estacionario más sencillo
-            compatible con las temperaturas impuestas.
-
-            Después de restarla a la temperatura original,
-            la nueva incógnita será cero en ambos extremos.
-
-            Gracias a ello podremos aplicar separación de variables.
-            """,
-            "blue"
-        )
-
-        separador()
-
-        st.markdown("### 📋 Resumen")
-
-        c1, c2, c3, c4 = st.columns(4)
-
-        with c1:
-            st.metric(
-                "Complejidad",
-                "⭐"
+   
+            duda(
+                "¿Por qué elegir precisamente una recta?",
+                r"""
+                Porque buscamos la función más sencilla capaz de cumplir
+                el objetivo.
+   
+                Además,
+   
+                \[
+                w''(x)=0,
+                \]
+   
+                por lo que la ecuación diferencial apenas se modifica.
+   
+                En Matemáticas suele ser preferible la solución más simple
+                que resuelva completamente el problema.
+                """
             )
-
-        with c2:
-            st.metric(
-                "Uso",
-                "Curso"
-            )
-
-        with c3:
-            st.metric(
-                "Álgebra",
-                "Muy simple"
-            )
-
-        with c4:
-            st.metric(
-                "Recomendada",
-                "✅ Sí"
-            )
-
-        st.progress(.18)
-
-        texto("""
-        Es la elección más sencilla cuando las temperaturas
-        de los extremos permanecen constantes.
-        """)
-
-        separador()
-
-        idea_clave(
-            r"""
-            Cuando
-
-            \[
-            u(0,t)=T_1,
-            \qquad
-            u(L,t)=T_2,
-            \]
-
-            permanecen constantes, una recta ya satisface exactamente
-            las condiciones de frontera.
-
-            No necesitamos una función más complicada.
-            """
-        )
-
-        duda(
-            "¿Por qué elegir precisamente una recta?",
-            r"""
-            Porque buscamos la función más sencilla capaz de cumplir
-            el objetivo.
-
-            Además,
-
-            \[
-            w''(x)=0,
-            \]
-
-            por lo que la ecuación diferencial apenas se modifica.
-
-            En Matemáticas suele ser preferible la solución más simple
-            que resuelva completamente el problema.
-            """
-        )
 
     # =========================================================================
     # DEPENDIENTE DEL TIEMPO
