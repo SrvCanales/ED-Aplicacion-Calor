@@ -2312,8 +2312,8 @@ defaults = {
     "in_B": "0",
     "in_f": "sin(pi*x)"
     st.session_state.mostrar_ayuda: False,
-    st.session_state.help_slide": 0,
-    st.session_state.help_max_slide": 0,
+    st.session_state.help_slide: 0,
+    st.session_state.help_max_slide: 0,
 }
 
 for k, v in defaults.items():
