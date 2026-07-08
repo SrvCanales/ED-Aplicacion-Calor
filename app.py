@@ -194,16 +194,16 @@ C_TIME = "#F57C00"  # Naranjo (Temporal)
 # GESTIÓN DEL ESTADO Y LOGICA DE FLUJO
 # ==========================================
 if "help_slide" not in st.session_state:
-   st.session_state.help_slide = 0
+st.session_state.help_slide = 0
 
 if "help_max_slide" not in st.session_state:
-   st.session_state.help_max_slide = 0
+st.session_state.help_max_slide = 0
 
 
 if 'step' not in st.session_state:
-   st.session_state.step = 1
+st.session_state.step = 1
 if 'math_data' not in st.session_state:
-   st.session_state.math_data = {}
+st.session_state.math_data = {}
 
 # Inicializar Inputs en session_state para evitar que se borren al hacer rerun
 if 'in_L' not in st.session_state: st.session_state.in_L = "L"
@@ -214,7 +214,7 @@ if 'in_B' not in st.session_state: st.session_state.in_B = "T_2"
 if 'in_f' not in st.session_state: st.session_state.in_f = "T_0 * sin(pi*x/L)"
 
 def avanzar():
-   st.session_state.step += 1
+st.session_state.step += 1
 
 # ==========================================
 # BARRA LATERAL (Progreso)
@@ -230,11 +230,11 @@ pasos = [
 ]
 
 for i, paso in enumerate(pasos):
-   if i + 1 < st.session_state.step:
+if i + 1 < st.session_state.step:
 st.sidebar.markdown(f"✅ <span style='color:gray;'>{paso}</span>", unsafe_allow_html=True)
-   elif i + 1 == st.session_state.step:
+elif i + 1 == st.session_state.step:
 st.sidebar.markdown(f"👉 **<span style='color:{C_GEN};'>{paso}</span>**", unsafe_allow_html=True)
-   else:
+else:
 st.sidebar.markdown(f"🔒 <span style='color:lightgray;'>{paso}</span>", unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
@@ -357,7 +357,7 @@ st.session_state.math_data = {
 }
 return True
 except Exception as e:
-   st.error(f"Error en los cálculos matemáticos: {e}")
+st.error(f"Error en los cálculos matemáticos: {e}")
 return False
 
 
@@ -2310,7 +2310,7 @@ defaults = {
 "in_F": "0",
 "in_A": "0",
 "in_B": "0",
-"in_f": "sin(pi*x)",
+"in_f": "sin(pi*x)"
 "mostrar_ayuda": False,
 "help_slide": 0,
 "help_max_slide": 0,}
