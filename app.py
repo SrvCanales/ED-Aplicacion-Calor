@@ -308,58 +308,58 @@ transformations=transformaciones,
 local_dict={'pi': sp.pi}
 )
 
-   f = parse_expr(
-f_str,
-transformations=transformaciones,
-local_dict={
-'x': x,
-'pi': sp.pi,
-'sin': sp.sin,
-'cos': sp.cos,
-'exp': sp.exp
-}
-)
-# Homogeneización
-w = sp.simplify(A + (x / L) * (B - A))
-F_tilde = sp.simplify(F - sp.diff(w, t) + alpha**2 * sp.diff(w, x, 2))
-f_tilde = sp.simplify(f - w.subs(t, 0))
+f = parse_expr(
+        f_str,
+        transformations=transformaciones,
+        local_dict={
+            'x': x,
+            'pi': sp.pi,
+            'sin': sp.sin,
+            'cos': sp.cos,
+            'exp': sp.exp
+        }
+    )
+    # Homogeneización
+    w = sp.simplify(A + (x / L) * (B - A))
+    F_tilde = sp.simplify(F - sp.diff(w, t) + alpha**2 * sp.diff(w, x, 2))
+    f_tilde = sp.simplify(f - w.subs(t, 0))
 
-# Componente Espacial
-lam_n = n_sym * sp.pi / L
-phi_n = sp.sin(lam_n * x)
+    # Componente Espacial
+    lam_n = n_sym * sp.pi / L
+    phi_n = sp.sin(lam_n * x)
 
-# Componente Temporal Proyectada
-q_n_expr = (2/L) * sp.integrate(F_tilde * phi_n, (x, 0, L))
+    # Componente Temporal Proyectada
+    q_n_expr = (2/L) * sp.integrate(F_tilde * phi_n, (x, 0, L))
 
-# Simulación numérica (N=6 términos)
-v_sol_num = 0
-   
-for n_val in range(1, 7):
-   lam_val = n_val * sp.pi / L
-   phi_val = sp.sin(lam_val * x)
-   q_n_val = (2/L) * sp.integrate(F_tilde * phi_val, (x, 0, L))
-   a_n_0 = (2/L) * sp.integrate(f_tilde * phi_val, (x, 0, L))
+    # Simulación numérica (N=6 términos)
+    v_sol_num = 0
+    
+    for n_val in range(1, 7):
+        lam_val = n_val * sp.pi / L
+        phi_val = sp.sin(lam_val * x)
+        q_n_val = (2/L) * sp.integrate(F_tilde * phi_val, (x, 0, L))
+        a_n_0 = (2/L) * sp.integrate(f_tilde * phi_val, (x, 0, L))
 
-   factor_k = alpha**2 * lam_val**2
-   int_part = sp.integrate(q_n_val.subs(t, tau) * sp.exp(factor_k * tau), tau)
-   int_eval = int_part.subs(tau, t) - int_part.subs(tau, 0)
+        factor_k = alpha**2 * lam_val**2
+        int_part = sp.integrate(q_n_val.subs(t, tau) * sp.exp(factor_k * tau), tau)
+        int_eval = int_part.subs(tau, t) - int_part.subs(tau, 0)
 
-   a_n_t = sp.exp(-factor_k * t) * (int_eval + a_n_0)
-   v_sol_num += a_n_t * phi_val
-   
-   u_final_num = sp.simplify(w + v_sol_num)
-   u_num_func = sp.lambdify((x, t), u_final_num, modules=['numpy', 'math'])
+        a_n_t = sp.exp(-factor_k * t) * (int_eval + a_n_0)
+        v_sol_num += a_n_t * phi_val
+    
+    u_final_num = sp.simplify(w + v_sol_num)
+    u_num_func = sp.lambdify((x, t), u_final_num, modules=['numpy', 'math'])
 
-   st.session_state.math_data = {
-   'L': L, 'alpha': alpha, 'F': F, 'A': A, 'B': B, 'f': f,
-   'w': w, 'F_tilde': F_tilde, 'f_tilde': f_tilde,
-   'lam_n': lam_n, 'phi_n': phi_n, 'q_n_expr': q_n_expr,
-   'u_num_func': u_num_func, 'L_num': float(L.evalf())
-   }
-   return True
-   except Exception as e:
-   st.error(f"Error en los cálculos matemáticos: {e}")
-   return False
+    st.session_state.math_data = {
+        'L': L, 'alpha': alpha, 'F': F, 'A': A, 'B': B, 'f': f,
+        'w': w, 'F_tilde': F_tilde, 'f_tilde': f_tilde,
+        'lam_n': lam_n, 'phi_n': phi_n, 'q_n_expr': q_n_expr,
+        'u_num_func': u_num_func, 'L_num': float(L.evalf())
+    }
+    return True
+except Exception as e:
+    st.error(f"Error en los cálculos matemáticos: {e}")
+    return False
 
 
 # =============================================================================
@@ -367,272 +367,261 @@ for n_val in range(1, 7):
 # =============================================================================
 
 def texto(txt):
-   st.markdown(
-f"""
-<div style="
-color:{COLOR_TEXT};
-font-size:17px;
-line-height:1.8;
-text-align:justify;
-margin-top:0.3rem;
-margin-bottom:0.5rem;
-">
-{txt}
-</div>
-""",
-unsafe_allow_html=True
-)
+    st.markdown(
+        f"""
+        <div style="
+        color:{COLOR_TEXT};
+        font-size:17px;
+        line-height:1.8;
+        text-align:justify;
+        margin-top:0.3rem;
+        margin-bottom:0.5rem;
+        ">
+        {txt}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 def bloque_latex(titulo, *expresiones):
-   """
-   Muestra una tarjeta con un título y una o varias expresiones
-   matemáticas perfectamente integradas utilizando únicamente
-   componentes nativos de Streamlit.
-   """
-
-with st.container(border=True):
-
-   st.markdown(
-   f"""
-   <div style="
-   color:{COLOR_TEXT};
-   font-size:17px;
-   font-weight:600;
-   margin-bottom:0.3rem;
-   ">
-   {titulo}
-   </div>
-   """,
-   unsafe_allow_html=True
-   )
-
-for expr in expresiones:
-   st.latex(expr)
+    """
+    Muestra una tarjeta con un título y una o varias expresiones
+    matemáticas perfectamente integradas utilizando únicamente
+    componentes nativos de Streamlit.
+    """
+    with st.container(border=True):
+        st.markdown(
+            f"""
+            <div style="
+            color:{COLOR_TEXT};
+            font-size:17px;
+            font-weight:600;
+            margin-bottom:0.3rem;
+            ">
+            {titulo}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        for expr in expresiones:
+            st.latex(expr)
 
 def aplicar_estilo(fig):
+    fig.update_layout(
+        height=340,
+        margin=dict(
+            l=20,
+            r=20,
+            t=20,
+            b=10
+        ),
+        paper_bgcolor=COLOR_BG,
+        plot_bgcolor=COLOR_BG,
+        font=dict(
+            family="Arial",
+            size=15,
+            color=COLOR_TEXT
+        ),
+        hoverlabel=dict(
+            bgcolor=COLOR_BOX,
+            font=dict(
+                color=COLOR_TEXT,   # <-- Antes aparecía blanco
+                size=15
+            )
+        ),
+        showlegend=False
+    )
 
-   fig.update_layout(
+    fig.update_xaxes(
+        title="Posición sobre la barra",
+        tickmode="array",
+        tickvals=[0, L],
+        ticktext=["0", "L"],
+        range=[-0.3, L+0.3],
+        gridcolor=COLOR_GRID,
+        linecolor="#7A5230",
+        linewidth=2,
+        zeroline=False
+    )
 
-height=340,
+    fig.update_yaxes(
+        title="Temperatura",
+        gridcolor=COLOR_GRID,
+        linecolor="#7A5230",
+        linewidth=2,
+        zeroline=True,
+        zerolinecolor="#C7B6A3"
+    )
 
-margin=dict(
-l=20,
-r=20,
-t=20,
-b=10
-),
-
-paper_bgcolor=COLOR_BG,
-plot_bgcolor=COLOR_BG,
-
-font=dict(
-family="Arial",
-size=15,
-color=COLOR_TEXT
-),
-
-hoverlabel=dict(
-bgcolor=COLOR_BOX,
-font=dict(
-color=COLOR_TEXT,   # <-- Antes aparecía blanco
-size=15
-)
-),
-
-showlegend=False
-)
-
-fig.update_xaxes(
-title="Posición sobre la barra",
-tickmode="array",
-tickvals=[0, L],
-ticktext=["0", "L"],
-range=[-0.3, L+0.3],
-gridcolor=COLOR_GRID,
-linecolor="#7A5230",
-linewidth=2,
-zeroline=False
-)
-
-fig.update_yaxes(
-title="Temperatura",
-gridcolor=COLOR_GRID,
-linecolor="#7A5230",
-linewidth=2,
-zeroline=True,
-zerolinecolor="#C7B6A3"
-)
-
-return fig
+    return fig
 
 def grafico_frontera_homogenea():   
-   x = np.linspace(0, L, 500)
-   y = 2.8*np.sin(np.pi*x/L)
-   fig = go.Figure()
-   fig.add_trace(
-   go.Scatter(
-   x=x,
-   y=y,
-   mode="lines",
-   line=dict(
-   color=COLOR_CURVE,
-   width=4
-   ),
-   hovertemplate=(
-   "<b>x</b> = %{x:.2f}"
-   "<br><b>Temperatura</b> = %{y:.2f} °C"
-   "<extra></extra>"
-   )
-   )
-   )
+    x = np.linspace(0, L, 500)
+    y = 2.8*np.sin(np.pi*x/L)
+    fig = go.Figure()
+    
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y,
+            mode="lines",
+            line=dict(
+                color=COLOR_CURVE,
+                width=4
+            ),
+            hovertemplate=(
+                "<b>x</b> = %{x:.2f}"
+                "<br><b>Temperatura</b> = %{y:.2f} °C"
+                "<extra></extra>"
+            )
+        )
+    )
 
-fig.add_trace(
-go.Scatter(
-x=[0, L],
-y=[0, 0],
-mode="markers",
-marker=dict(
-color=COLOR_BORDER,
-size=10,
-line=dict(
-color="white",
-width=2
-)
-)
-)
-)
+    fig.add_trace(
+        go.Scatter(
+            x=[0, L],
+            y=[0, 0],
+            mode="markers",
+            marker=dict(
+                color=COLOR_BORDER,
+                size=10,
+                line=dict(
+                    color="white",
+                    width=2
+                )
+            )
+        )
+    )
 
-fig.add_annotation(
-x=0,
-y=0,
-text="<b>0°C</b>",
-showarrow=True,
-yshift=22,
-font=dict(
-color=COLOR_BORDER,
-size=14
-)
-)
+    fig.add_annotation(
+        x=0,
+        y=0,
+        text="<b>0°C</b>",
+        showarrow=True,
+        yshift=22,
+        font=dict(
+            color=COLOR_BORDER,
+            size=14
+        )
+    )
 
-fig.add_annotation(
-x=L,
-y=0,
-text="<b>0°C</b>",
-showarrow=True,
-yshift=22,
-font=dict(
-color=COLOR_BORDER,
-size=14
-)
-)
+    fig.add_annotation(
+        x=L,
+        y=0,
+        text="<b>0°C</b>",
+        showarrow=True,
+        yshift=22,
+        font=dict(
+            color=COLOR_BORDER,
+            size=14
+        )
+    )
 
-fig.add_shape(
-type="line",
-x0=0,
-x1=L,
-y0=-0.35,
-y1=-0.35,
-line=dict(
-color="#B77B40",
-width=9
-)
-)
+    fig.add_shape(
+        type="line",
+        x0=0,
+        x1=L,
+        y0=-0.35,
+        y1=-0.35,
+        line=dict(
+            color="#B77B40",
+            width=9
+        )
+    )
 
-fig.add_annotation(
-x=L/2,
-y=-0.7,
-text="<b>Barra</b>",
-showarrow=False,
-font=dict(
-color="#7A5230",
-size=14
-)
-)
+    fig.add_annotation(
+        x=L/2,
+        y=-0.7,
+        text="<b>Barra</b>",
+        showarrow=False,
+        font=dict(
+            color="#7A5230",
+            size=14
+        )
+    )
 
-# -------- Restricción de temperatura --------
+    # -------- Restricción de temperatura --------
+    fig.update_yaxes(
+        range=[0, 3.3]
+    )
 
-fig.update_yaxes(
-range=[0, 3.3]
-)
-
-return aplicar_estilo(fig)
-
+    return aplicar_estilo(fig)
 
 
 def grafico_frontera_no_homogenea():
-   x = np.linspace(0, L, 500)
-   y = 20 + (75-20)*x/L + 6*np.sin(np.pi*x/L)
-   fig = go.Figure()
-   fig.add_trace(
-   go.Scatter(
-   x=x,
-   y=y,
-   mode="lines",
-   line=dict(
-   color=COLOR_CURVE,
-   width=4
-   ),
+    x = np.linspace(0, L, 500)
+    y = 20 + (75-20)*x/L + 6*np.sin(np.pi*x/L)
+    fig = go.Figure()
+    
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y,
+            mode="lines",
+            line=dict(
+                color=COLOR_CURVE,
+                width=4
+            ),
+            hovertemplate=(
+                "<b>x</b> = %{x:.2f}"
+                "<br><b>Temperatura</b> = %{y:.2f} °C"
+                "<extra></extra>"
+            )
+        )
+    )
 
-hovertemplate=(
-"<b>x</b> = %{x:.2f}"
-"<br><b>Temperatura</b> = %{y:.2f} °C"
-"<extra></extra>"
-)
-)
-)
+    fig.add_trace(
+        go.Scatter(
+            x=[0, L],
+            y=[20, 75],
+            mode="markers",
+            marker=dict(
+                color=COLOR_BORDER,
+                size=10,
+                line=dict(
+                    color="white",
+                    width=2
+                )
+            )
+        )
+    )
 
-fig.add_trace(
-go.Scatter(
-x=[0, L],
-y=[20, 75],
-mode="markers",
-marker=dict(
-color=COLOR_BORDER,
-size=10,
-line=dict(
-color="white",
-width=2
-)
-)
-)
-)
+    fig.add_annotation(
+        x=0,
+        y=20,
+        text="<b>20°C</b>",
+        showarrow=True,
+        yshift=22,
+        font=dict(
+            color=COLOR_BORDER,
+            size=14
+        )
+    )
 
-fig.add_annotation(
-x=0,
-y=20,
-text="<b>20°C</b>",
-showarrow=True,
-yshift=22,
-font=dict(
-color=COLOR_BORDER,
-size=14
-)
-)
+    fig.add_annotation(
+        x=L,
+        y=75,
+        text="<b>75°C</b>",
+        showarrow=True,
+        yshift=22,
+        font=dict(
+            color=COLOR_BORDER,
+            size=14
+        )
+    )
 
-fig.add_annotation(
-x=L,
-y=75,
-text="<b>75°C</b>",
-showarrow=True,
-yshift=22,
-font=dict(
-color=COLOR_BORDER,
-size=14
-)
-)
-
-fig.add_shape(
-type="line",
-x0=0,
-x1=L,
-y0=0,
-y1=0,
-line=dict(
-color="#B77B40",
-width=9
-)
-)
+    fig.add_shape(
+        type="line",
+        x0=0,
+        x1=L,
+        y0=0,
+        y1=0,
+        line=dict(
+            color="#B77B40",
+            width=9
+        )
+    )
 
 fig.add_annotation(
 x=L/2,
