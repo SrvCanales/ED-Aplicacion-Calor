@@ -277,13 +277,13 @@ transformations=transformaciones,
 local_dict={'pi': sp.pi}
 )
 
-alpha = parse_expr(
+   alpha = parse_expr(
 alpha_str,
 transformations=transformaciones,
 local_dict={'pi': sp.pi}
 )
 
-F = parse_expr(
+   F = parse_expr(
 F_str,
 transformations=transformaciones,
 local_dict={
@@ -296,19 +296,19 @@ local_dict={
 }
 )
 
-A = parse_expr(
+   A = parse_expr(
 A_str,
 transformations=transformaciones,
 local_dict={'pi': sp.pi}
 )
 
-B = parse_expr(
+   B = parse_expr(
 B_str,
 transformations=transformaciones,
 local_dict={'pi': sp.pi}
 )
 
-f = parse_expr(
+   f = parse_expr(
 f_str,
 transformations=transformaciones,
 local_dict={
@@ -333,6 +333,7 @@ q_n_expr = (2/L) * sp.integrate(F_tilde * phi_n, (x, 0, L))
 
 # Simulación numérica (N=6 términos)
 v_sol_num = 0
+   
 for n_val in range(1, 7):
    lam_val = n_val * sp.pi / L
    phi_val = sp.sin(lam_val * x)
