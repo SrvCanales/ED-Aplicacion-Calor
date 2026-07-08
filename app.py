@@ -1662,515 +1662,510 @@ def slide_3():
 # LINEAL
 # =========================================================================
 
-if tipo == "Lineal":
-        st.markdown("## 🔥 Sustitución lineal")
+   if tipo == "Lineal":
+    st.markdown("## 🔥 Sustitución lineal")
 
-        texto("""
-        La sustitución lineal es la que utilizaremos durante todo el curso.
+    texto("""
+    La sustitución lineal es la que utilizaremos durante todo el curso.
 
-        Conecta las temperaturas impuestas en ambos extremos mediante
-        la función más sencilla posible.
-        """)
+    Conecta las temperaturas impuestas en ambos extremos mediante
+    la función más sencilla posible.
+    """)
 
-        col1, col2 = st.columns([1.3, 1])
+    col1, col2 = st.columns([1.3, 1])
 
-        with col1:
-            T1 = 20
-            T2 = 75
+    with col1:
+        T1 = 20
+        T2 = 75
 
-            x = np.linspace(0, L, 400)
-            y = T1 + (T2-T1)*x/L
+        x = np.linspace(0, L, 400)
+        y = T1 + (T2-T1)*x/L
 
-            fig = go.Figure()
+        fig = go.Figure()
 
-            fig.add_trace(
-                go.Scatter(
-                    x=x,
-                    y=y,
-                    mode="lines",
-                    line=dict(
-                        color=COLOR_CURVE,
-                        width=4
-                    ),
-                    hovertemplate=
-                    "<b>x</b> = %{x:.2f}"
-                    "<br><b>w(x)</b> = %{y:.2f} °C"
-                    "<extra></extra>"
-                )
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=y,
+                mode="lines",
+                line=dict(
+                    color=COLOR_CURVE,
+                    width=4
+                ),
+                hovertemplate=
+                "<b>x</b> = %{x:.2f}"
+                "<br><b>w(x)</b> = %{y:.2f} °C"
+                "<extra></extra>"
             )
+        )
 
-            fig.add_trace(
-                go.Scatter(
-                    x=[0, L],
-                    y=[T1, T2],
-                    mode="markers",
-                    marker=dict(
-                        color=COLOR_BORDER,
-                        size=11,
-                        line=dict(
-                            color="white",
-                            width=2
-                        )
+        fig.add_trace(
+            go.Scatter(
+                x=[0, L],
+                y=[T1, T2],
+                mode="markers",
+                marker=dict(
+                    color=COLOR_BORDER,
+                    size=11,
+                    line=dict(
+                        color="white",
+                        width=2
                     )
                 )
             )
-
-            fig.add_annotation(
-                x=0,
-                y=T1,
-                text="<b>T₁</b>",
-                showarrow=True,
-                yshift=18,
-                font=dict(color=COLOR_BORDER)
-            )
-
-            fig.add_annotation(
-                x=L,
-                y=T2,
-                text="<b>T₂</b>",
-                showarrow=True,
-                yshift=18,
-                font=dict(color=COLOR_BORDER)
-            )
-
-            fig.add_shape(
-                type="line",
-                x0=0,
-                x1=L,
-                y0=0,
-                y1=0,
-                line=dict(
-                    color="#B77B40",
-                    width=9
-                )
-            )
-
-            fig.add_annotation(
-                x=L/2,
-                y=-6,
-                text="<b>Barra</b>",
-                showarrow=False,
-                font=dict(
-                    color="#7A5230",
-                    size=14
-                )
-            )
-
-            fig.update_yaxes(range=[0, 85])
-
-            st.plotly_chart(
-                aplicar_estilo(fig),
-                use_container_width=True
-            )
-
-        with col2:
-            bloque_latex(
-                "Sustitución utilizada",
-                r"""
-                w(x)=
-                T_1+
-                \frac{T_2-T_1}{L}x
-                """
-            )
-
-            texto("""
-            La recta conecta exactamente ambas temperaturas.
-
-            No intenta resolver la ecuación diferencial.
-
-            Su única misión consiste en satisfacer
-            las condiciones de frontera.
-            """)
-
-        separador()
-
-        tarjeta(
-            "🌡️ Interpretación",
-            """
-            La función w representa el perfil estacionario más sencillo
-            compatible con las temperaturas impuestas.
-
-            Después de restarla a la temperatura original,
-            la nueva incógnita será cero en ambos extremos.
-
-            Gracias a ello podremos aplicar separación de variables.
-            """,
-            "blue"
         )
 
-        separador()
+        fig.add_annotation(
+            x=0,
+            y=T1,
+            text="<b>T₁</b>",
+            showarrow=True,
+            yshift=18,
+            font=dict(color=COLOR_BORDER)
+        )
 
-        st.markdown("### 📋 Resumen")
+        fig.add_annotation(
+            x=L,
+            y=T2,
+            text="<b>T₂</b>",
+            showarrow=True,
+            yshift=18,
+            font=dict(color=COLOR_BORDER)
+        )
 
-        c1, c2, c3, c4 = st.columns(4)
-
-        with c1:
-            st.metric(
-                "Complejidad",
-                "⭐"
+        fig.add_shape(
+            type="line",
+            x0=0,
+            x1=L,
+            y0=0,
+            y1=0,
+            line=dict(
+                color="#B77B40",
+                width=9
             )
+        )
 
-        with c2:
-            st.metric(
-                "Uso",
-                "Curso"
+        fig.add_annotation(
+            x=L/2,
+            y=-6,
+            text="<b>Barra</b>",
+            showarrow=False,
+            font=dict(
+                color="#7A5230",
+                size=14
             )
+        )
 
-        with c3:
-            st.metric(
-                "Álgebra",
-                "Muy simple"
-            )
+        fig.update_yaxes(range=[0, 85])
 
-        with c4:
-            st.metric(
-                "Recomendada",
-                "✅ Sí"
-            )
+        st.plotly_chart(
+            aplicar_estilo(fig),
+            use_container_width=True
+        )
 
-        st.progress(.18)
+    with col2:
+        bloque_latex(
+            "Sustitución utilizada",
+            r"""
+            w(x)=
+            T_1+
+            \frac{T_2-T_1}{L}x
+            """
+        )
 
         texto("""
-        Es la elección más sencilla cuando las temperaturas
-        de los extremos permanecen constantes.
+        La recta conecta exactamente ambas temperaturas.
+
+        No intenta resolver la ecuación diferencial.
+
+        Su única misión consiste en satisfacer
+        las condiciones de frontera.
         """)
 
-        separador()
+    separador()
+
+    tarjeta(
+        "🌡️ Interpretación",
+        """
+        La función w representa el perfil estacionario más sencillo
+        compatible con las temperaturas impuestas.
+
+        Después de restarla a la temperatura original,
+        la nueva incógnita será cero en ambos extremos.
+
+        Gracias a ello podremos aplicar separación de variables.
+        """,
+        "blue"
+    )
+
+    separador()
+
+    st.markdown("### 📋 Resumen")
+
+    c1, c2, c3, c4 = st.columns(4)
+
+    with c1:
+        st.metric(
+            "Complejidad",
+            "⭐"
+        )
+
+    with c2:
+        st.metric(
+            "Uso",
+            "Curso"
+        )
+
+    with c3:
+        st.metric(
+            "Álgebra",
+            "Muy simple"
+        )
+
+    with c4:
+        st.metric(
+            "Recomendada",
+            "✅ Sí"
+        )
+
+    st.progress(.18)
+
+    texto("""
+    Es la elección más sencilla cuando las temperaturas
+    de los extremos permanecen constantes.
+    """)
+
+    separador()
+
+    idea_clave(
+        r"""
+        Cuando
+
+        \[
+        u(0,t)=T_1,
+        \qquad
+        u(L,t)=T_2,
+        \]
+
+        permanecen constantes, una recta ya satisface exactamente
+        las condiciones de frontera.
+
+        No necesitamos una función más complicada.
+        """
+    )
+
+    duda(
+        "¿Por qué elegir precisamente una recta?",
+        r"""
+        Porque buscamos la función más sencilla capaz de cumplir
+        el objetivo.
+
+        Además,
+
+        \[
+        w''(x)=0,
+        \]
+
+        por lo que la ecuación diferencial apenas se modifica.
+
+        En Matemáticas suele ser preferible la solución más simple
+        que resuelva completamente el problema.
+        """
+    )
+
+# =========================================================================
+# DEPENDIENTE DEL TIEMPO
+# =========================================================================
+
+elif tipo == "Dependiente del tiempo":
+    st.markdown("## ⏳ Sustitución dependiente del tiempo")
+
+    tarjeta(
+        "Más allá del caso básico",
+        """
+        La idea de la homogeneización no cambia.
+
+        La diferencia es que ahora las temperaturas impuestas en los
+        extremos también evolucionan con el tiempo.
+
+        La función w debe adaptarse continuamente para seguir
+        satisfaciendo las condiciones de frontera.
+        """,
+        "blue"
+    )
+
+    col1, col2 = st.columns([1.3, 1])
+
+    with col1:
+        x = np.linspace(0, L, 400)
+        T1 = 10
+        T2 = 40
+        y = T1 + (T2-T1)*x/L
+
+        fig = go.Figure()
+
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=y,
+                mode="lines",
+                line=dict(
+                    color=COLOR_CURVE,
+                    width=4,
+                    dash="dash"
+                ),
+                hovertemplate=
+                "<b>x</b> = %{x:.2f}"
+                "<br><b>w(x,t)</b> = %{y:.2f}"
+                "<extra></extra>"
+            )
+        )
+
+        fig.add_shape(
+            type="line",
+            x0=0,
+            x1=L,
+            y0=0,
+            y1=0,
+            line=dict(
+                color="#B77B40",
+                width=9
+            )
+        )
+
+        fig.update_yaxes(range=[0, 50])
+
+        st.plotly_chart(
+            aplicar_estilo(fig),
+            use_container_width=True
+        )
+
+    with col2:
+        bloque_latex(
+            "Ejemplo",
+            r"""
+            w(x,t)
+            =
+            10e^{-t}
+            +
+            \frac{30e^{-t}}{L}x
+            """
+        )
+
+        texto("""
+        La función sigue siendo lineal respecto a x,
+        pero ahora cambia con el tiempo.
+
+        En cada instante conecta correctamente
+        las temperaturas impuestas.
+        """)
 
         idea_clave(
             r"""
-            Cuando
+            La estrategia es exactamente la misma.
 
-            \[
-            u(0,t)=T_1,
-            \qquad
-            u(L,t)=T_2,
-            \]
-
-            permanecen constantes, una recta ya satisface exactamente
-            las condiciones de frontera.
-
-            No necesitamos una función más complicada.
+            Simplemente permitimos que la función utilizada para
+            homogeneizar también dependa del tiempo.
             """
         )
 
-        duda(
-            "¿Por qué elegir precisamente una recta?",
+        st.info("""
+        💡 Este tipo de sustituciones aparece cuando las temperaturas
+        de frontera ya no permanecen constantes.
+        """)
+
+    separador()
+
+# =========================================================================
+# CUADRÁTICA
+# =========================================================================
+
+elif tipo == "Cuadrática":
+    st.markdown("## 📈 Sustitución cuadrática")
+
+    col1, col2 = st.columns([1.3, 1])
+
+    with col1:
+        x = np.linspace(0, L, 400)
+        y = 20 + 55*(x/L) + 12*(x/L)*(1-x/L)
+
+        fig = go.Figure()
+
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=y,
+                mode="lines",
+                line=dict(
+                    color=COLOR_CURVE,
+                    width=4
+                ),
+                hovertemplate=
+                "<b>x</b> = %{x:.2f}"
+                "<br><b>w(x)</b> = %{y:.2f}"
+                "<extra></extra>"
+            )
+        )
+
+        fig.add_shape(
+            type="line",
+            x0=0,
+            x1=L,
+            y0=0,
+            y1=0,
+            line=dict(
+                color="#B77B40",
+                width=9
+            )
+        )
+
+        fig.update_yaxes(range=[0, 90])
+
+        st.plotly_chart(
+            aplicar_estilo(fig),
+            use_container_width=True
+        )
+
+    with col2:
+        bloque_latex(
+            "Ejemplo",
             r"""
-            Porque buscamos la función más sencilla capaz de cumplir
-            el objetivo.
-
-            Además,
-
-            \[
-            w''(x)=0,
-            \]
-
-            por lo que la ecuación diferencial apenas se modifica.
-
-            En Matemáticas suele ser preferible la solución más simple
-            que resuelva completamente el problema.
+            w(x)
+            =
+            Ax^2+Bx+C
             """
         )
 
-    # =============================================================================
-    # CASOS: Dependiente del tiempo + Cuadrática + Trigonométrica
-    # (Reemplaza los bloques elif originales)
-    # =============================================================================
+        texto("""
+        La función ya no es una recta.
 
-    # =========================================================================
-    # DEPENDIENTE DEL TIEMPO
-    # =========================================================================
-
-    elif tipo == "Dependiente del tiempo":
-        st.markdown("## ⏳ Sustitución dependiente del tiempo")
+        Ahora posee curvatura, lo que modifica
+        sus derivadas espaciales.
+        """)
 
         tarjeta(
-            "Más allá del caso básico",
+            "¿Por qué alguien usaría una parábola?",
             """
-            La idea de la homogeneización no cambia.
+            En algunos problemas especiales puede resultar útil para
+            simplificar ciertos términos de la ecuación diferencial.
 
-            La diferencia es que ahora las temperaturas impuestas en los
-            extremos también evolucionan con el tiempo.
-
-            La función w debe adaptarse continuamente para seguir
-            satisfaciendo las condiciones de frontera.
+            Sin embargo, para los problemas introductorios de este curso
+            normalmente no ofrece ventajas importantes frente a una recta.
             """,
-            "blue"
+            "green"
         )
 
-        col1, col2 = st.columns([1.3, 1])
+        idea_clave(
+            r"""
+            Una parábola también puede homogeneizar el problema.
 
-        with col1:
-            x = np.linspace(0, L, 400)
-            T1 = 10
-            T2 = 40
-            y = T1 + (T2-T1)*x/L
+            Sin embargo, si una recta ya funciona correctamente,
+            normalmente preferimos la opción más simple.
+            """
+        )
 
-            fig = go.Figure()
+        st.warning("""
+        ⚠️ En cursos básicos rara vez necesitaremos este tipo de
+        sustituciones.
+        """)
 
-            fig.add_trace(
-                go.Scatter(
-                    x=x,
-                    y=y,
-                    mode="lines",
-                    line=dict(
-                        color=COLOR_CURVE,
-                        width=4,
-                        dash="dash"
-                    ),
-                    hovertemplate=
-                    "<b>x</b> = %{x:.2f}"
-                    "<br><b>w(x,t)</b> = %{y:.2f}"
-                    "<extra></extra>"
-                )
-            )
+    separador()
 
-            fig.add_shape(
-                type="line",
-                x0=0,
-                x1=L,
-                y0=0,
-                y1=0,
+# =========================================================================
+# TRIGONOMÉTRICA
+# =========================================================================
+
+elif tipo == "Trigonométrica":
+    st.markdown("## 🌊 Sustitución trigonométrica")
+
+    col1, col2 = st.columns([1.3, 1])
+
+    with col1:
+        x = np.linspace(0, L, 500)
+        y = 20 + 55*x/L + 10*np.sin(np.pi*x/L)
+
+        fig = go.Figure()
+
+        fig.add_trace(
+            go.Scatter(
+                x=x,
+                y=y,
+                mode="lines",
                 line=dict(
-                    color="#B77B40",
-                    width=9
-                )
+                    color=COLOR_CURVE,
+                    width=4
+                ),
+                hovertemplate=
+                "<b>x</b> = %{x:.2f}"
+                "<br><b>w(x)</b> = %{y:.2f}"
+                "<extra></extra>"
             )
+        )
 
-            fig.update_yaxes(range=[0, 50])
-
-            st.plotly_chart(
-                aplicar_estilo(fig),
-                use_container_width=True
+        fig.add_shape(
+            type="line",
+            x0=0,
+            x1=L,
+            y0=0,
+            y1=0,
+            line=dict(
+                color="#B77B40",
+                width=9
             )
+        )
 
-        with col2:
-            bloque_latex(
-                "Ejemplo",
-                r"""
-                w(x,t)
-                =
-                10e^{-t}
-                +
-                \frac{30e^{-t}}{L}x
-                """
-            )
+        fig.update_yaxes(range=[0, 90])
 
-            texto("""
-            La función sigue siendo lineal respecto a x,
-            pero ahora cambia con el tiempo.
+        st.plotly_chart(
+            aplicar_estilo(fig),
+            use_container_width=True
+        )
 
-            En cada instante conecta correctamente
-            las temperaturas impuestas.
-            """)
+    with col2:
+        bloque_latex(
+            "Ejemplo",
+            r"""
+            w(x)
+            =
+            A\sin\!\left(
+            \frac{\pi x}{L}
+            \right)+B
+            """
+        )
 
-            idea_clave(
-                r"""
-                La estrategia es exactamente la misma.
+        texto("""
+        Este tipo de funciones aparece cuando la física
+        del problema presenta comportamientos periódicos
+        u oscilatorios.
+        """)
 
-                Simplemente permitimos que la función utilizada para
-                homogeneizar también dependa del tiempo.
-                """
-            )
+        tarjeta(
+            "Una posibilidad más",
+            """
+            Las funciones trigonométricas también pueden utilizarse
+            para construir sustituciones válidas.
 
-            st.info("""
-            💡 Este tipo de sustituciones aparece cuando las temperaturas
-            de frontera ya no permanecen constantes.
-            """)
+            Sin embargo, suelen generar desarrollos algebraicos más
+            largos y rara vez son necesarias en una primera introducción
+            a la ecuación de calor.
+            """,
+            "yellow"
+        )
 
-        separador()
+        idea_clave(
+            r"""
+            La mejor sustitución no es la más sofisticada.
 
-    # =========================================================================
-    # CUADRÁTICA
-    # =========================================================================
+            Es la que simplifica el problema de la forma más eficiente.
+            """
+        )
 
-    elif tipo == "Cuadrática":
-        st.markdown("## 📈 Sustitución cuadrática")
+        st.warning("""
+        ⚠️ En este curso las veremos principalmente como una
+        curiosidad matemática y no como la estrategia principal.
+        """)
 
-        col1, col2 = st.columns([1.3, 1])
-
-        with col1:
-            x = np.linspace(0, L, 400)
-            y = 20 + 55*(x/L) + 12*(x/L)*(1-x/L)
-
-            fig = go.Figure()
-
-            fig.add_trace(
-                go.Scatter(
-                    x=x,
-                    y=y,
-                    mode="lines",
-                    line=dict(
-                        color=COLOR_CURVE,
-                        width=4
-                    ),
-                    hovertemplate=
-                    "<b>x</b> = %{x:.2f}"
-                    "<br><b>w(x)</b> = %{y:.2f}"
-                    "<extra></extra>"
-                )
-            )
-
-            fig.add_shape(
-                type="line",
-                x0=0,
-                x1=L,
-                y0=0,
-                y1=0,
-                line=dict(
-                    color="#B77B40",
-                    width=9
-                )
-            )
-
-            fig.update_yaxes(range=[0, 90])
-
-            st.plotly_chart(
-                aplicar_estilo(fig),
-                use_container_width=True
-            )
-
-        with col2:
-            bloque_latex(
-                "Ejemplo",
-                r"""
-                w(x)
-                =
-                Ax^2+Bx+C
-                """
-            )
-
-            texto("""
-            La función ya no es una recta.
-
-            Ahora posee curvatura, lo que modifica
-            sus derivadas espaciales.
-            """)
-
-            tarjeta(
-                "¿Por qué alguien usaría una parábola?",
-                """
-                En algunos problemas especiales puede resultar útil para
-                simplificar ciertos términos de la ecuación diferencial.
-
-                Sin embargo, para los problemas introductorios de este curso
-                normalmente no ofrece ventajas importantes frente a una recta.
-                """,
-                "green"
-            )
-
-            idea_clave(
-                r"""
-                Una parábola también puede homogeneizar el problema.
-
-                Sin embargo, si una recta ya funciona correctamente,
-                normalmente preferimos la opción más simple.
-                """
-            )
-
-            st.warning("""
-            ⚠️ En cursos básicos rara vez necesitaremos este tipo de
-            sustituciones.
-            """)
-
-        separador()
-
-    # =========================================================================
-    # TRIGONOMÉTRICA
-    # =========================================================================
-
-    elif tipo == "Trigonométrica":
-        st.markdown("## 🌊 Sustitución trigonométrica")
-
-        col1, col2 = st.columns([1.3, 1])
-
-        with col1:
-            x = np.linspace(0, L, 500)
-            y = 20 + 55*x/L + 10*np.sin(np.pi*x/L)
-
-            fig = go.Figure()
-
-            fig.add_trace(
-                go.Scatter(
-                    x=x,
-                    y=y,
-                    mode="lines",
-                    line=dict(
-                        color=COLOR_CURVE,
-                        width=4
-                    ),
-                    hovertemplate=
-                    "<b>x</b> = %{x:.2f}"
-                    "<br><b>w(x)</b> = %{y:.2f}"
-                    "<extra></extra>"
-                )
-            )
-
-            fig.add_shape(
-                type="line",
-                x0=0,
-                x1=L,
-                y0=0,
-                y1=0,
-                line=dict(
-                    color="#B77B40",
-                    width=9
-                )
-            )
-
-            fig.update_yaxes(range=[0, 90])
-
-            st.plotly_chart(
-                aplicar_estilo(fig),
-                use_container_width=True
-            )
-
-        with col2:
-            bloque_latex(
-                "Ejemplo",
-                r"""
-                w(x)
-                =
-                A\sin\!\left(
-                \frac{\pi x}{L}
-                \right)+B
-                """
-            )
-
-            texto("""
-            Este tipo de funciones aparece cuando la física
-            del problema presenta comportamientos periódicos
-            u oscilatorios.
-            """)
-
-            tarjeta(
-                "Una posibilidad más",
-                """
-                Las funciones trigonométricas también pueden utilizarse
-                para construir sustituciones válidas.
-
-                Sin embargo, suelen generar desarrollos algebraicos más
-                largos y rara vez son necesarias en una primera introducción
-                a la ecuación de calor.
-                """,
-                "yellow"
-            )
-
-            idea_clave(
-                r"""
-                La mejor sustitución no es la más sofisticada.
-
-                Es la que simplifica el problema de la forma más eficiente.
-                """
-            )
-
-            st.warning("""
-            ⚠️ En este curso las veremos principalmente como una
-            curiosidad matemática y no como la estrategia principal.
-            """)
-
-        separador()
+    separador()
 
 ##################################
 # CONTENIDOS
