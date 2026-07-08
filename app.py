@@ -11,238 +11,156 @@ import plotly.graph_objects as go
 
 L = 10
 
-# TODO AYUDA PARTE HOMOGENIZACION -------------------------------
-
-if "help_slide" not in st.session_state:
-    st.session_state.help_slide = 0
-
-if "help_max_slide" not in st.session_state:
-    st.session_state.help_max_slide = 0
-
 # -----------------------------------------------------------------------------
 # CSS GENERAL
 # -----------------------------------------------------------------------------
 
-st.markdown("""
+st.markdown(f"""
 <style>
-
-/*==========================================================
-CONTENEDOR
-==========================================================*/
-
-.help-card{
-    background:white;
-    border-radius:16px;
-    border:1px solid #E5E7EB;
-    padding:22px;
-    margin-top:12px;
-    margin-bottom:18px;
-    box-shadow:0 4px 12px rgba(0,0,0,.05);
-}
-
-/*==========================================================
-TÍTULOS
-==========================================================*/
-
-.help-title{
-
-    font-size:30px;
-    font-weight:700;
-    color:#0F172A;
-
-}
-
-.help-subtitle{
-
-    font-size:17px;
-    color:#475569;
-    margin-bottom:20px;
-
-}
-
-.step-title{
-
-    font-size:26px;
-    font-weight:700;
-    color:#1E3A8A;
-    margin-bottom:10px;
-
-}
-
-.small-title{
-
-    font-size:19px;
-    font-weight:600;
-    color:#1F2937;
-
-}
-
-
-/*==========================================================
-CAJAS
-==========================================================*/
-
-.box-blue{
-
-    background:#EFF6FF;
-    border-left:6px solid #2563EB;
-    padding:18px;
-    border-radius:12px;
-    margin-top:12px;
-    margin-bottom:18px;
-
-}
-
-.box-green{
-
-    background:#F0FDF4;
-    border-left:6px solid #16A34A;
-    padding:18px;
-    border-radius:12px;
-    margin-top:12px;
-    margin-bottom:18px;
-
-}
-
-.box-yellow{
-
-    background:#FFF7ED;
-    border-left:6px solid #F59E0B;
-    padding:18px;
-    border-radius:12px;
-    margin-top:12px;
-    margin-bottom:18px;
-
-}
-
-.box-red{
-
-    background:#FEF2F2;
-    border-left:6px solid #DC2626;
-    padding:18px;
-    border-radius:12px;
-    margin-top:12px;
-    margin-bottom:18px;
-
-}
-
-.box-gray{
-
-    background:#F8FAFC;
-    border:1px solid #E5E7EB;
-    padding:18px;
-    border-radius:12px;
-    margin-top:10px;
-    margin-bottom:15px;
-
-}
-
-
-/*==========================================================
-TARJETAS
-==========================================================*/
-
-.card{
-
-    background:white;
-    border:1px solid #E5E7EB;
-    border-radius:15px;
-    padding:16px;
-
-}
-
-
-/*==========================================================
-BADGES
-==========================================================*/
-
-.badge{
-
-display:inline-block;
-
-padding:5px 12px;
-
-border-radius:999px;
-
-background:#DBEAFE;
-
-color:#1D4ED8;
-
-font-weight:600;
-
-font-size:13px;
-
-margin-bottom:12px;
-
-}
-
-.badge2{
-
-display:inline-block;
-
-padding:5px 12px;
-
-border-radius:999px;
-
-background:#DCFCE7;
-
-color:#15803D;
-
-font-weight:600;
-
-font-size:13px;
-
-margin-bottom:12px;
-
-}
-
-
-/*==========================================================
-NOTAS
-==========================================================*/
-
-.note{
-
-font-size:15px;
-
-color:#475569;
-
-line-height:1.75;
-
-}
-
-
-/*==========================================================
-SVG
-==========================================================*/
-
-.svg-card{
-
-border:1px solid #E5E7EB;
-
-border-radius:14px;
-
-padding:10px;
-
-background:white;
-
-}
-
-
-/*==========================================================
-BOTONES
-==========================================================*/
-
-div.stButton>button{
-
-border-radius:12px;
-
-font-weight:600;
-
-height:44px;
-
-}
-
+/* Fondo de la aplicación completa */
+.stApp {{
+    background-color: {COLOR_BG} !important;
+    color: {COLOR_TEXT} !important;
+}}
+
+/* Estilo para los componentes laterales y principales */
+section[data-testid="stSidebar"] {{
+    background-color: {COLOR_BOX} !important;
+    border-right: 1px solid {COLOR_GRID} !important;
+}}
+
+/* Forzar temas en inputs nativos de Streamlit */
+div[data-testid="stTextInput"] input {{
+    background-color: #FFFFFF !important;
+    border: 1px solid {COLOR_GRID} !important;
+    color: {COLOR_TEXT} !important;
+    border-radius: 8px !important;
+}}
+
+/* Personalización de los contenedores nativos con borde */
+div[data-testid="stContainer"] {{
+    background-color: {COLOR_BOX} !important;
+    border: 1px solid {COLOR_GRID} !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+}}
+
+/* Personalización de Botones Nativos */
+div.stButton > button {{
+    background-color: {COLOR_CURVE} !important;
+    color: #FFFFFF !important;
+    border: 1px solid {COLOR_BORDER} !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    height: 44px !important;
+    transition: all 0.2s ease-in-out !important;
+}}
+
+div.stButton > button:hover {{
+    background-color: {COLOR_CURVE_2} !important;
+    box-shadow: 0 4px 10px rgba(216, 67, 21, 0.2) !important;
+    color: #FFFFFF !important;
+}}
+
+/* Cajas personalizadas del Modal de Ayuda */
+.help-card {{
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid {COLOR_GRID};
+    padding: 22px;
+    margin-top: 12px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.03);
+}}
+
+.help-title {{
+    font-size: 30px;
+    font-weight: 700;
+    color: {COLOR_BORDER};
+}}
+
+.help-subtitle {{
+    font-size: 17px;
+    color: {COLOR_TEXT};
+    margin-bottom: 20px;
+}}
+
+.step-title {{
+    font-size: 26px;
+    font-weight: 700;
+    color: {COLOR_BORDER};
+    margin-bottom: 10px;
+}}
+
+.box-blue {{
+    background: {COLOR_BOX};
+    border-left: 6px solid {COLOR_CURVE};
+    padding: 18px;
+    border-radius: 12px;
+    margin-top: 12px;
+    margin-bottom: 18px;
+}}
+
+.box-green {{
+    background: #F2F9F3;
+    border-left: 6px solid #2E7D32;
+    padding: 18px;
+    border-radius: 12px;
+    margin-top: 12px;
+    margin-bottom: 18px;
+}}
+
+.box-yellow {{
+    background: {COLOR_BOX};
+    border-left: 6px solid {COLOR_CURVE_2};
+    padding: 18px;
+    border-radius: 12px;
+    margin-top: 12px;
+    margin-bottom: 18px;
+}}
+
+.box-red {{
+    background: #FDF2F2;
+    border-left: 6px solid {COLOR_BORDER};
+    padding: 18px;
+    border-radius: 12px;
+    margin-top: 12px;
+    margin-bottom: 18px;
+}}
+
+.box-gray {{
+    background: #FFFFFF;
+    border: 1px solid {COLOR_GRID};
+    padding: 18px;
+    border-radius: 12px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}}
+
+.card {{
+    background: #FFFFFF;
+    border: 1px solid {COLOR_GRID};
+    border-radius: 15px;
+    padding: 16px;
+}}
+
+.badge {{
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: {COLOR_BOX};
+    color: {COLOR_BORDER};
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 12px;
+    border: 1px solid {COLOR_GRID};
+}}
+
+.note {{
+    font-size: 15px;
+    color: {COLOR_TEXT};
+    line-height: 1.75;
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -250,7 +168,7 @@ height:44px;
 # ==========================================
 # CONFIGURACIÓN DE PÁGINA Y ESTILOS 
 # ==========================================
-st.set_page_config(page_title="Ruta de Aprendizaje: Calor 1D", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Complemento de Aprendizaje: Calor 1D", layout="wide", initial_sidebar_state="expanded")
 
 # Paleta de Colores Suaves (Material Design)
 C_STAT = "#1976D2"  # Azul (Estacionaria)
@@ -276,6 +194,13 @@ COLOR_BOX = "#FFF3E0"
 # ==========================================
 # GESTIÓN DEL ESTADO Y LOGICA DE FLUJO
 # ==========================================
+if "help_slide" not in st.session_state:
+    st.session_state.help_slide = 0
+
+if "help_max_slide" not in st.session_state:
+    st.session_state.help_max_slide = 0
+    
+
 if 'step' not in st.session_state:
     st.session_state.step = 1
 if 'math_data' not in st.session_state:
@@ -2671,35 +2596,33 @@ curiosidad matemática y no como la estrategia principal.
 # CONTENIDOS
 ##################################
 
-st.title("🔥 Simulador de EDP: Calor 1D Analítico")
-st.markdown("Sigue esta ruta guiada interactiva para resolver tu Problema de Valor Inicial y de Frontera (PVIF) paso a paso.")
+st.title("🔥 Simulador Analítico de la Ecuación del Calor 1D")
+st.markdown("Modela y analiza la evolución de la temperatura utilizando el formalismo riguroso de Sturm-Liouville paso a paso.")
 st.divider()
 
-st.header("1. Planteando la EDP")
-st.markdown("Define los parámetros físicos y geométricos de tu sistema unidimensional.")
+st.header("1. Configuración del Campo Térmico")
+st.markdown("Determina las dimensiones, la difusividad del material y las fronteras de energía:")
 
-# Contenedor nativo con enlace directo al session_state para retener los datos ingresados
 with st.container(border=True):
     col1, col2 = st.columns(2)
     with col1:
-        st.session_state.in_L = st.text_input("Longitud de la barra (L):", value=st.session_state.in_L)
-        st.session_state.in_alpha = st.text_input("Difusividad térmica (α):", value=st.session_state.in_alpha)
-        st.session_state.in_F = st.text_input("Fuente externa de calor F(x,t):", value=st.session_state.in_F)
+        st.session_state.in_L = st.text_input("Longitud geométrica de la barra (L):", value=st.session_state.in_L)
+        st.session_state.in_alpha = st.text_input("Parámetro de difusividad térmica (α):", value=st.session_state.in_alpha)
+        st.session_state.in_F = st.text_input("Fuente de calor interna F(x,t):", value=st.session_state.in_F)
     with col2:
-        st.session_state.in_A = st.text_input("Frontera Izquierda u(0,t):", value=st.session_state.in_A)
-        st.session_state.in_B = st.text_input("Frontera Derecha u(L,t):", value=st.session_state.in_B)
-        st.session_state.in_f = st.text_input("Perfil Inicial u(x,0):", value=st.session_state.in_f)
+        st.session_state.in_A = st.text_input("Temperatura en extremo izquierdo u(0,t):", value=st.session_state.in_A)
+        st.session_state.in_B = st.text_input("Temperatura en extremo derecho u(L,t):", value=st.session_state.in_B)
+        st.session_state.in_f = st.text_input("Distribución inicial de calor u(x,0):", value=st.session_state.in_f)
 
 transformaciones = (standard_transformations + (implicit_multiplication_application,))
 
 def parsear_seguro(expr_str):
-    if not expr_str.strip():
-        raise ValueError("Expresión vacía")
+    if not expr_str.strip(): raise ValueError("Expresión vacía")
     expr = parse_expr(expr_str, transformations=transformaciones)
     reemplazos = {sim: (x if sim.name == 'x' else (t if sim.name == 't' else sim)) for sim in expr.free_symbols}
     return expr.subs(reemplazos)
 
-st.subheader("Modelo Matemático (Tiempo Real)")
+st.subheader("Planteamiento Físico del Sistema")
 
 try:
     L_s = parsear_seguro(st.session_state.in_L)
@@ -2715,7 +2638,6 @@ try:
     
     alpha_term = sp.latex(alpha_s**2)
     
-    # Construcción precisa de LaTeX inyectando solo el color en el carácter 'u'
     latex_sistema = rf"""
     \begin{{cases}}
     \frac{{\partial {COLOR_MAP['u']}}}{{\partial t}} = {alpha_term} \frac{{\partial^2 {COLOR_MAP['u']}}}{{\partial x^2}} + {sp.latex(F_s)}, & 0 < x < {sp.latex(L_s)}, \quad t > 0 \\[8pt]
@@ -2730,115 +2652,104 @@ try:
         
     col_help, _ = st.columns([1, 2])
     with col_help:
-        if st.button("ℹ️ Ver Fundamentos de Homogeneización", use_container_width=True):
+        if st.button("📖 Ver Fundamentos Analíticos del Calor", use_container_width=True):
             mostrar_ayuda_profunda(w_dyn, F_t_dyn, f_t_dyn)
 
 except Exception:
     with st.container(border=True):
-        st.latex(r"\text{Esperando expresiones matemáticas válidas...}")
-
-st.info("💡 **Reto de Aprendizaje:** Identifica mentalmente cuáles términos causan que el problema no sea homogéneo antes de avanzar.")
+        st.latex(r"\text{Esperando especificaciones matemáticas válidas para actualizar el sistema...}")
 
 if st.button("Guardar Parámetros y Avanzar 🚀", type="primary"):
     exito = calcular_matematicas(st.session_state.in_L, st.session_state.in_alpha, st.session_state.in_F, st.session_state.in_A, st.session_state.in_B, st.session_state.in_f)
     if exito:
-        if st.session_state.step == 1:
-            avanzar()
+        if st.session_state.step == 1: avanzar()
         st.rerun()
 
 st.divider()
 
-# ---------------------------------------------------------
+# =========================================================
 # ETAPA 2: HOMOGENEIZACIÓN
-# ---------------------------------------------------------
+# =========================================================
 if st.session_state.step >= 2:
     data = st.session_state.math_data
-    st.header("2. Homogeneizando las fronteras")
-    
-    st.markdown("Proponemos separar la solución en dos contribuciones físicas:")
+    st.header("2. Descomposición del Perfil Térmico")
+    st.markdown("Estructuramos la solución en equilibrio estático y ondas térmicas transitorias:")
     st.latex(rf"{COLOR_MAP['u']}(x,t) = {COLOR_MAP['w']}(x,t) + {COLOR_MAP['v']}(x,t)")
     
-    st.markdown("Interpolando linealmente las fronteras, la **parte estacionaria** resulta en:")
+    st.markdown("El estado estacionario calculado para este sistema es:")
     st.latex(rf"{COLOR_MAP['w']}(x,t) = {sp.latex(data['w'])}")
     
-    st.markdown("Sustituyendo en la EDP, nuestro **nuevo problema transitorio** queda sujeto a:")
-    
+    st.markdown("La transformación produce el siguiente campo transitorio modificado:")
     with st.container(border=True):
-        st.latex(rf"{COLOR_MAP['F_tilde']}(x,t) = {sp.latex(data['F_tilde'])}")
-        st.latex(rf"{COLOR_MAP['f_tilde']}(x) = {sp.latex(data['f_tilde'])}")
+        st.latex(rf"\tilde{{F}}(x,t) = {sp.latex(data['F_tilde'])}")
+        st.latex(rf"\tilde{{f}}(x) = {sp.latex(data['f_tilde'])}")
         
     if st.session_state.step == 2:
-        if st.button("Buscar Valores Propios 🚀"): avanzar(); st.rerun()
+        if st.button("Calcular Base Espacial 🚀"): avanzar(); st.rerun()
     st.divider()
 
-# ---------------------------------------------------------
+# =========================================================
 # ETAPA 3: VALORES Y FUNCIONES PROPIAS
-# ---------------------------------------------------------
+# =========================================================
 if st.session_state.step >= 3:
     data = st.session_state.math_data
-    st.header("3. Valores y Funciones Propias Espaciales")
-    
-    st.markdown("Resolviendo el problema de Sturm-Liouville asociado a las fronteras homogéneas nulas en ambos extremos, obtenemos la base espacial:")
+    st.header("3. Autofunciones y Modos Vibracionales de Calor")
+    st.markdown("Al resolver el problema homogéneo de Sturm-Liouville en el espacio, determinamos los autovalores y la base de modos puros:")
     
     with st.container(border=True):
-        st.latex(rf"{COLOR_MAP['lam']}_n = {sp.latex(data['lam_n'])}")
-        st.latex(rf"{COLOR_MAP['phi']}_n(x) = {sp.latex(data['phi_n'])}")
+        st.latex(rf"\lambda_n = {sp.latex(data['lam_n'])}")
+        st.latex(rf"\phi_n(x) = {sp.latex(data['phi_n'])}")
 
     if st.session_state.step == 3:
-        if st.button("Plantear Expansión 🚀"): avanzar(); st.rerun()
+        if st.button("Proyectar Expansión de Fourier 🚀"): avanzar(); st.rerun()
     st.divider()
 
-# ---------------------------------------------------------
-# ETAPA 4: EXPANSIÓN Y STURM-LIOUVILLE
-# ---------------------------------------------------------
+# =========================================================
+# ETAPA 4: EXPANSIÓN POR AUTOFUNCIONES
+# =========================================================
 if st.session_state.step >= 4:
     data = st.session_state.math_data
-    st.header("4. Sturm-Liouville y Expansión")
-    
-    st.markdown("Expresamos la solución transitoria y la fuente modificada como combinaciones lineales (series de Fourier) de nuestras funciones propias espaciales:")
+    st.header("4. Expansión en Modos Ortogonales")
+    st.markdown("Expandimos el campo térmico dinámico y las fuentes utilizando la base armónica calculada:")
     
     L_tex = sp.latex(data['L'])
     sin_term = rf"\sin\left(\frac{{n\pi x}}{{{L_tex}}}\right)"
     
     with st.container(border=True):
         st.latex(rf"{COLOR_MAP['v']}(x,t) = \sum_{{n=1}}^{{\infty}} {COLOR_MAP['a']}_n(t) \cdot {sin_term}")
-        st.latex(rf"{COLOR_MAP['F_tilde']}(x,t) = \sum_{{n=1}}^{{\infty}} {COLOR_MAP['q']}_n(t) \cdot {sin_term}")
+        st.latex(rf"\tilde{{F}}(x,t) = \sum_{{n=1}}^{{\infty}} q_n(t) \cdot {sin_term}")
 
     if st.session_state.step == 4:
-        if st.button("Resolver Coeficientes Temporales 🚀"): avanzar(); st.rerun()
+        if st.button("Resolver EDOs Temporales 🚀"): avanzar(); st.rerun()
     st.divider()
 
-# ---------------------------------------------------------
-# ETAPA 5: COEFICIENTES TEMPORALES a_n(t)
-# ---------------------------------------------------------
+# =========================================================
+# ETAPA 5: COEFICIENTES TEMPORALES a(t)
+# =========================================================
 if st.session_state.step >= 5:
     data = st.session_state.math_data
-    st.header("5. Obteniendo los Coeficientes Temporales")
-    
-    st.markdown("Proyectando la ecuación original sobre la base ortogonal, la EDP se desacopla en infinitas Ecuaciones Diferenciales Ordinarias (EDOs) para el tiempo:")
+    st.header("5. Solución de las Amplitudes Temporales")
+    st.markdown("La proyección ortogonal desacopla la ecuación diferencial parcial en un conjunto infinito de ecuaciones diferenciales ordinarias de primer orden para las amplitudes de calor:")
     
     factor = f"{sp.latex(data['alpha']**2)} \left(\\frac{{n\pi}}{{{sp.latex(data['L'])}}}\\right)^2"
     
     with st.container(border=True):
-        st.latex(rf"{COLOR_MAP['a']}_n^\prime(t) + {factor} {COLOR_MAP['a']}_n(t) = {COLOR_MAP['q']}_n(t)")
-        
-    st.markdown("Donde los coeficientes de la fuente proyectada calculados por el producto interno son:")
-    st.latex(rf"{COLOR_MAP['q']}_n(t) = {sp.latex(data['q_n_expr'])}")
+        st.latex(rf"{COLOR_MAP['a']}_n^\prime(t) + {factor} {COLOR_MAP['a']}_n(t) = q_n(t)")
+    st.markdown("Donde los coeficientes de carga de la fuente se calculan analíticamente como:")
+    st.latex(rf"q_n(t) = {sp.latex(data['q_n_expr'])}")
 
     if st.session_state.step == 5:
-        if st.button("Ensamblar Solución Final y Simular 🚀"): avanzar(); st.rerun()
+        if st.button("Sintetizar Solución Total y Simular 🚀"): avanzar(); st.rerun()
     st.divider()
 
-# ---------------------------------------------------------
+# =========================================================
 # ETAPA 6: SOLUCIÓN Y SIMULADOR
-# ---------------------------------------------------------
+# =========================================================
 if st.session_state.step >= 6:
     data = st.session_state.math_data
-    st.header("6. Solución General y Simulador Físico")
+    st.header("6. Síntesis y Laboratorio Dinámico de Simulación")
     
-    vista = st.radio("Filtro de Visualización Matemática:", 
-                     ["Solución General completa", "Solo Estacionaria", "Solo Transitoria"],
-                     horizontal=True)
+    vista = st.radio("Componente Térmico a Aislar:", ["Solución General Completa", "Perfil de Equilibrio Estacionario", "Ondas Transitorias Dispersivas"], horizontal=True)
     
     L_tex = sp.latex(data['L'])
     w_tex = sp.latex(data['w'])
@@ -2846,35 +2757,42 @@ if st.session_state.step >= 6:
     sum_tex = rf"\sum_{{n=1}}^{{\infty}} {COLOR_MAP['a']}_n(t) \cdot {sin_term}"
     
     with st.container(border=True):
-        if vista == "Solo Estacionaria":
+        if vista == "Perfil de Equilibrio Estacionario":
             st.latex(rf"{COLOR_MAP['w']}(x,t) = {w_tex}")
-        elif vista == "Solo Transitoria":
+        elif vista == "Ondas Transitorias Dispersivas":
             st.latex(rf"{COLOR_MAP['v']}(x,t) = {sum_tex}")
         else:
             w_part = f"{w_tex} + " if data['w'] != 0 else ""
             st.latex(rf"{COLOR_MAP['u']}(x,t) = {w_part} {sum_tex}")
 
-    # SIMULADOR NUMÉRICO
-    st.subheader("Simulación Térmica Interactiva")
-    t_val = st.slider(f"Flujo del Tiempo (t)", 0.0, 5.0, 0.0, 0.05)
+    # SIMULADOR NUMÉRICO ASOCIADO (Estilo Térmico Caliente)
+    st.subheader("Simulación Térmica de Distribución Continental de Calor")
+    t_val = st.slider(f"Evolución Temporal del Flujo (segundos):", 0.0, 5.0, 0.0, 0.05)
     
     x_vals = np.linspace(0, data['L_num'], 250)
     u_vals = data['u_num_func'](x_vals, t_val)
     if np.isscalar(u_vals):
         u_vals = np.ones_like(x_vals) * u_vals
 
-    fig, ax = plt.subplots(figsize=(10, 2), dpi=120)
+    # Configuración del gráfico integrada a la paleta crema
+    fig, ax = plt.subplots(figsize=(10, 2.2), dpi=130)
+    fig.patch.set_facecolor(COLOR_BG)
+    ax.set_facecolor(COLOR_BG)
+    
     extent = [0, data['L_num'], 0, 1]
-    
     im = ax.imshow(np.array([u_vals, u_vals]), cmap='inferno', aspect='auto', extent=extent, vmin=np.min(u_vals)-0.1, vmax=np.max(u_vals)+1)
-    ax.set_yticks([])
-    ax.set_xlabel('Posición de la barra $x$', fontweight='bold', color='#475569')
-    ax.spines['top'].set_visible(False); ax.spines['right'].set_visible(False); ax.spines['left'].set_visible(False)
     
-    cbar = fig.colorbar(im, ax=ax, orientation='horizontal', fraction=0.3, pad=0.5)
-    cbar.set_label(f'Temperatura a los {t_val:.2f}s', fontweight='bold', color='#475569')
+    ax.set_yticks([])
+    ax.set_xlabel('Coordenada espacial de la barra (x)', fontweight='bold', color=COLOR_TEXT)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_color(COLOR_GRID)
+    ax.tick_params(axis='x', colors=COLOR_TEXT)
+    
+    cbar = fig.colorbar(im, ax=ax, orientation='horizontal', fraction=0.25, pad=0.55)
+    cbar.set_label(f'Escala de Temperatura Física a los {t_val:.2f}s', fontweight='bold', color=COLOR_TEXT)
     cbar.outline.set_visible(False)
+    cbar.ax.tick_params(labelsize=9, colors=COLOR_TEXT)
     
     st.pyplot(fig)
-
-
