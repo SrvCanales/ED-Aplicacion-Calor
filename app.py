@@ -1165,431 +1165,427 @@ Al final del procedimiento recuperaremos la solución original.
 
 def slide_2(w_d, F_t_d, f_t_d):
 
-# =========================================================================
-# ENCABEZADO
-# =========================================================================
-
-encabezado_slide(
-2,
-"¿Cómo se homogeneiza un problema?",
-"""
-Ahora construiremos una nueva incógnita que sí satisfaga fronteras
-homogéneas.
-
-La idea consiste en separar la temperatura en una parte conocida,
-responsable de las condiciones de frontera, y otra que describa
-la evolución restante del sistema.
-"""
-)
-
-# =========================================================================
-# IDEA PRINCIPAL
-# =========================================================================
-
-tarjeta(
-"🔥 La idea fundamental",
-"""
-En lugar de resolver directamente la temperatura u(x,t),
-la escribiremos como la suma de dos funciones.
-
-Una de ellas será elegida por nosotros para satisfacer
-automáticamente las condiciones de frontera.
-
-La otra contendrá toda la información dinámica del problema
-y será la nueva incógnita que resolveremos mediante separación
-de variables.
-""",
-"green"
-)
-
-separador()
-
-# =========================================================================
-# SUSTITUCIÓN
-# =========================================================================
-
-st.markdown("## 🔥 La sustitución")
-
-bloque_latex(
-"Descomposición de la temperatura",
-rf"""
-{COLOR_MAP['u']}(x,t)=
-{COLOR_MAP['w']}(x,t)+
-{COLOR_MAP['v']}(x,t)
-"""
-)
-
-texto("""
-No se trata de una identidad misteriosa.
-
-Simplemente estamos descomponiendo la temperatura en dos partes,
-de la misma manera que un vector puede escribirse como suma
-de otros dos vectores.
-
-La ventaja es que podremos controlar por separado las
-condiciones de frontera y la evolución temporal.
-""")
-
-separador()
-
-# =========================================================================
-# REPRESENTACIÓN DE w(x,t)
-# =========================================================================
-
-st.markdown("## 🌡️ ¿Qué representa la función $w(x,t)$?")
-
-x = np.linspace(0, L, 400)
-
-T1 = 20
-T2 = 75
-
-y = T1 + (T2 - T1) * x / L
-
-fig = go.Figure()
-
-fig.add_trace(
-go.Scatter(
-x=x,
-y=y,
-mode="lines",
-line=dict(
-color=COLOR_CURVE,
-width=4
-),
-hovertemplate=
-"<b>x</b> = %{x:.2f}"
-"<br><b>w(x)</b> = %{y:.2f} °C"
-"<extra></extra>"
-)
-)
-
-fig.add_trace(
-go.Scatter(
-x=[0, L],
-y=[T1, T2],
-mode="markers",
-marker=dict(
-color=COLOR_BORDER,
-size=11,
-line=dict(
-color="white",
-width=2
-)
-)
-)
-)
-
-fig.add_annotation(
-x=0,
-y=T1,
-text="<b>T₁</b>",
-showarrow=True,
-yshift=20,
-font=dict(color=COLOR_BORDER)
-)
-
-fig.add_annotation(
-x=L,
-y=T2,
-text="<b>T₂</b>",
-showarrow=True,
-yshift=20,
-font=dict(color=COLOR_BORDER)
-)
-
-fig.add_shape(
-type="line",
-x0=0,
-x1=L,
-y0=0,
-y1=0,
-line=dict(
-color="#B77B40",
-width=9
-)
-)
-
-fig.add_annotation(
-x=L/2,
-y=-6,
-text="<b>Barra</b>",
-showarrow=False,
-font=dict(
-color="#7A5230",
-size=14
-)
-)
-
-fig.update_yaxes(range=[0, 85])
-
-st.plotly_chart(
-aplicar_estilo(fig),
-use_container_width=True
-)
-
-texto("""
-La función <b>w(x,t)</b> conecta exactamente las temperaturas
-impuestas en ambos extremos.
-
-Su única misión consiste en satisfacer automáticamente
-las condiciones de frontera.
-
-Todavía no hemos resuelto la ecuación diferencial.
-
-Simplemente hemos construido una función conveniente.
-""")
-
-bloque_latex(
-"Una elección habitual para w(x,t)",
-rf"""
-{COLOR_MAP['w']}(x,t)=
-{sp.latex(w_d)}
-"""
-)
-
-st.info("""
-💡 Observa que la función w queda completamente determinada
-por las temperaturas impuestas en los extremos.
-""")
-
-separador()
-
-# =========================================================================
-# COMPARACIÓN
-# =========================================================================
-
-col1, col2 = st.columns(2)
-
-with col1:
-
-mini_card(
-"🔥 Parte estacionaria",
-"""
-Corresponde a la función w(x,t).
-
-Es completamente conocida.
-
-Su misión consiste únicamente en satisfacer
-las condiciones de frontera.
-
-En muchos problemas básicos es simplemente
-una recta.
-"""
-)
-
-with col2:
-
-mini_card(
-"🌡️ Parte transitoria",
-"""
-Corresponde a la función v(x,t).
-
-Describe la evolución de la temperatura
-una vez eliminada la influencia directa
-de las fronteras.
-
-Esta será la función que resolveremos
-mediante separación de variables.
-"""
-)
-
-separador()
-
-# =========================================================================
-# CONSECUENCIA
-# =========================================================================
-
-st.markdown("## 🔥 ¿Qué ocurre con la nueva incógnita?")
-
-bloque_latex(
-"Relación entre ambas funciones",
-r"""
-u=w+v
-"""
-)
-
-bloque_latex(
-"Despejando la nueva incógnita",
-r"""
-v=u-w
-"""
-)
-
-texto("""
-Si la función w fue construida correctamente,
-ocurre algo muy importante.
-
-La nueva incógnita posee automáticamente
-fronteras homogéneas.
-""")
-
-bloque_latex(
-"Condiciones de frontera para v",
-r"""
-v(0,t)=0
-""",
-r"""
-v(L,t)=0
-"""
-)
-
-idea_clave(
-r"""
-No estamos obligando a la temperatura física
-a ser cero.
-
-La que vale cero en los extremos es únicamente
-la nueva incógnita
-
-\[
-v(x,t).
-\]
-
-La temperatura original sigue siendo
-
-\[
-u(x,t)=w(x,t)+v(x,t).
-\]
-"""
-)
-
-separador()
-
-# =========================================================================
-# NUEVA ECUACIÓN
-# =========================================================================
-
-st.markdown("## 🌡️ ¿Qué cambia después de sustituir?")
-
-texto("""
-Al reemplazar
-
-u=w+v
-
-en la ecuación diferencial aparecen tres
-modificaciones naturales.
-""")
-
-c1, c2, c3 = st.columns(3)
-
-with c1:
-
-bloque_latex(
-"① Fronteras",
-r"""
-v(0,t)=0
-""",
-r"""
-v(L,t)=0
-"""
-)
-
-with c2:
-
-bloque_latex(
-"② Nueva fuente",
-rf"""
-{COLOR_MAP['F_tilde']}(x,t)=
-{sp.latex(F_t_d)}
-"""
-)
-
-with c3:
-
-bloque_latex(
-"③ Nueva condición inicial",
-rf"""
-{COLOR_MAP['v']}(x,0)=
-{sp.latex(f_t_d)}
-"""
-)
-
-st.success("""
-🔥 Todo el efecto de las temperaturas impuestas
-en los extremos ha quedado absorbido por la función
-w(x,t).
-
-La nueva ecuación ya posee fronteras homogéneas y
-está lista para aplicar separación de variables.
-""")
-
-separador()
-
-# =========================================================================
-# DUDAS2
-# =========================================================================
-
-duda(
-"¿Por qué se escoge precisamente una recta?",
-r"""
-Porque normalmente las temperaturas de los extremos son
-constantes.
-
-La recta es la función más sencilla que conecta ambos valores.
-
-Además,
-
-\[
-w''(x)=0,
-\]
-
-por lo que introduce la menor cantidad posible de términos nuevos
-al sustituirla en la ecuación diferencial.
-
-Es, por tanto, la elección más simple y conveniente.
-"""
-)
-
-# -------------------------------------------------------------------------
-
-duda(
-"¿Qué significa 'solución estacionaria'?",
-r"""
-Se denomina estacionaria a una solución que ya no cambia con el
-tiempo.
-
-Si esperamos un tiempo suficientemente largo, la temperatura suele
-aproximarse a un perfil fijo.
-
-La función \(w\) representa precisamente esa parte permanente del
-problema.
-
-La función \(v\) mide únicamente cuánto falta para alcanzar dicho
-estado.
-"""
-)
-
-# -------------------------------------------------------------------------
-
-duda(
-"¿Qué significa 'solución transitoria'?",
-r"""
-La solución transitoria describe la evolución temporal.
-
-Al inicio puede tener valores importantes.
-
-Conforme transcurre el tiempo suele hacerse cada vez más pequeña,
-hasta desaparecer.
-
-Cuando eso ocurre únicamente permanece la parte estacionaria.
-"""
-)
-
-# -------------------------------------------------------------------------
-
-duda(
-"¿La sustitución siempre simplifica la ecuación?",
-r"""
-Sí en el sentido más importante:
-
-las condiciones de frontera pasan a ser homogéneas.
-
-Aunque puedan aparecer nuevos términos en la ecuación o en la
-condición inicial, el problema resultante puede resolverse mediante
-separación de variables, lo que compensa ampliamente esas pequeñas
-modificaciones.
-"""
-)
+    # =========================================================================
+    # ENCABEZADO
+    # =========================================================================
+
+    encabezado_slide(
+        2,
+        "¿Cómo se homogeneiza un problema?",
+        """
+        Ahora construiremos una nueva incógnita que sí satisfaga fronteras
+        homogéneas.
+
+        La idea consiste en separar la temperatura en una parte conocida,
+        responsable de las condiciones de frontera, y otra que describa
+        la evolución restante del sistema.
+        """
+    )
+
+    # =========================================================================
+    # IDEA PRINCIPAL
+    # =========================================================================
+
+    tarjeta(
+        "🔥 La idea fundamental",
+        """
+        En lugar de resolver directamente la temperatura u(x,t),
+        la escribiremos como la suma de dos funciones.
+
+        Una de ellas será elegida por nosotros para satisfacer
+        automáticamente las condiciones de frontera.
+
+        La otra contendrá toda la información dinámica del problema
+        y será la nueva incógnita que resolveremos mediante separación
+        de variables.
+        """,
+        "green"
+    )
+
+    separador()
+
+    # =========================================================================
+    # SUSTITUCIÓN
+    # =========================================================================
+
+    st.markdown("## 🔥 La sustitución")
+
+    bloque_latex(
+        "Descomposición de la temperatura",
+        rf"""
+        {COLOR_MAP['u']}(x,t)=
+        {COLOR_MAP['w']}(x,t)+
+        {COLOR_MAP['v']}(x,t)
+        """
+    )
+
+    texto("""
+    No se trata de una identidad misteriosa.
+
+    Simplemente estamos descomponiendo la temperatura en dos partes,
+    de la misma manera que un vector puede escribirse como suma
+    de otros dos vectores.
+
+    La ventaja es que podremos controlar por separado las
+    condiciones de frontera y la evolución temporal.
+    """)
+
+    separador()
+
+    # =========================================================================
+    # REPRESENTACIÓN DE w(x,t)
+    # =========================================================================
+
+    st.markdown("## 🌡️ ¿Qué representa la función $w(x,t)$?")
+
+    x = np.linspace(0, L, 400)
+
+    T1 = 20
+    T2 = 75
+
+    y = T1 + (T2 - T1) * x / L
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=x,
+            y=y,
+            mode="lines",
+            line=dict(
+                color=COLOR_CURVE,
+                width=4
+            ),
+            hovertemplate=
+            "<b>x</b> = %{x:.2f}"
+            "<br><b>w(x)</b> = %{y:.2f} °C"
+            "<extra></extra>"
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[0, L],
+            y=[T1, T2],
+            mode="markers",
+            marker=dict(
+                color=COLOR_BORDER,
+                size=11,
+                line=dict(
+                    color="white",
+                    width=2
+                )
+            )
+        )
+    )
+
+    fig.add_annotation(
+        x=0,
+        y=T1,
+        text="<b>T₁</b>",
+        showarrow=True,
+        yshift=20,
+        font=dict(color=COLOR_BORDER)
+    )
+
+    fig.add_annotation(
+        x=L,
+        y=T2,
+        text="<b>T₂</b>",
+        showarrow=True,
+        yshift=20,
+        font=dict(color=COLOR_BORDER)
+    )
+
+    fig.add_shape(
+        type="line",
+        x0=0,
+        x1=L,
+        y0=0,
+        y1=0,
+        line=dict(
+            color="#B77B40",
+            width=9
+        )
+    )
+
+    fig.add_annotation(
+        x=L/2,
+        y=-6,
+        text="<b>Barra</b>",
+        showarrow=False,
+        font=dict(
+            color="#7A5230",
+            size=14
+        )
+    )
+
+    fig.update_yaxes(range=[0, 85])
+
+    st.plotly_chart(
+        aplicar_estilo(fig),
+        use_container_width=True
+    )
+
+    texto("""
+    La función <b>w(x,t)</b> conecta exactamente las temperaturas
+    impuestas en ambos extremos.
+
+    Su única misión consiste en satisfacer automáticamente
+    las condiciones de frontera.
+
+    Todavía no hemos resuelto la ecuación diferencial.
+
+    Simplemente hemos construido una función conveniente.
+    """)
+
+    bloque_latex(
+        "Una elección habitual para w(x,t)",
+        rf"""
+        {COLOR_MAP['w']}(x,t)=
+        {sp.latex(w_d)}
+        """
+    )
+
+    st.info("""
+    💡 Observa que la función w queda completamente determinada
+    por las temperaturas impuestas en los extremos.
+    """)
+
+    separador()
+
+    # =========================================================================
+    # COMPARACIÓN
+    # =========================================================================
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        mini_card(
+            "🔥 Parte estacionaria",
+            """
+            Corresponde a la función w(x,t).
+
+            Es completamente conocida.
+
+            Su misión consiste únicamente en satisfacer
+            las condiciones de frontera.
+
+            En muchos problemas básicos es simplemente
+            una recta.
+            """
+        )
+
+    with col2:
+        mini_card(
+            "🌡️ Parte transitoria",
+            """
+            Corresponde a la función v(x,t).
+
+            Describe la evolución de la temperatura
+            una vez eliminada la influencia directa
+            de las fronteras.
+
+            Esta será la función que resolveremos
+            mediante separación de variables.
+            """
+        )
+
+    separador()
+
+    # =========================================================================
+    # CONSECUENCIA
+    # =========================================================================
+
+    st.markdown("## 🔥 ¿Qué ocurre con la nueva incógnita?")
+
+    bloque_latex(
+        "Relación entre ambas funciones",
+        r"""
+        u=w+v
+        """
+    )
+
+    bloque_latex(
+        "Despejando la nueva incógnita",
+        r"""
+        v=u-w
+        """
+    )
+
+    texto("""
+    Si la función w fue construida correctamente,
+    ocurre algo muy importante.
+
+    La nueva incógnita posee automáticamente
+    fronteras homogéneas.
+    """)
+
+    bloque_latex(
+        "Condiciones de frontera para v",
+        r"""
+        v(0,t)=0
+        """,
+        r"""
+        v(L,t)=0
+        """
+    )
+
+    idea_clave(
+        r"""
+        No estamos obligando a la temperatura física
+        a ser cero.
+
+        La que vale cero en los extremos es únicamente
+        la nueva incógnita
+
+        \[
+        v(x,t).
+        \]
+
+        La temperatura original sigue siendo
+
+        \[
+        u(x,t)=w(x,t)+v(x,t).
+        \]
+        """
+    )
+
+    separador()
+
+    # =========================================================================
+    # NUEVA ECUACIÓN
+    # =========================================================================
+
+    st.markdown("## 🌡️ ¿Qué cambia después de sustituir?")
+
+    texto("""
+    Al reemplazar
+
+    u=w+v
+
+    en la ecuación diferencial aparecen tres
+    modificaciones naturales.
+    """)
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        bloque_latex(
+            "① Fronteras",
+            r"""
+            v(0,t)=0
+            """,
+            r"""
+            v(L,t)=0
+            """
+        )
+
+    with c2:
+        bloque_latex(
+            "② Nueva fuente",
+            rf"""
+            {COLOR_MAP['F_tilde']}(x,t)=
+            {sp.latex(F_t_d)}
+            """
+        )
+
+    with c3:
+        bloque_latex(
+            "③ Nueva condición inicial",
+            rf"""
+            {COLOR_MAP['v']}(x,0)=
+            {sp.latex(f_t_d)}
+            """
+        )
+
+    st.success("""
+    🔥 Todo el efecto de las temperaturas impuestas
+    en los extremos ha quedado absorbido por la función
+    w(x,t).
+
+    La nueva ecuación ya posee fronteras homogéneas y
+    está lista para aplicar separación de variables.
+    """)
+
+    separador()
+
+    # =========================================================================
+    # DUDAS2
+    # =========================================================================
+
+    duda(
+        "¿Por qué se escoge precisamente una recta?",
+        r"""
+        Porque normalmente las temperaturas de los extremos son
+        constantes.
+
+        La recta es la función más sencilla que conecta ambos valores.
+
+        Además,
+
+        \[
+        w''(x)=0,
+        \]
+
+        por lo que introduce la menor cantidad posible de términos nuevos
+        al sustituirla en la ecuación diferencial.
+
+        Es, por tanto, la elección más simple y conveniente.
+        """
+    )
+
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿Qué significa 'solución estacionaria'?",
+        r"""
+        Se denomina estacionaria a una solución que ya no cambia con el
+        tiempo.
+
+        Si esperamos un tiempo suficientemente largo, la temperatura suele
+        aproximarse a un perfil fijo.
+
+        La función \(w\) representa precisamente esa parte permanente del
+        problema.
+
+        La función \(v\) mide únicamente cuánto falta para alcanzar dicho
+        estado.
+        """
+    )
+
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿Qué significa 'solución transitoria'?",
+        r"""
+        La solución transitoria describe la evolución temporal.
+
+        Al inicio puede tener valores importantes.
+
+        Conforme transcurre el tiempo suele hacerse cada vez más pequeña,
+        hasta desaparecer.
+
+        Cuando eso ocurre únicamente permanece la parte estacionaria.
+        """
+    )
+
+    # -------------------------------------------------------------------------
+
+    duda(
+        "¿La sustitución siempre simplifica la ecuación?",
+        r"""
+        Sí en el sentido más importante:
+
+        las condiciones de frontera pasan a ser homogéneas.
+
+        Aunque puedan aparecer nuevos términos en la ecuación o en la
+        condición inicial, el problema resultante puede resolverse mediante
+        separación de variables, lo que compensa ampliamente esas pequeñas
+        modificaciones.
+        """
+    )
+
 
 # =============================================================================
 # SLIDE 3 - LABORATORIO DE SUSTITUCIONES
@@ -1599,601 +1595,582 @@ modificaciones.
 
 def slide_3():
 
-encabezado_slide(
-3,
-"Laboratorio de sustituciones",
-"""
-Hasta ahora hemos utilizado una sustitución lineal.
+    encabezado_slide(
+        3,
+        "Laboratorio de sustituciones",
+        """
+        Hasta ahora hemos utilizado una sustitución lineal.
 
-Sin embargo, no es la única posibilidad.
+        Sin embargo, no es la única posibilidad.
 
-En esta sección exploraremos brevemente otras alternativas para
-comprender que existen muchas funciones capaces de homogeneizar
-las condiciones de frontera, aunque para este curso trabajaremos
-casi siempre con la opción más sencilla.
-"""
-)
+        En esta sección exploraremos brevemente otras alternativas para
+        comprender que existen muchas funciones capaces de homogeneizar
+        las condiciones de frontera, aunque para este curso trabajaremos
+        casi siempre con la opción más sencilla.
+        """
+    )
 
-# =========================================================================
-# INTRODUCCIÓN
-# =========================================================================
+    # =========================================================================
+    # INTRODUCCIÓN
+    # =========================================================================
 
-tarjeta(
-"🔥 Una misma idea, distintas funciones",
-"""
-El objetivo de una sustitución siempre es el mismo:
+    tarjeta(
+        "🔥 Una misma idea, distintas funciones",
+        """
+        El objetivo de una sustitución siempre es el mismo:
 
-transformar el problema original en otro equivalente con
-condiciones de frontera homogéneas.
+        transformar el problema original en otro equivalente con
+        condiciones de frontera homogéneas.
 
-Existen muchas funciones capaces de lograrlo.
+        Existen muchas funciones capaces de lograrlo.
 
-En este curso nos centraremos principalmente en la sustitución
-lineal, ya que suele ser la alternativa más simple y eficiente.
-""",
-"green"
-)
+        En este curso nos centraremos principalmente en la sustitución
+        lineal, ya que suele ser la alternativa más simple y eficiente.
+        """,
+        "green"
+    )
 
-separador()
+    separador()
 
-try:
+    try:
+        tipo = st.segmented_control(
+            "Selecciona una sustitución",
+            [
+                "Lineal",
+                "Dependiente del tiempo",
+                "Cuadrática",
+                "Trigonométrica"
+            ],
+            default="Lineal"
+        )
 
-tipo = st.segmented_control(
-"Selecciona una sustitución",
-[
-"Lineal",
-"Dependiente del tiempo",
-"Cuadrática",
-"Trigonométrica"
-],
-default="Lineal"
-)
+    except:
+        tipo = st.radio(
+            "Selecciona una sustitución",
+            [
+                "Lineal",
+                "Dependiente del tiempo",
+                "Cuadrática",
+                "Trigonométrica"
+            ],
+            horizontal=True
+        )
 
-except:
-
-tipo = st.radio(
-"Selecciona una sustitución",
-[
-"Lineal",
-"Dependiente del tiempo",
-"Cuadrática",
-"Trigonométrica"
-],
-horizontal=True
-)
-
-separador()
+    separador()
 
 # =========================================================================
 # LINEAL
 # =========================================================================
 
 if tipo == "Lineal":
-
-st.markdown("## 🔥 Sustitución lineal")
-
-texto("""
-La sustitución lineal es la que utilizaremos durante todo el curso.
-
-Conecta las temperaturas impuestas en ambos extremos mediante
-la función más sencilla posible.
-""")
-
-col1, col2 = st.columns([1.3,1])
-
-with col1:
-
-T1 = 20
-T2 = 75
-
-x = np.linspace(0, L, 400)
-
-y = T1 + (T2-T1)*x/L
-
-fig = go.Figure()
-
-fig.add_trace(
-go.Scatter(
-x=x,
-y=y,
-mode="lines",
-line=dict(
-color=COLOR_CURVE,
-width=4
-),
-hovertemplate=
-"<b>x</b> = %{x:.2f}"
-"<br><b>w(x)</b> = %{y:.2f} °C"
-"<extra></extra>"
-)
-)
-
-fig.add_trace(
-go.Scatter(
-x=[0,L],
-y=[T1,T2],
-mode="markers",
-marker=dict(
-color=COLOR_BORDER,
-size=11,
-line=dict(
-color="white",
-width=2
-)
-)
-)
-)
-
-fig.add_annotation(
-x=0,
-y=T1,
-text="<b>T₁</b>",
-showarrow=True,
-yshift=18,
-font=dict(color=COLOR_BORDER)
-)
-
-fig.add_annotation(
-x=L,
-y=T2,
-text="<b>T₂</b>",
-showarrow=True,
-yshift=18,
-font=dict(color=COLOR_BORDER)
-)
-
-fig.add_shape(
-type="line",
-x0=0,
-x1=L,
-y0=0,
-y1=0,
-line=dict(
-color="#B77B40",
-width=9
-)
-)
-
-fig.add_annotation(
-x=L/2,
-y=-6,
-text="<b>Barra</b>",
-showarrow=False,
-font=dict(
-color="#7A5230",
-size=14
-)
-)
-
-fig.update_yaxes(range=[0,85])
-
-st.plotly_chart(
-aplicar_estilo(fig),
-use_container_width=True
-)
-
-with col2:
-
-bloque_latex(
-"Sustitución utilizada",
-r"""
-w(x)=
-T_1+
-\frac{T_2-T_1}{L}x
-"""
-)
-
-texto("""
-La recta conecta exactamente ambas temperaturas.
-
-No intenta resolver la ecuación diferencial.
-
-Su única misión consiste en satisfacer
-las condiciones de frontera.
-""")
-
-separador()
-
-tarjeta(
-"🌡️ Interpretación",
-"""
-La función w representa el perfil estacionario más sencillo
-compatible con las temperaturas impuestas.
-
-Después de restarla a la temperatura original,
-la nueva incógnita será cero en ambos extremos.
-
-Gracias a ello podremos aplicar separación de variables.
-""",
-"blue"
-)
-
-separador()
-
-st.markdown("### 📋 Resumen")
-
-c1,c2,c3,c4 = st.columns(4)
-
-with c1:
-st.metric(
-"Complejidad",
-"⭐"
-)
-
-with c2:
-st.metric(
-"Uso",
-"Curso"
-)
-
-with c3:
-st.metric(
-"Álgebra",
-"Muy simple"
-)
-
-with c4:
-st.metric(
-"Recomendada",
-"✅ Sí"
-)
-
-st.progress(.18)
-
-texto("""
-Es la elección más sencilla cuando las temperaturas
-de los extremos permanecen constantes.
-""")
-
-separador()
-
-idea_clave(
-r"""
-Cuando
-
-\[
-u(0,t)=T_1,
-\qquad
-u(L,t)=T_2,
-\]
-
-permanecen constantes, una recta ya satisface exactamente
-las condiciones de frontera.
-
-No necesitamos una función más complicada.
-"""
-)
-
-duda(
-"¿Por qué elegir precisamente una recta?",
-r"""
-Porque buscamos la función más sencilla capaz de cumplir
-el objetivo.
-
-Además,
-
-\[
-w''(x)=0,
-\]
-
-por lo que la ecuación diferencial apenas se modifica.
-
-En Matemáticas suele ser preferible la solución más simple
-que resuelva completamente el problema.
-"""
-)
-
-# =============================================================================
-# CASOS: Dependiente del tiempo + Cuadrática + Trigonométrica
-# (Reemplaza los bloques elif originales)
-# =============================================================================
-
-# =========================================================================
-# DEPENDIENTE DEL TIEMPO
-# =========================================================================
-
-elif tipo == "Dependiente del tiempo":
-
-st.markdown("## ⏳ Sustitución dependiente del tiempo")
-
-tarjeta(
-"Más allá del caso básico",
-"""
-La idea de la homogeneización no cambia.
-
-La diferencia es que ahora las temperaturas impuestas en los
-extremos también evolucionan con el tiempo.
-
-La función w debe adaptarse continuamente para seguir
-satisfaciendo las condiciones de frontera.
-""",
-"blue"
-)
-
-col1, col2 = st.columns([1.3,1])
-
-with col1:
-
-x = np.linspace(0, L, 400)
-
-T1 = 10
-T2 = 40
-
-y = T1 + (T2-T1)*x/L
-
-fig = go.Figure()
-
-fig.add_trace(
-go.Scatter(
-x=x,
-y=y,
-mode="lines",
-line=dict(
-color=COLOR_CURVE,
-width=4,
-dash="dash"
-),
-hovertemplate=
-"<b>x</b> = %{x:.2f}"
-"<br><b>w(x,t)</b> = %{y:.2f}"
-"<extra></extra>"
-)
-)
-
-fig.add_shape(
-type="line",
-x0=0,
-x1=L,
-y0=0,
-y1=0,
-line=dict(
-color="#B77B40",
-width=9
-)
-)
-
-fig.update_yaxes(range=[0,50])
-
-st.plotly_chart(
-aplicar_estilo(fig),
-use_container_width=True
-)
-
-with col2:
-
-bloque_latex(
-"Ejemplo",
-r"""
-w(x,t)
-=
-10e^{-t}
-+
-\frac{30e^{-t}}{L}x
-"""
-)
-
-texto("""
-La función sigue siendo lineal respecto a x,
-pero ahora cambia con el tiempo.
-
-En cada instante conecta correctamente
-las temperaturas impuestas.
-""")
-
-idea_clave(
-r"""
-La estrategia es exactamente la misma.
-
-Simplemente permitimos que la función utilizada para
-homogeneizar también dependa del tiempo.
-"""
-)
-
-st.info("""
-💡 Este tipo de sustituciones aparece cuando las temperaturas
-de frontera ya no permanecen constantes.
-""")
-
-separador()
-
-# =========================================================================
-# CUADRÁTICA
-# =========================================================================
-
-elif tipo == "Cuadrática":
-
-st.markdown("## 📈 Sustitución cuadrática")
-
-col1, col2 = st.columns([1.3,1])
-
-with col1:
-
-x = np.linspace(0, L, 400)
-
-y = 20 + 55*(x/L) + 12*(x/L)*(1-x/L)
-
-fig = go.Figure()
-
-fig.add_trace(
-go.Scatter(
-x=x,
-y=y,
-mode="lines",
-line=dict(
-color=COLOR_CURVE,
-width=4
-),
-hovertemplate=
-"<b>x</b> = %{x:.2f}"
-"<br><b>w(x)</b> = %{y:.2f}"
-"<extra></extra>"
-)
-)
-
-fig.add_shape(
-type="line",
-x0=0,
-x1=L,
-y0=0,
-y1=0,
-line=dict(
-color="#B77B40",
-width=9
-)
-)
-
-fig.update_yaxes(range=[0,90])
-
-st.plotly_chart(
-aplicar_estilo(fig),
-use_container_width=True
-)
-
-with col2:
-
-bloque_latex(
-"Ejemplo",
-r"""
-w(x)
-=
-Ax^2+Bx+C
-"""
-)
-
-texto("""
-La función ya no es una recta.
-
-Ahora posee curvatura, lo que modifica
-sus derivadas espaciales.
-""")
-
-tarjeta(
-"¿Por qué alguien usaría una parábola?",
-"""
-En algunos problemas especiales puede resultar útil para
-simplificar ciertos términos de la ecuación diferencial.
-
-Sin embargo, para los problemas introductorios de este curso
-normalmente no ofrece ventajas importantes frente a una recta.
-""",
-"green"
-)
-
-idea_clave(
-r"""
-Una parábola también puede homogeneizar el problema.
-
-Sin embargo, si una recta ya funciona correctamente,
-normalmente preferimos la opción más simple.
-"""
-)
-
-st.warning("""
-⚠️ En cursos básicos rara vez necesitaremos este tipo de
-sustituciones.
-""")
-
-separador()
-
-# =========================================================================
-# TRIGONOMÉTRICA
-# =========================================================================
-
-elif tipo == "Trigonométrica":
-
-st.markdown("## 🌊 Sustitución trigonométrica")
-
-col1, col2 = st.columns([1.3,1])
-
-with col1:
-
-x = np.linspace(0, L, 500)
-
-y = 20 + 55*x/L + 10*np.sin(np.pi*x/L)
-
-fig = go.Figure()
-
-fig.add_trace(
-go.Scatter(
-x=x,
-y=y,
-mode="lines",
-line=dict(
-color=COLOR_CURVE,
-width=4
-),
-hovertemplate=
-"<b>x</b> = %{x:.2f}"
-"<br><b>w(x)</b> = %{y:.2f}"
-"<extra></extra>"
-)
-)
-
-fig.add_shape(
-type="line",
-x0=0,
-x1=L,
-y0=0,
-y1=0,
-line=dict(
-color="#B77B40",
-width=9
-)
-)
-
-fig.update_yaxes(range=[0,90])
-
-st.plotly_chart(
-aplicar_estilo(fig),
-use_container_width=True
-)
-
-with col2:
-
-bloque_latex(
-"Ejemplo",
-r"""
-w(x)
-=
-A\sin\!\left(
-\frac{\pi x}{L}
-\right)+B
-"""
-)
-
-texto("""
-Este tipo de funciones aparece cuando la física
-del problema presenta comportamientos periódicos
-u oscilatorios.
-""")
-
-tarjeta(
-"Una posibilidad más",
-"""
-Las funciones trigonométricas también pueden utilizarse
-para construir sustituciones válidas.
-
-Sin embargo, suelen generar desarrollos algebraicos más
-largos y rara vez son necesarias en una primera introducción
-a la ecuación de calor.
-""",
-"yellow"
-)
-
-idea_clave(
-r"""
-La mejor sustitución no es la más sofisticada.
-
-Es la que simplifica el problema de la forma más eficiente.
-"""
-)
-
-st.warning("""
-⚠️ En este curso las veremos principalmente como una
-curiosidad matemática y no como la estrategia principal.
-""")
-
-separador()
+        st.markdown("## 🔥 Sustitución lineal")
+
+        texto("""
+        La sustitución lineal es la que utilizaremos durante todo el curso.
+
+        Conecta las temperaturas impuestas en ambos extremos mediante
+        la función más sencilla posible.
+        """)
+
+        col1, col2 = st.columns([1.3, 1])
+
+        with col1:
+            T1 = 20
+            T2 = 75
+
+            x = np.linspace(0, L, 400)
+            y = T1 + (T2-T1)*x/L
+
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    line=dict(
+                        color=COLOR_CURVE,
+                        width=4
+                    ),
+                    hovertemplate=
+                    "<b>x</b> = %{x:.2f}"
+                    "<br><b>w(x)</b> = %{y:.2f} °C"
+                    "<extra></extra>"
+                )
+            )
+
+            fig.add_trace(
+                go.Scatter(
+                    x=[0, L],
+                    y=[T1, T2],
+                    mode="markers",
+                    marker=dict(
+                        color=COLOR_BORDER,
+                        size=11,
+                        line=dict(
+                            color="white",
+                            width=2
+                        )
+                    )
+                )
+            )
+
+            fig.add_annotation(
+                x=0,
+                y=T1,
+                text="<b>T₁</b>",
+                showarrow=True,
+                yshift=18,
+                font=dict(color=COLOR_BORDER)
+            )
+
+            fig.add_annotation(
+                x=L,
+                y=T2,
+                text="<b>T₂</b>",
+                showarrow=True,
+                yshift=18,
+                font=dict(color=COLOR_BORDER)
+            )
+
+            fig.add_shape(
+                type="line",
+                x0=0,
+                x1=L,
+                y0=0,
+                y1=0,
+                line=dict(
+                    color="#B77B40",
+                    width=9
+                )
+            )
+
+            fig.add_annotation(
+                x=L/2,
+                y=-6,
+                text="<b>Barra</b>",
+                showarrow=False,
+                font=dict(
+                    color="#7A5230",
+                    size=14
+                )
+            )
+
+            fig.update_yaxes(range=[0, 85])
+
+            st.plotly_chart(
+                aplicar_estilo(fig),
+                use_container_width=True
+            )
+
+        with col2:
+            bloque_latex(
+                "Sustitución utilizada",
+                r"""
+                w(x)=
+                T_1+
+                \frac{T_2-T_1}{L}x
+                """
+            )
+
+            texto("""
+            La recta conecta exactamente ambas temperaturas.
+
+            No intenta resolver la ecuación diferencial.
+
+            Su única misión consiste en satisfacer
+            las condiciones de frontera.
+            """)
+
+        separador()
+
+        tarjeta(
+            "🌡️ Interpretación",
+            """
+            La función w representa el perfil estacionario más sencillo
+            compatible con las temperaturas impuestas.
+
+            Después de restarla a la temperatura original,
+            la nueva incógnita será cero en ambos extremos.
+
+            Gracias a ello podremos aplicar separación de variables.
+            """,
+            "blue"
+        )
+
+        separador()
+
+        st.markdown("### 📋 Resumen")
+
+        c1, c2, c3, c4 = st.columns(4)
+
+        with c1:
+            st.metric(
+                "Complejidad",
+                "⭐"
+            )
+
+        with c2:
+            st.metric(
+                "Uso",
+                "Curso"
+            )
+
+        with c3:
+            st.metric(
+                "Álgebra",
+                "Muy simple"
+            )
+
+        with c4:
+            st.metric(
+                "Recomendada",
+                "✅ Sí"
+            )
+
+        st.progress(.18)
+
+        texto("""
+        Es la elección más sencilla cuando las temperaturas
+        de los extremos permanecen constantes.
+        """)
+
+        separador()
+
+        idea_clave(
+            r"""
+            Cuando
+
+            \[
+            u(0,t)=T_1,
+            \qquad
+            u(L,t)=T_2,
+            \]
+
+            permanecen constantes, una recta ya satisface exactamente
+            las condiciones de frontera.
+
+            No necesitamos una función más complicada.
+            """
+        )
+
+        duda(
+            "¿Por qué elegir precisamente una recta?",
+            r"""
+            Porque buscamos la función más sencilla capaz de cumplir
+            el objetivo.
+
+            Además,
+
+            \[
+            w''(x)=0,
+            \]
+
+            por lo que la ecuación diferencial apenas se modifica.
+
+            En Matemáticas suele ser preferible la solución más simple
+            que resuelva completamente el problema.
+            """
+        )
+
+    # =============================================================================
+    # CASOS: Dependiente del tiempo + Cuadrática + Trigonométrica
+    # (Reemplaza los bloques elif originales)
+    # =============================================================================
+
+    # =========================================================================
+    # DEPENDIENTE DEL TIEMPO
+    # =========================================================================
+
+    elif tipo == "Dependiente del tiempo":
+        st.markdown("## ⏳ Sustitución dependiente del tiempo")
+
+        tarjeta(
+            "Más allá del caso básico",
+            """
+            La idea de la homogeneización no cambia.
+
+            La diferencia es que ahora las temperaturas impuestas en los
+            extremos también evolucionan con el tiempo.
+
+            La función w debe adaptarse continuamente para seguir
+            satisfaciendo las condiciones de frontera.
+            """,
+            "blue"
+        )
+
+        col1, col2 = st.columns([1.3, 1])
+
+        with col1:
+            x = np.linspace(0, L, 400)
+            T1 = 10
+            T2 = 40
+            y = T1 + (T2-T1)*x/L
+
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    line=dict(
+                        color=COLOR_CURVE,
+                        width=4,
+                        dash="dash"
+                    ),
+                    hovertemplate=
+                    "<b>x</b> = %{x:.2f}"
+                    "<br><b>w(x,t)</b> = %{y:.2f}"
+                    "<extra></extra>"
+                )
+            )
+
+            fig.add_shape(
+                type="line",
+                x0=0,
+                x1=L,
+                y0=0,
+                y1=0,
+                line=dict(
+                    color="#B77B40",
+                    width=9
+                )
+            )
+
+            fig.update_yaxes(range=[0, 50])
+
+            st.plotly_chart(
+                aplicar_estilo(fig),
+                use_container_width=True
+            )
+
+        with col2:
+            bloque_latex(
+                "Ejemplo",
+                r"""
+                w(x,t)
+                =
+                10e^{-t}
+                +
+                \frac{30e^{-t}}{L}x
+                """
+            )
+
+            texto("""
+            La función sigue siendo lineal respecto a x,
+            pero ahora cambia con el tiempo.
+
+            En cada instante conecta correctamente
+            las temperaturas impuestas.
+            """)
+
+            idea_clave(
+                r"""
+                La estrategia es exactamente la misma.
+
+                Simplemente permitimos que la función utilizada para
+                homogeneizar también dependa del tiempo.
+                """
+            )
+
+            st.info("""
+            💡 Este tipo de sustituciones aparece cuando las temperaturas
+            de frontera ya no permanecen constantes.
+            """)
+
+        separador()
+
+    # =========================================================================
+    # CUADRÁTICA
+    # =========================================================================
+
+    elif tipo == "Cuadrática":
+        st.markdown("## 📈 Sustitución cuadrática")
+
+        col1, col2 = st.columns([1.3, 1])
+
+        with col1:
+            x = np.linspace(0, L, 400)
+            y = 20 + 55*(x/L) + 12*(x/L)*(1-x/L)
+
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    line=dict(
+                        color=COLOR_CURVE,
+                        width=4
+                    ),
+                    hovertemplate=
+                    "<b>x</b> = %{x:.2f}"
+                    "<br><b>w(x)</b> = %{y:.2f}"
+                    "<extra></extra>"
+                )
+            )
+
+            fig.add_shape(
+                type="line",
+                x0=0,
+                x1=L,
+                y0=0,
+                y1=0,
+                line=dict(
+                    color="#B77B40",
+                    width=9
+                )
+            )
+
+            fig.update_yaxes(range=[0, 90])
+
+            st.plotly_chart(
+                aplicar_estilo(fig),
+                use_container_width=True
+            )
+
+        with col2:
+            bloque_latex(
+                "Ejemplo",
+                r"""
+                w(x)
+                =
+                Ax^2+Bx+C
+                """
+            )
+
+            texto("""
+            La función ya no es una recta.
+
+            Ahora posee curvatura, lo que modifica
+            sus derivadas espaciales.
+            """)
+
+            tarjeta(
+                "¿Por qué alguien usaría una parábola?",
+                """
+                En algunos problemas especiales puede resultar útil para
+                simplificar ciertos términos de la ecuación diferencial.
+
+                Sin embargo, para los problemas introductorios de este curso
+                normalmente no ofrece ventajas importantes frente a una recta.
+                """,
+                "green"
+            )
+
+            idea_clave(
+                r"""
+                Una parábola también puede homogeneizar el problema.
+
+                Sin embargo, si una recta ya funciona correctamente,
+                normalmente preferimos la opción más simple.
+                """
+            )
+
+            st.warning("""
+            ⚠️ En cursos básicos rara vez necesitaremos este tipo de
+            sustituciones.
+            """)
+
+        separador()
+
+    # =========================================================================
+    # TRIGONOMÉTRICA
+    # =========================================================================
+
+    elif tipo == "Trigonométrica":
+        st.markdown("## 🌊 Sustitución trigonométrica")
+
+        col1, col2 = st.columns([1.3, 1])
+
+        with col1:
+            x = np.linspace(0, L, 500)
+            y = 20 + 55*x/L + 10*np.sin(np.pi*x/L)
+
+            fig = go.Figure()
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    line=dict(
+                        color=COLOR_CURVE,
+                        width=4
+                    ),
+                    hovertemplate=
+                    "<b>x</b> = %{x:.2f}"
+                    "<br><b>w(x)</b> = %{y:.2f}"
+                    "<extra></extra>"
+                )
+            )
+
+            fig.add_shape(
+                type="line",
+                x0=0,
+                x1=L,
+                y0=0,
+                y1=0,
+                line=dict(
+                    color="#B77B40",
+                    width=9
+                )
+            )
+
+            fig.update_yaxes(range=[0, 90])
+
+            st.plotly_chart(
+                aplicar_estilo(fig),
+                use_container_width=True
+            )
+
+        with col2:
+            bloque_latex(
+                "Ejemplo",
+                r"""
+                w(x)
+                =
+                A\sin\!\left(
+                \frac{\pi x}{L}
+                \right)+B
+                """
+            )
+
+            texto("""
+            Este tipo de funciones aparece cuando la física
+            del problema presenta comportamientos periódicos
+            u oscilatorios.
+            """)
+
+            tarjeta(
+                "Una posibilidad más",
+                """
+                Las funciones trigonométricas también pueden utilizarse
+                para construir sustituciones válidas.
+
+                Sin embargo, suelen generar desarrollos algebraicos más
+                largos y rara vez son necesarias en una primera introducción
+                a la ecuación de calor.
+                """,
+                "yellow"
+            )
+
+            idea_clave(
+                r"""
+                La mejor sustitución no es la más sofisticada.
+
+                Es la que simplifica el problema de la forma más eficiente.
+                """
+            )
+
+            st.warning("""
+            ⚠️ En este curso las veremos principalmente como una
+            curiosidad matemática y no como la estrategia principal.
+            """)
+
+        separador()
 
 ##################################
 # CONTENIDOS
@@ -2207,202 +2184,203 @@ st.divider()
 # INICIALIZACIÓN DEL SESSION STATE
 # =========================================================
 defaults = {
-"step": 1,
-"in_L": "1",
-"in_alpha": "1",
-"in_F": "0",
-"in_A": "0",
-"in_B": "0",
-"in_f": "sin(pi*x)"
-"mostrar_ayuda": False,
-"help_slide": 0,
-"help_max_slide": 0,}
+    "step": 1,
+    "in_L": "1",
+    "in_alpha": "1",
+    "in_F": "0",
+    "in_A": "0",
+    "in_B": "0",
+    "in_f": "sin(pi*x)",
+    "mostrar_ayuda": False,
+    "help_slide": 0,
+    "help_max_slide": 0,
+}
 
 for k, v in defaults.items():
-st.session_state.setdefault(k, v)
+    st.session_state.setdefault(k, v)
 
 st.header("Planteando el problema")
 st.markdown("Escribe los términos que se incluirán dentro del problema de calor:")
 
 with st.container(border=True):
-col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2)
 
-with col1:
-st.text_input(
-"Longitud de la barra (L):",
-key="in_L"
-)
+    with col1:
+        st.text_input(
+            "Longitud de la barra (L):",
+            key="in_L"
+        )
 
-st.text_input(
-"Difusividad térmica (α):",
-key="in_alpha"
-)
+        st.text_input(
+            "Difusividad térmica (α):",
+            key="in_alpha"
+        )
 
-st.text_input(
-"Fuente de calor F(x,t):",
-key="in_F"
-)
+        st.text_input(
+            "Fuente de calor F(x,t):",
+            key="in_F"
+        )
 
-with col2:
-st.text_input(
-"Temperatura en extremo izquierdo u(0,t):",
-key="in_A"
-)
+    with col2:
+        st.text_input(
+            "Temperatura en extremo izquierdo u(0,t):",
+            key="in_A"
+        )
 
-st.text_input(
-"Temperatura en extremo derecho u(L,t):",
-key="in_B"
-)
+        st.text_input(
+            "Temperatura en extremo derecho u(L,t):",
+            key="in_B"
+        )
 
-st.text_input(
-"Distribución inicial de calor u(x,0):",
-key="in_f"
-)
+        st.text_input(
+            "Distribución inicial de calor u(x,0):",
+            key="in_f"
+        )
 
 transformaciones = (
-standard_transformations +
-(implicit_multiplication_application,)
+    standard_transformations +
+    (implicit_multiplication_application,)
 )
 
 def parsear_seguro(expr_str):
-if not expr_str.strip():
-raise ValueError("Expresión vacía")
+    if not expr_str.strip():
+        raise ValueError("Expresión vacía")
 
-expr = parse_expr(
-expr_str,
-transformations=transformaciones
-)
+    expr = parse_expr(
+        expr_str,
+        transformations=transformaciones
+    )
 
-reemplazos = {
-sim: (
-x if sim.name == "x"
-else t if sim.name == "t"
-else sim
-)
-for sim in expr.free_symbols
-}
+    reemplazos = {
+        sim: (
+            x if sim.name == "x"
+            else t if sim.name == "t"
+            else sim
+        )
+        for sim in expr.free_symbols
+    }
 
-return expr.subs(reemplazos)
+    return expr.subs(reemplazos)
 
 st.subheader("Problema a resolver")
 
 try:
 
-# =====================================================
-# PARSEO DE ENTRADAS
-# =====================================================
+    # =====================================================
+    # PARSEO DE ENTRADAS
+    # =====================================================
 
-L_s = parsear_seguro(st.session_state.in_L)
-alpha_s = parsear_seguro(st.session_state.in_alpha)
-F_s = parsear_seguro(st.session_state.in_F)
-A_s = parsear_seguro(st.session_state.in_A)
-B_s = parsear_seguro(st.session_state.in_B)
-f_s = parsear_seguro(st.session_state.in_f)
+    L_s = parsear_seguro(st.session_state.in_L)
+    alpha_s = parsear_seguro(st.session_state.in_alpha)
+    F_s = parsear_seguro(st.session_state.in_F)
+    A_s = parsear_seguro(st.session_state.in_A)
+    B_s = parsear_seguro(st.session_state.in_B)
+    f_s = parsear_seguro(st.session_state.in_f)
 
-# =====================================================
-# HOMOGENEIZACIÓN PRELIMINAR
-# =====================================================
+    # =====================================================
+    # HOMOGENEIZACIÓN PRELIMINAR
+    # =====================================================
 
-w_dyn = sp.simplify(
-A_s + (x / L_s) * (B_s - A_s)
-)
+    w_dyn = sp.simplify(
+        A_s + (x / L_s) * (B_s - A_s)
+    )
 
-F_t_dyn = sp.simplify(
-F_s
-- sp.diff(w_dyn, t)
-+ alpha_s**2 * sp.diff(w_dyn, x, 2)
-)
+    F_t_dyn = sp.simplify(
+        F_s
+        - sp.diff(w_dyn, t)
+        + alpha_s**2 * sp.diff(w_dyn, x, 2)
+    )
 
-f_t_dyn = sp.simplify(
-f_s - w_dyn.subs(t, 0)
-)
+    f_t_dyn = sp.simplify(
+        f_s - w_dyn.subs(t, 0)
+    )
 
-alpha_term = sp.latex(alpha_s**2)
+    alpha_term = sp.latex(alpha_s**2)
 
-latex_sistema = rf"""
-   \begin{{cases}}
-   \dfrac{{\partial u}}{{\partial t}}
-   =
-   {alpha_term}
-   \dfrac{{\partial^2 {COLOR_MAP['u']}}}{{\partial x^2}}
-   +
-   {sp.latex(F_s)},
-   &
-   0<x<{sp.latex(L_s)},\quad t>0
-   \\[8pt]
+    latex_sistema = rf"""
+    \begin{{cases}}
+    \dfrac{{\partial u}}{{\partial t}}
+    =
+    {alpha_term}
+    \dfrac{{\partial^2 {COLOR_MAP['u']}}}{{\partial x^2}}
+    +
+    {sp.latex(F_s)},
+    &
+    0<x<{sp.latex(L_s)},\quad t>0
+    \\[8pt]
 
-   {u}(0,t)
-   =
-   {sp.latex(A_s)},
-   &
-   t>0
-   \\[8pt]
+    {u}(0,t)
+    =
+    {sp.latex(A_s)},
+    &
+    t>0
+    \\[8pt]
 
-   {u}({sp.latex(L_s)},t)
-   =
-   {sp.latex(B_s)},
-   &
-   t>0
-   \\[8pt]
+    {u}({sp.latex(L_s)},t)
+    =
+    {sp.latex(B_s)},
+    &
+    t>0
+    \\[8pt]
 
-   {u}(x,0)
-   =
-   {sp.latex(f_s)},
-   &
-   0\le x\le {sp.latex(L_s)}
+    {u}(x,0)
+    =
+    {sp.latex(f_s)},
+    &
+    0\le x\le {sp.latex(L_s)}
 
-   \end{{cases}}
-   """
+    \end{{cases}}
+    """
 
-with st.container(border=True):
-st.latex(latex_sistema)
+    with st.container(border=True):
+        st.latex(latex_sistema)
 
-col_help, _ = st.columns([1, 2])
+    col_help, _ = st.columns([1, 2])
 
-with col_help:
-if st.button(
-"Teoría - Homogeneización",
-use_container_width=True
-):
-st.session_state.mostrar_ayuda = True
-st.session_state.help_slide = 0
-st.session_state.help_max_slide = 0
-st.rerun()
+    with col_help:
+        if st.button(
+            "Teoría - Homogeneización",
+            use_container_width=True
+        ):
+            st.session_state.mostrar_ayuda = True
+            st.session_state.help_slide = 0
+            st.session_state.help_max_slide = 0
+            st.rerun()
 
-if st.session_state.mostrar_ayuda:
-mostrar_ayuda_profunda(
-w_dyn,
-F_t_dyn,
-f_t_dyn
-)
+    if st.session_state.mostrar_ayuda:
+        mostrar_ayuda_profunda(
+            w_dyn,
+            F_t_dyn,
+            f_t_dyn
+        )
 
 except Exception:
-with st.container(border=True):
-st.latex(
-r"\text{Esperando especificaciones matemáticas válidas para actualizar el sistema...}"
-)
+    with st.container(border=True):
+        st.latex(
+            r"\text{Esperando especificaciones matemáticas válidas para actualizar el sistema...}"
+        )
 
 # =========================================================
 # BOTÓN PRINCIPAL
 # =========================================================
 
 if st.button(
-"Guardar problema y avanzar",
-type="primary"
+    "Guardar problema y avanzar",
+    type="primary"
 ):
 
-exito = calcular_matematicas(
-st.session_state.in_L,
-st.session_state.in_alpha,
-st.session_state.in_F,
-st.session_state.in_A,
-st.session_state.in_B,
-st.session_state.in_f
-)
+    exito = calcular_matematicas(
+        st.session_state.in_L,
+        st.session_state.in_alpha,
+        st.session_state.in_F,
+        st.session_state.in_A,
+        st.session_state.in_B,
+        st.session_state.in_f
+    )
 
-if exito:
-avanzar()
-st.rerun()
+    if exito:
+        avanzar()
+        st.rerun()
 
 st.divider()
 
@@ -2410,128 +2388,147 @@ st.divider()
 # ETAPA 2: HOMOGENEIZACIÓN
 # =========================================================
 if st.session_state.step >= 2:
-data = st.session_state.math_data
-st.header("2. Descomposición del Perfil Térmico")
-st.markdown("Estructuramos la solución en equilibrio estático y ondas térmicas transitorias:")
-st.latex(rf"{COLOR_MAP['u']}(x,t) = {COLOR_MAP['w']}(x,t) + {COLOR_MAP['v']}(x,t)")
+    data = st.session_state.math_data
+    st.header("2. Descomposición del Perfil Térmico")
+    st.markdown("Estructuramos la solución en equilibrio estático y ondas térmicas transitorias:")
+    st.latex(rf"{COLOR_MAP['u']}(x,t) = {COLOR_MAP['w']}(x,t) + {COLOR_MAP['v']}(x,t)")
 
-st.markdown("El estado estacionario calculado para este sistema es:")
-st.latex(rf"{COLOR_MAP['w']}(x,t) = {sp.latex(data['w'])}")
+    st.markdown("El estado estacionario calculado para este sistema es:")
+    st.latex(rf"{COLOR_MAP['w']}(x,t) = {sp.latex(data['w'])}")
 
-st.markdown("La transformación produce el siguiente campo transitorio modificado:")
-with st.container(border=True):
-st.latex(rf"\tilde{{F}}(x,t) = {sp.latex(data['F_tilde'])}")
-st.latex(rf"\tilde{{f}}(x) = {sp.latex(data['f_tilde'])}")
+    st.markdown("La transformación produce el siguiente campo transitorio modificado:")
+    with st.container(border=True):
+        st.latex(rf"\tilde{{F}}(x,t) = {sp.latex(data['F_tilde'])}")
+        st.latex(rf"\tilde{{f}}(x) = {sp.latex(data['f_tilde'])}")
 
-if st.session_state.step == 2:
-if st.button("Calcular Base Espacial 🚀"): avanzar(); st.rerun()
-st.divider()
+    if st.session_state.step == 2:
+        if st.button("Calcular Base Espacial 🚀"):
+            avanzar()
+            st.rerun()
+    st.divider()
 
 # =========================================================
 # ETAPA 3: VALORES Y FUNCIONES PROPIAS
 # =========================================================
 if st.session_state.step >= 3:
-data = st.session_state.math_data
-st.header("3. Autofunciones y Modos Vibracionales de Calor")
-st.markdown("Al resolver el problema homogéneo de Sturm-Liouville en el espacio, determinamos los autovalores y la base de modos puros:")
+    data = st.session_state.math_data
+    st.header("3. Autofunciones y Modos Vibracionales de Calor")
+    st.markdown("Al resolver el problema homogéneo de Sturm-Liouville en el espacio, determinamos los autovalores y la base de modos puros:")
 
-with st.container(border=True):
-st.latex(rf"\lambda_n = {sp.latex(data['lam_n'])}")
-st.latex(rf"\phi_n(x) = {sp.latex(data['phi_n'])}")
+    with st.container(border=True):
+        st.latex(rf"\lambda_n = {sp.latex(data['lam_n'])}")
+        st.latex(rf"\phi_n(x) = {sp.latex(data['phi_n'])}")
 
-if st.session_state.step == 3:
-if st.button("Proyectar Expansión de Fourier 🚀"): avanzar(); st.rerun()
-st.divider()
+    if st.session_state.step == 3:
+        if st.button("Proyectar Expansión de Fourier 🚀"):
+            avanzar()
+            st.rerun()
+    st.divider()
 
 # =========================================================
 # ETAPA 4: EXPANSIÓN POR AUTOFUNCIONES
 # =========================================================
 if st.session_state.step >= 4:
-data = st.session_state.math_data
-st.header("4. Expansión en Modos Ortogonales")
-st.markdown("Expandimos el campo térmico dinámico y las fuentes utilizando la base armónica calculada:")
+    data = st.session_state.math_data
+    st.header("4. Expansión en Modos Ortogonales")
+    st.markdown("Expandimos el campo térmico dinámico y las fuentes utilizando la base armónica calculada:")
 
-L_tex = sp.latex(data['L'])
-sin_term = rf"\sin\left(\frac{{n\pi x}}{{{L_tex}}}\right)"
+    L_tex = sp.latex(data['L'])
+    sin_term = rf"\sin\left(\frac{{n\pi x}}{{{L_tex}}}\right)"
 
-with st.container(border=True):
-st.latex(rf"{COLOR_MAP['v']}(x,t) = \sum_{{n=1}}^{{\infty}} {COLOR_MAP['a']}_n(t) \cdot {sin_term}")
-st.latex(rf"\tilde{{F}}(x,t) = \sum_{{n=1}}^{{\infty}} q_n(t) \cdot {sin_term}")
+    with st.container(border=True):
+        st.latex(rf"{COLOR_MAP['v']}(x,t) = \sum_{{n=1}}^{{\infty}} {COLOR_MAP['a']}_n(t) \cdot {sin_term}")
+        st.latex(rf"\tilde{{F}}(x,t) = \sum_{{n=1}}^{{\infty}} q_n(t) \cdot {sin_term}")
 
-if st.session_state.step == 4:
-if st.button("Resolver EDOs Temporales 🚀"): avanzar(); st.rerun()
-st.divider()
+    if st.session_state.step == 4:
+        if st.button("Resolver EDOs Temporales 🚀"):
+            avanzar()
+            st.rerun()
+    st.divider()
 
 # =========================================================
 # ETAPA 5: COEFICIENTES TEMPORALES a(t)
 # =========================================================
 if st.session_state.step >= 5:
-data = st.session_state.math_data
-st.header("5. Solución de las Amplitudes Temporales")
-st.markdown("La proyección ortogonal desacopla la ecuación diferencial parcial en un conjunto infinito de ecuaciones diferenciales ordinarias de primer orden para las amplitudes de calor:")
+    data = st.session_state.math_data
+    st.header("5. Solución de las Amplitudes Temporales")
+    st.markdown("La proyección ortogonal desacopla la ecuación diferencial parcial en un conjunto infinito de ecuaciones diferenciales ordinarias de primer orden para las amplitudes de calor:")
 
-factor = f"{sp.latex(data['alpha']**2)} \left(\\frac{{n\pi}}{{{sp.latex(data['L'])}}}\\right)^2"
+    factor = f"{sp.latex(data['alpha']**2)} \left(\\frac{{n\pi}}{{{sp.latex(data['L'])}}}\\right)^2"
 
-with st.container(border=True):
-st.latex(rf"{COLOR_MAP['a']}_n^\prime(t) + {factor} {COLOR_MAP['a']}_n(t) = q_n(t)")
-st.markdown("Donde los coeficientes de carga de la fuente se calculan analíticamente como:")
-st.latex(rf"q_n(t) = {sp.latex(data['q_n_expr'])}")
+    with st.container(border=True):
+        st.latex(rf"{COLOR_MAP['a']}_n^\prime(t) + {factor} {COLOR_MAP['a']}_n(t) = q_n(t)")
+        st.markdown("Donde los coeficientes de carga de la fuente se calculan analíticamente como:")
+        st.latex(rf"q_n(t) = {sp.latex(data['q_n_expr'])}")
 
-if st.session_state.step == 5:
-if st.button("Sintetizar Solución Total y Simular 🚀"): avanzar(); st.rerun()
-st.divider()
+    if st.session_state.step == 5:
+        if st.button("Sintetizar Solución Total y Simular 🚀"):
+            avanzar()
+            st.rerun()
+    st.divider()
 
 # =========================================================
 # ETAPA 6: SOLUCIÓN Y SIMULADOR
 # =========================================================
 if st.session_state.step >= 6:
-data = st.session_state.math_data
-st.header("6. Síntesis y Laboratorio Dinámico de Simulación")
+    data = st.session_state.math_data
+    st.header("6. Síntesis y Laboratorio Dinámico de Simulación")
 
-vista = st.radio("Componente Térmico a Aislar:", ["Solución General Completa", "Perfil de Equilibrio Estacionario", "Ondas Transitorias Dispersivas"], horizontal=True)
+    vista = st.radio(
+        "Componente Térmico a Aislar:", 
+        ["Solución General Completa", "Perfil de Equilibrio Estacionario", "Ondas Transitorias Dispersivas"], 
+        horizontal=True
+    )
 
-L_tex = sp.latex(data['L'])
-w_tex = sp.latex(data['w'])
-sin_term = rf"\sin\left(\frac{{n\pi x}}{{{L_tex}}}\right)"
-sum_tex = rf"\sum_{{n=1}}^{{\infty}} {COLOR_MAP['a']}_n(t) \cdot {sin_term}"
+    L_tex = sp.latex(data['L'])
+    w_tex = sp.latex(data['w'])
+    sin_term = rf"\sin\left(\frac{{n\pi x}}{{{L_tex}}}\right)"
+    sum_tex = rf"\sum_{{n=1}}^{{\infty}} {COLOR_MAP['a']}_n(t) \cdot {sin_term}"
 
-with st.container(border=True):
-if vista == "Perfil de Equilibrio Estacionario":
-st.latex(rf"{COLOR_MAP['w']}(x,t) = {w_tex}")
-elif vista == "Ondas Transitorias Dispersivas":
-st.latex(rf"{COLOR_MAP['v']}(x,t) = {sum_tex}")
-else:
-w_part = f"{w_tex} + " if data['w'] != 0 else ""
-st.latex(rf"{COLOR_MAP['u']}(x,t) = {w_part} {sum_tex}")
+    with st.container(border=True):
+        if vista == "Perfil de Equilibrio Estacionario":
+            st.latex(rf"{COLOR_MAP['w']}(x,t) = {w_tex}")
+        elif vista == "Ondas Transitorias Dispersivas":
+            st.latex(rf"{COLOR_MAP['v']}(x,t) = {sum_tex}")
+        else:
+            w_part = f"{w_tex} + " if data['w'] != 0 else ""
+            st.latex(rf"{COLOR_MAP['u']}(x,t) = {w_part} {sum_tex}")
 
-# SIMULADOR NUMÉRICO ASOCIADO (Estilo Térmico Caliente)
-st.subheader("Simulación Térmica de Distribución Continental de Calor")
-t_val = st.slider(f"Evolución Temporal del Flujo (segundos):", 0.0, 5.0, 0.0, 0.05)
+    # SIMULADOR NUMÉRICO ASOCIADO (Estilo Térmico Caliente)
+    st.subheader("Simulación Térmica de Distribución Continental de Calor")
+    t_val = st.slider(f"Evolución Temporal del Flujo (segundos):", 0.0, 5.0, 0.0, 0.05)
 
-x_vals = np.linspace(0, data['L_num'], 250)
-u_vals = data['u_num_func'](x_vals, t_val)
-if np.isscalar(u_vals):
-u_vals = np.ones_like(x_vals) * u_vals
+    x_vals = np.linspace(0, data['L_num'], 250)
+    u_vals = data['u_num_func'](x_vals, t_val)
+    if np.isscalar(u_vals):
+        u_vals = np.ones_like(x_vals) * u_vals
 
-# Configuración del gráfico integrada a la paleta crema
-fig, ax = plt.subplots(figsize=(10, 2.2), dpi=130)
-fig.patch.set_facecolor(COLOR_BG)
-ax.set_facecolor(COLOR_BG)
+    # Configuración del gráfico integrada a la paleta crema
+    fig, ax = plt.subplots(figsize=(10, 2.2), dpi=130)
+    fig.patch.set_facecolor(COLOR_BG)
+    ax.set_facecolor(COLOR_BG)
 
-extent = [0, data['L_num'], 0, 1]
-im = ax.imshow(np.array([u_vals, u_vals]), cmap='inferno', aspect='auto', extent=extent, vmin=np.min(u_vals)-0.1, vmax=np.max(u_vals)+1)
+    extent = [0, data['L_num'], 0, 1]
+    im = ax.imshow(
+        np.array([u_vals, u_vals]), 
+        cmap='inferno', 
+        aspect='auto', 
+        extent=extent, 
+        vmin=np.min(u_vals)-0.1, 
+        vmax=np.max(u_vals)+1
+    )
 
-ax.set_yticks([])
-ax.set_xlabel('Coordenada espacial de la barra (x)', fontweight='bold', color=COLOR_TEXT)
-ax.spines['top'].set_visible(False)
-ax.spines['right'].set_visible(False)
-ax.spines['left'].set_visible(False)
-ax.spines['bottom'].set_color(COLOR_GRID)
-ax.tick_params(axis='x', colors=COLOR_TEXT)
+    ax.set_yticks([])
+    ax.set_xlabel('Coordenada espacial de la barra (x)', fontweight='bold', color=COLOR_TEXT)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_color(COLOR_GRID)
+    ax.tick_params(axis='x', colors=COLOR_TEXT)
 
-cbar = fig.colorbar(im, ax=ax, orientation='horizontal', fraction=0.25, pad=0.55)
-cbar.set_label(f'Escala de Temperatura Física a los {t_val:.2f}s', fontweight='bold', color=COLOR_TEXT)
-cbar.outline.set_visible(False)
-cbar.ax.tick_params(labelsize=9, colors=COLOR_TEXT)
+    cbar = fig.colorbar(im, ax=ax, orientation='horizontal', fraction=0.25, pad=0.55)
+    cbar.set_label(f'Escala de Temperatura Física a los {t_val:.2f}s', fontweight='bold', color=COLOR_TEXT)
+    cbar.outline.set_visible(False)
+    cbar.ax.tick_params(labelsize=9, colors=COLOR_TEXT)
 
-st.pyplot(fig)
+    st.pyplot(fig)
