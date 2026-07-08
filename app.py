@@ -2336,8 +2336,8 @@ if "help_slide" not in st.session_state:
 if "help_max_slide" not in st.session_state:
     st.session_state.help_max_slide = 0
     
-#for k, v in defaults.items():
- #   st.session_state.setdefault(k, v)
+for k, v in defaults.items():
+    st.session_state.setdefault(k, v)
 
 st.header("Planteando el problema")
 st.markdown("Escribe los términos que se incluirán dentro del problema de calor:")
