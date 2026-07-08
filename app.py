@@ -230,11 +230,11 @@ pasos = [
 ]
 
 for i, paso in enumerate(pasos):
-if i + 1 < st.session_state.step:
+   if i + 1 < st.session_state.step:
 st.sidebar.markdown(f"✅ <span style='color:gray;'>{paso}</span>", unsafe_allow_html=True)
-elif i + 1 == st.session_state.step:
+   elif i + 1 == st.session_state.step:
 st.sidebar.markdown(f"👉 **<span style='color:{C_GEN};'>{paso}</span>**", unsafe_allow_html=True)
-else:
+   else:
 st.sidebar.markdown(f"🔒 <span style='color:lightgray;'>{paso}</span>", unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
@@ -357,7 +357,7 @@ st.session_state.math_data = {
 }
 return True
 except Exception as e:
-st.error(f"Error en los cálculos matemáticos: {e}")
+   st.error(f"Error en los cálculos matemáticos: {e}")
 return False
 
 
