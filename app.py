@@ -2303,19 +2303,35 @@ st.divider()
 # =========================================================
 # INICIALIZACIÓN DEL SESSION STATE
 # =========================================================
-defaults = {
-    "step": 1,
-    "in_L": "1",
-    "in_alpha": "1",
-    "in_F": "0",
-    "in_A": "0",
-    "in_B": "0",
-    "in_f": "sin(pi*x)",
-    "mostrar_ayuda": False,
-    "help_slide": 0,
-    "help_max_slide": 0
-}
+if "step" not in st.session_state:
+    st.session_state.step = 1
 
+if "in_L" not in st.session_state:
+    st.session_state.in_L = "1"
+
+if "in_alpha" not in st.session_state:
+    st.session_state.in_alpha = "1"
+
+if "in_F" not in st.session_state:
+    st.session_state.in_F = "0"
+
+if "in_A" not in st.session_state:
+    st.session_state.in_A = "0"
+
+if "in_B" not in st.session_state:
+    st.session_state.in_B = "0"
+
+if "in_f" not in st.session_state:
+    st.session_state.in_f = "sin(pi*x)"
+
+if "mostrar_ayuda" not in st.session_state:
+    st.session_state.mostrar_ayuda = False
+
+if "help_slide" not in st.session_state:
+    st.session_state.help_slide = 0
+
+if "help_max_slide" not in st.session_state:
+    st.session_state.help_max_slide = 0
 for k, v in defaults.items():
     st.session_state.setdefault(k, v)
 
