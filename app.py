@@ -11,6 +11,18 @@ import plotly.graph_objects as go
 
 L = 10
 
+# =============================================================================
+# PALETA DE COLORES
+# =============================================================================
+
+COLOR_CURVE = "#F57C00"          # Naranja principal
+COLOR_CURVE_2 = "#FB8C00"
+COLOR_BORDER = "#D84315"         # Rojo cálido
+COLOR_BG = "#FFF8F2"             # Fondo crema
+COLOR_GRID = "#EADFD3"
+COLOR_TEXT = "#3C3C3C"
+COLOR_BOX = "#FFF3E0"
+
 # -----------------------------------------------------------------------------
 # CSS GENERAL
 # -----------------------------------------------------------------------------
@@ -176,19 +188,6 @@ C_TRANS = "#D32F2F" # Rojo (Transitoria)
 C_GEN = "#7B1FA2"   # Morado (Solución General)
 C_SPACE = "#388E3C" # Verde (Espacial)
 C_TIME = "#F57C00"  # Naranjo (Temporal)
-
-# =============================================================================
-# PALETA DE COLORES
-# =============================================================================
-
-COLOR_CURVE = "#F57C00"          # Naranja principal
-COLOR_CURVE_2 = "#FB8C00"
-COLOR_BORDER = "#D84315"         # Rojo cálido
-COLOR_BG = "#FFF8F2"             # Fondo crema
-COLOR_GRID = "#EADFD3"
-COLOR_TEXT = "#3C3C3C"
-COLOR_BOX = "#FFF3E0"
-
 
 
 # ==========================================
