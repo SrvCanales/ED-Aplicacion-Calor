@@ -194,16 +194,16 @@ C_TIME = "#F57C00"  # Naranjo (Temporal)
 # GESTIÓN DEL ESTADO Y LOGICA DE FLUJO
 # ==========================================
 if "help_slide" not in st.session_state:
-st.session_state.help_slide = 0
+   st.session_state.help_slide = 0
 
 if "help_max_slide" not in st.session_state:
-st.session_state.help_max_slide = 0
+   st.session_state.help_max_slide = 0
 
 
 if 'step' not in st.session_state:
-st.session_state.step = 1
+   st.session_state.step = 1
 if 'math_data' not in st.session_state:
-st.session_state.math_data = {}
+   st.session_state.math_data = {}
 
 # Inicializar Inputs en session_state para evitar que se borren al hacer rerun
 if 'in_L' not in st.session_state: st.session_state.in_L = "L"
