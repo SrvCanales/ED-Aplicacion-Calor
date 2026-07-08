@@ -764,7 +764,7 @@ def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
 
     st.divider()
     
-        _, c, _ = st.columns([3,2,3])
+    _, c, _ = st.columns([3,2,3])
 
     with c:
 
