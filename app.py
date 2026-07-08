@@ -2324,7 +2324,7 @@ for k, v in DEFAULTS.items():
         st.session_state[k] = v
 
 # =========================================================
-# R
+# PARSER
 # =========================================================
 
 transformaciones = (
@@ -2344,7 +2344,7 @@ LOCAL_DICT = {
 }
 
 
-def ar_seguro(expr):
+def parsear_seguro(expr):
 
     expr = expr.strip()
 
@@ -2451,50 +2451,41 @@ try:
     )
 
     sistema = rf"""
-    \begin{{cases}}
-    \dfrac{{\partial u}}{{\partial t}}
+    \\begin{{cases}}
+    \\dfrac{{\\partial u}}{{\\partial t}}
     =
     {sp.latex(alpha_s**2)}
-    \dfrac{{\partial^2u}}{{\partial x^2}}
+    \\dfrac{{\\partial^2u}}{{\\partial x^2}}
     +
     {sp.latex(F_s)},
     &
-    0<x<{sp.latex(L_s)},\;t>0
-    \\[10pt]
+    0<x<{sp.latex(L_s)},\\;t>0
+    \\\\[10pt]
 
     u(0,t)
     =
     {sp.latex(A_s)},
     &
     t>0
-    \\[10pt]
+    \\\\[10pt]
 
     u({sp.latex(L_s)},t)
     =
     {sp.latex(B_s)},
     &
     t>0
-    \\[10pt]
+    \\\\[10pt]
 
     u(x,0)
     =
     {sp.latex(f_s)},
     &
-    0\le x\le {sp.latex(L_s)}
-    \end{{cases}}
+    0\\le x\\le {sp.latex(L_s)}
+    \\end{{cases}}
     """
 
     with st.container(border=True):
         st.latex(sistema)
-
-st.latex(r"""
-\begin{aligned}
-u_t &= u_{xx}\\
-u(0,t) &= 0\\
-u(1,t) &= 0\\
-u(x,0) &= \sin(\pi x)
-\end{aligned}
-""")
 
 except Exception:
 
@@ -2502,29 +2493,29 @@ except Exception:
 
         st.latex(
             rf"""
-            \begin{{cases}}
-            \dfrac{{\partial u}}{{\partial t}}
+            \\begin{{cases}}
+            \\dfrac{{\\partial u}}{{\\partial t}}
             =
             ({st.session_state.in_alpha})^2
-            \dfrac{{\partial^2u}}{{\partial x^2}}
+            \\dfrac{{\\partial^2u}}{{\\partial x^2}}
             +
             {st.session_state.in_F}
-            \\[10pt]
+            \\\\[10pt]
 
             u(0,t)
             =
             {st.session_state.in_A}
-            \\[10pt]
+            \\\\[10pt]
 
-            u({st.session_state.in_L})
+            u({st.session_state.in_L},t)
             =
             {st.session_state.in_B}
-            \\[10pt]
+            \\\\[10pt]
 
             u(x,0)
             =
             {st.session_state.in_f}
-            \end{{cases}}
+            \\end{{cases}}
             """
         )
 
