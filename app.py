@@ -2462,10 +2462,10 @@ try:
     "Teoría - Homogeneización",
     use_container_width=True
 ):
-    mostrar_ayuda = True
-    help_slide = 0
-    help_max_slide = 0
-    st.rerun()
+            mostrar_ayuda = True
+            help_slide = 0
+            help_max_slide = 0
+            st.rerun()
 
         if st.session_state.mostrar_ayuda:
     mostrar_ayuda_profunda(
