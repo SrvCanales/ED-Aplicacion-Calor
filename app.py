@@ -194,16 +194,16 @@ C_TIME = "#F57C00"  # Naranjo (Temporal)
 # GESTIÓN DEL ESTADO Y LOGICA DE FLUJO
 # ==========================================
 if "help_slide" not in st.session_state:
-st.session_state.help_slide = 0
+   st.session_state.help_slide = 0
 
 if "help_max_slide" not in st.session_state:
-st.session_state.help_max_slide = 0
+   st.session_state.help_max_slide = 0
 
 
 if 'step' not in st.session_state:
-st.session_state.step = 1
+   st.session_state.step = 1
 if 'math_data' not in st.session_state:
-st.session_state.math_data = {}
+   st.session_state.math_data = {}
 
 # Inicializar Inputs en session_state para evitar que se borren al hacer rerun
 if 'in_L' not in st.session_state: st.session_state.in_L = "L"
@@ -214,7 +214,7 @@ if 'in_B' not in st.session_state: st.session_state.in_B = "T_2"
 if 'in_f' not in st.session_state: st.session_state.in_f = "T_0 * sin(pi*x/L)"
 
 def avanzar():
-st.session_state.step += 1
+   st.session_state.step += 1
 
 # ==========================================
 # BARRA LATERAL (Progreso)
@@ -230,11 +230,11 @@ pasos = [
 ]
 
 for i, paso in enumerate(pasos):
-if i + 1 < st.session_state.step:
+   if i + 1 < st.session_state.step:
 st.sidebar.markdown(f"✅ <span style='color:gray;'>{paso}</span>", unsafe_allow_html=True)
-elif i + 1 == st.session_state.step:
+   elif i + 1 == st.session_state.step:
 st.sidebar.markdown(f"👉 **<span style='color:{C_GEN};'>{paso}</span>**", unsafe_allow_html=True)
-else:
+   else:
 st.sidebar.markdown(f"🔒 <span style='color:lightgray;'>{paso}</span>", unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
@@ -269,9 +269,9 @@ COLOR_MAP = {
 # MOTOR MATEMÁTICO CENTRAL
 # ==========================================
 def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
-"""Calcula algebraicamente la solución general utilizando n simbólico."""
+   """Calcula algebraicamente la solución general utilizando n simbólico."""
 try:
-L = parse_expr(
+   L = parse_expr(
 L_str,
 transformations=transformaciones,
 local_dict={'pi': sp.pi}
@@ -334,31 +334,31 @@ q_n_expr = (2/L) * sp.integrate(F_tilde * phi_n, (x, 0, L))
 # Simulación numérica (N=6 términos)
 v_sol_num = 0
 for n_val in range(1, 7):
-lam_val = n_val * sp.pi / L
-phi_val = sp.sin(lam_val * x)
-q_n_val = (2/L) * sp.integrate(F_tilde * phi_val, (x, 0, L))
-a_n_0 = (2/L) * sp.integrate(f_tilde * phi_val, (x, 0, L))
+   lam_val = n_val * sp.pi / L
+   phi_val = sp.sin(lam_val * x)
+   q_n_val = (2/L) * sp.integrate(F_tilde * phi_val, (x, 0, L))
+   a_n_0 = (2/L) * sp.integrate(f_tilde * phi_val, (x, 0, L))
 
-factor_k = alpha**2 * lam_val**2
-int_part = sp.integrate(q_n_val.subs(t, tau) * sp.exp(factor_k * tau), tau)
-int_eval = int_part.subs(tau, t) - int_part.subs(tau, 0)
+   factor_k = alpha**2 * lam_val**2
+   int_part = sp.integrate(q_n_val.subs(t, tau) * sp.exp(factor_k * tau), tau)
+   int_eval = int_part.subs(tau, t) - int_part.subs(tau, 0)
 
-a_n_t = sp.exp(-factor_k * t) * (int_eval + a_n_0)
-v_sol_num += a_n_t * phi_val
+   a_n_t = sp.exp(-factor_k * t) * (int_eval + a_n_0)
+   v_sol_num += a_n_t * phi_val
+   
+   u_final_num = sp.simplify(w + v_sol_num)
+   u_num_func = sp.lambdify((x, t), u_final_num, modules=['numpy', 'math'])
 
-u_final_num = sp.simplify(w + v_sol_num)
-u_num_func = sp.lambdify((x, t), u_final_num, modules=['numpy', 'math'])
-
-st.session_state.math_data = {
-'L': L, 'alpha': alpha, 'F': F, 'A': A, 'B': B, 'f': f,
-'w': w, 'F_tilde': F_tilde, 'f_tilde': f_tilde,
-'lam_n': lam_n, 'phi_n': phi_n, 'q_n_expr': q_n_expr,
-'u_num_func': u_num_func, 'L_num': float(L.evalf())
-}
-return True
-except Exception as e:
-st.error(f"Error en los cálculos matemáticos: {e}")
-return False
+   st.session_state.math_data = {
+   'L': L, 'alpha': alpha, 'F': F, 'A': A, 'B': B, 'f': f,
+   'w': w, 'F_tilde': F_tilde, 'f_tilde': f_tilde,
+   'lam_n': lam_n, 'phi_n': phi_n, 'q_n_expr': q_n_expr,
+   'u_num_func': u_num_func, 'L_num': float(L.evalf())
+   }
+   return True
+   except Exception as e:
+   st.error(f"Error en los cálculos matemáticos: {e}")
+   return False
 
 
 # =============================================================================
@@ -366,7 +366,7 @@ return False
 # =============================================================================
 
 def texto(txt):
-st.markdown(
+   st.markdown(
 f"""
 <div style="
 color:{COLOR_TEXT};
@@ -384,7 +384,7 @@ unsafe_allow_html=True
 
 
 def bloque_latex(titulo, *expresiones):
-"""
+   """
    Muestra una tarjeta con un título y una o varias expresiones
    matemáticas perfectamente integradas utilizando únicamente
    componentes nativos de Streamlit.
@@ -392,26 +392,26 @@ def bloque_latex(titulo, *expresiones):
 
 with st.container(border=True):
 
-st.markdown(
-f"""
-<div style="
-color:{COLOR_TEXT};
-font-size:17px;
-font-weight:600;
-margin-bottom:0.3rem;
-">
-{titulo}
-</div>
-""",
-unsafe_allow_html=True
-)
+   st.markdown(
+   f"""
+   <div style="
+   color:{COLOR_TEXT};
+   font-size:17px;
+   font-weight:600;
+   margin-bottom:0.3rem;
+   ">
+   {titulo}
+   </div>
+   """,
+   unsafe_allow_html=True
+   )
 
 for expr in expresiones:
-st.latex(expr)
+   st.latex(expr)
 
 def aplicar_estilo(fig):
 
-fig.update_layout(
+   fig.update_layout(
 
 height=340,
 
@@ -465,27 +465,26 @@ zerolinecolor="#C7B6A3"
 
 return fig
 
-def grafico_frontera_homogenea():
-
-x = np.linspace(0, L, 500)
-y = 2.8*np.sin(np.pi*x/L)
-fig = go.Figure()
-fig.add_trace(
-go.Scatter(
-x=x,
-y=y,
-mode="lines",
-line=dict(
-color=COLOR_CURVE,
-width=4
-),
-hovertemplate=(
-"<b>x</b> = %{x:.2f}"
-"<br><b>Temperatura</b> = %{y:.2f} °C"
-"<extra></extra>"
-)
-)
-)
+def grafico_frontera_homogenea():   
+   x = np.linspace(0, L, 500)
+   y = 2.8*np.sin(np.pi*x/L)
+   fig = go.Figure()
+   fig.add_trace(
+   go.Scatter(
+   x=x,
+   y=y,
+   mode="lines",
+   line=dict(
+   color=COLOR_CURVE,
+   width=4
+   ),
+   hovertemplate=(
+   "<b>x</b> = %{x:.2f}"
+   "<br><b>Temperatura</b> = %{y:.2f} °C"
+   "<extra></extra>"
+   )
+   )
+   )
 
 fig.add_trace(
 go.Scatter(
@@ -561,18 +560,18 @@ return aplicar_estilo(fig)
 
 
 def grafico_frontera_no_homogenea():
-x = np.linspace(0, L, 500)
-y = 20 + (75-20)*x/L + 6*np.sin(np.pi*x/L)
-fig = go.Figure()
-fig.add_trace(
-go.Scatter(
-x=x,
-y=y,
-mode="lines",
-line=dict(
-color=COLOR_CURVE,
-width=4
-),
+   x = np.linspace(0, L, 500)
+   y = 20 + (75-20)*x/L + 6*np.sin(np.pi*x/L)
+   fig = go.Figure()
+   fig.add_trace(
+   go.Scatter(
+   x=x,
+   y=y,
+   mode="lines",
+   line=dict(
+   color=COLOR_CURVE,
+   width=4
+   ),
 
 hovertemplate=(
 "<b>x</b> = %{x:.2f}"
@@ -665,32 +664,32 @@ c1,c2,c3=st.columns(3)
 with c1:
 
 if st.session_state.help_slide==0:
-st.success("① ¿Por qué?")
+   st.success("① ¿Por qué?")
 else:
-st.write("① ¿Por qué? ✓")
+   st.write("① ¿Por qué? ✓")
 
 with c2:
 
 if st.session_state.help_slide==1:
-st.success("② ¿Cómo?")
+   st.success("② ¿Cómo?")
 elif st.session_state.help_slide>1:
-st.write("② ¿Cómo? ✓")
+   st.write("② ¿Cómo? ✓")
 else:
-st.write("② ¿Cómo?")
+   st.write("② ¿Cómo?")
 
 with c3:
 
 if st.session_state.help_slide==2:
-st.success("③ ¿Otra sustitución?")
+   st.success("③ ¿Otra sustitución?")
 else:
-st.write("③ ¿Otra sustitución?")
+   st.write("③ ¿Otra sustitución?")
 
 
 def botones_navegacion(): #Navegación homogenización
 
-st.divider()
+   st.divider()
 
-c1,c2,c3=st.columns([1,4,1])
+   c1,c2,c3=st.columns([1,4,1])
 
 with c1:
 
@@ -698,8 +697,8 @@ if st.session_state.help_slide>0:
 
 if st.button("⬅ Anterior",use_container_width=True):
 
-st.session_state.help_slide-=1
-st.rerun()
+   st.session_state.help_slide-=1
+   st.rerun()
 
 with c3:
 
@@ -707,27 +706,27 @@ if st.session_state.help_slide<2:
 
 if st.button("Siguiente ➜",use_container_width=True):
 
-st.session_state.help_slide+=1
+   st.session_state.help_slide+=1
 
-st.session_state.help_max_slide=max(
-st.session_state.help_slide,
-st.session_state.help_max_slide
-)
+   st.session_state.help_max_slide=max(
+   st.session_state.help_slide,
+   st.session_state.help_max_slide
+   )
 
-st.rerun()
+   st.rerun()
 
 
 @st.dialog("📖 Profundización matemática: Homogeneización", width="large") ##!!!!
 def mostrar_ayuda_profunda(w_d, F_t_d, f_t_d):
 
-st.markdown("""
-   <div class="help-title">
-   Homogeneización de las condiciones de frontera
-   </div>
-   """, unsafe_allow_html=True)
+   st.markdown("""
+      <div class="help-title">
+      Homogeneización de las condiciones de frontera
+      </div>
+      """, unsafe_allow_html=True)
 
-st.markdown("""
-   <div class="help-subtitle">
+   st.markdown("""
+      <div class="help-subtitle">
 
    En esta guía recorrerás paso a paso la idea detrás de la homogeneización.
    La intención no es memorizar una sustitución, sino comprender por qué surge
@@ -746,25 +745,25 @@ st.divider()
 
 if st.session_state.help_slide == 0:
 
-slide_1()
+   slide_1()
 
 elif st.session_state.help_slide == 1:
 
-slide_2(
-w_d=w_d,
-F_t_d=F_t_d,
-f_t_d=f_t_d
-)
+   slide_2(
+   w_d=w_d,
+   F_t_d=F_t_d,
+   f_t_d=f_t_d
+   )
 
 else:
 
-slide_3()
+   slide_3()
 
-botones_navegacion()
+   botones_navegacion()
 
-st.divider()
+   st.divider()
 
- _, c, _ = st.columns([3,2,3])
+    _, c, _ = st.columns([3,2,3])
 
 with c:
 
@@ -773,9 +772,9 @@ if st.button(
 type="primary",
 use_container_width=True
 ):
-st.session_state.mostrar_ayuda = False
-st.session_state.help_slide = 0
-st.rerun()
+   st.session_state.mostrar_ayuda = False
+   st.session_state.help_slide = 0
+   st.rerun()
 
 
 # =============================================================================
