@@ -773,7 +773,7 @@ def _profunda(w_d, F_t_d, f_t_d):
             type="primary",
             use_container_width=True
         ):
-            st.session_state. = False
+            st.session_state.() = False
             st.session_state.help_slide = 0
             st.rerun()
 
