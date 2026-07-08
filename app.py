@@ -271,19 +271,19 @@ COLOR_MAP = {
 def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
     """Calcula algebraicamente la solución general utilizando n simbólico."""
     try:
-        L = _expr(
+        L = parse_expr(
     L_str,
     transformations=transformaciones,
     local_dict={'pi': sp.pi}
 )
 
-        alpha = _expr(
+        alpha = parse_expr(
     alpha_str,
     transformations=transformaciones,
     local_dict={'pi': sp.pi}
 )
 
-        F = _expr(
+        F = parse_expr(
     F_str,
     transformations=transformaciones,
     local_dict={
@@ -296,19 +296,19 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
     }
 )
 
-        A = _expr(
+        A = parse_expr(
     A_str,
     transformations=transformaciones,
     local_dict={'pi': sp.pi}
 )
 
-        B = _expr(
+        B = parse_expr(
     B_str,
     transformations=transformaciones,
     local_dict={'pi': sp.pi}
 )
 
-        f = _expr(
+        f = parse_expr(
     f_str,
     transformations=transformaciones,
     local_dict={
@@ -323,14 +323,14 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
         w = sp.simplify(A + (x / L) * (B - A))
         F_tilde = sp.simplify(F - sp.diff(w, t) + alpha**2 * sp.diff(w, x, 2))
         f_tilde = sp.simplify(f - w.subs(t, 0))
-        
+
         # Componente Espacial
         lam_n = n_sym * sp.pi / L
         phi_n = sp.sin(lam_n * x)
-        
+
         # Componente Temporal Proyectada
         q_n_expr = (2/L) * sp.integrate(F_tilde * phi_n, (x, 0, L))
-        
+
         # Simulación numérica (N=6 términos)
         v_sol_num = 0
         for n_val in range(1, 7):
@@ -338,17 +338,17 @@ def calcular_matematicas(L_str, alpha_str, F_str, A_str, B_str, f_str):
             phi_val = sp.sin(lam_val * x)
             q_n_val = (2/L) * sp.integrate(F_tilde * phi_val, (x, 0, L))
             a_n_0 = (2/L) * sp.integrate(f_tilde * phi_val, (x, 0, L))
-            
+
             factor_k = alpha**2 * lam_val**2
             int_part = sp.integrate(q_n_val.subs(t, tau) * sp.exp(factor_k * tau), tau)
             int_eval = int_part.subs(tau, t) - int_part.subs(tau, 0)
-            
+
             a_n_t = sp.exp(-factor_k * t) * (int_eval + a_n_0)
             v_sol_num += a_n_t * phi_val
 
         u_final_num = sp.simplify(w + v_sol_num)
         u_num_func = sp.lambdify((x, t), u_final_num, modules=['numpy', 'math'])
-        
+
         st.session_state.math_data = {
             'L': L, 'alpha': alpha, 'F': F, 'A': A, 'B': B, 'f': f,
             'w': w, 'F_tilde': F_tilde, 'f_tilde': f_tilde,
